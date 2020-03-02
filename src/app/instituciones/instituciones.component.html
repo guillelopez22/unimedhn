@@ -194,7 +194,7 @@
                 <h5 class="mb-0"><i class="fa fa-filter mr-2"></i>Buscar Clientes</h5>
             </div>
             <div class="modal-body custom-modal-body fade-in">
-                <div class="cover-div" *ngIf="instituciones_search_loading">
+                <!-- <div class="cover-div" *ngIf="instituciones_search_loading">
                     <div class="sk-wave sk-primary">
                         <div class="sk-rect sk-rect1 custom-loader"></div>
                         <div class="sk-rect sk-rect2 custom-loader"></div>
@@ -202,15 +202,15 @@
                         <div class="sk-rect sk-rect4 custom-loader"></div>
                         <div class="sk-rect sk-rect5 custom-loader"></div>
                     </div>
-                </div>
+                </div> -->
                 <form-renderer #instituciones_search_form
                     [config]="instituciones_search_inputs">
                 </form-renderer>
             </div>
             <div class="modal-footer custom-modal-footer text-left">
-                <button [disabled]="instituciones_search_loading" class="btn btn-danger btn-sm" (click)="instituciones_search_modal.hide()"><i class="fa fa-times"></i> Cerrar</button>
-                <button [disabled]="instituciones_search_loading" class="btn btn-warning btn-sm" (click)="clean_search_instituciones()"><i class="fa fa-ban"></i> Limpiar Filtro</button>
-                <button [disabled]="instituciones_search_loading" class="btn btn-info btn-sm" (click)="search_instituciones()"><i class="fa fa-filter"></i> Buscar Instituciones</button>
+                <button  class="btn btn-danger btn-sm" (click)="instituciones_search_modal.hide()"><i class="fa fa-times"></i> Cerrar</button>
+                <button  class="btn btn-warning btn-sm" (click)="clean_search_instituciones()"><i class="fa fa-ban"></i> Limpiar Filtro</button>
+                <button  class="btn btn-info btn-sm" (click)="search_instituciones()"><i class="fa fa-filter"></i> Buscar Instituciones</button>
             </div>
         </div>
     </div>
