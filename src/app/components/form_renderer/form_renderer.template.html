@@ -1,0 +1,214 @@
+
+<form role="form" novalidate="novalidate" #form="ngForm" autocomplete="off">
+    <div *ngFor="let form_row of options;let row_i = index" [class]="form_row.class">
+        <div *ngFor="let form_column of form_row.columns;let column_i = index" [class]="form_column.class">
+            <div *ngFor="let form_input of form_column.inputs;let input_i = index">
+                <div *ngIf="form_input.type=='text'" class="form-group">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <input
+                        #input_ref="ngModel" 
+                        [name]="form_input.name" 
+                        [placeholder]="form_input.placeholder" 
+                        [(ngModel)]="values[form_input.name]"
+                        [textMask]="{mask: form_input.textmask(), keepCharPositions:true}"
+                        type="text"
+                        [class]="form_input.class"
+                        [class.is-invalid]="input_ref.invalid && submitted"
+                        [minlength]="form_input.minlength" 
+                        [maxlength]="form_input.maxlength" 
+                        [required]="form_input.required()"
+                        [disabled]="form_input.disabled()"
+                        pattern="{{form_input.pattern}}"
+                        (change)="form_input.change($event.target.value)"
+                        (input)="form_input.input()">
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                            <span *ngIf="input_ref.errors.pattern">{{form_input.error_pattern}}</span>
+                            <span *ngIf="input_ref.errors.minlength">{{form_input.error_minlength}}</span>
+                        </small>
+                </div>
+                <div *ngIf="form_input.type=='date'" class="form-group">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <input
+                        #input_ref="ngModel" 
+                        [name]="form_input.name" 
+                        [placeholder]="'DD/MM/YYYY'" 
+                        [(ngModel)]="values[form_input.name]"
+                        [textMask]="{mask: date_mask, keepCharPositions:true}"
+                        type="text"
+                        [class]="form_input.class"
+                        [class.is-invalid]="input_ref.invalid && submitted"
+                        [required]="form_input.required()"
+                        [disabled]="form_input.disabled()"
+                        pattern="^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"
+                        (change)="form_input.change($event.target.value)"
+                        (input)="form_input.input()">
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                            <span *ngIf="input_ref.errors.pattern">Fecha Inválida</span>
+                            <span *ngIf="input_ref.errors.minlength">{{form_input.error_minlength}}</span>
+                        </small>
+                </div>
+                <div *ngIf="form_input.type=='integer'" class="form-group">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <input
+                        #input_ref="ngModel" 
+                        [name]="form_input.name" 
+                        [placeholder]="'- Valor -'" 
+                        [(ngModel)]="values[form_input.name]"
+                        [textMask]="{mask: integer_mask}"
+                        type="text"
+                        [class]="form_input.class"
+                        [class.is-invalid]="input_ref.invalid && submitted"
+                        [required]="form_input.required()"
+                        [disabled]="form_input.disabled()"
+                        pattern="^[+-]?(\d{1,3}(,\d{3})*(\.\d+)?)$"
+                        (change)="form_input.change($event.target.value)"
+                        (input)="form_input.input()">
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                            <span *ngIf="input_ref.errors.pattern">Formato Inválido</span>
+                            <span *ngIf="input_ref.errors.minlength">{{form_input.error_minlength}}</span>
+                        </small>
+                </div>
+                <div *ngIf="form_input.type=='decimal'" class="form-group">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <input
+                        #input_ref="ngModel" 
+                        [name]="form_input.name" 
+                        [placeholder]="'- Valor -'" 
+                        [(ngModel)]="values[form_input.name]"
+                        [textMask]="{mask: decimal_mask}"
+                        type="text"
+                        [class]="form_input.class"
+                        [class.is-invalid]="input_ref.invalid && submitted"
+                        [required]="form_input.required()"
+                        [disabled]="form_input.disabled()"
+                        pattern="^[+-]?(\d{1,3}(,\d{3})*(\.\d+)?)$"
+                        (change)="form_input.change($event.target.value)"
+                        (input)="form_input.input()">
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                            <span *ngIf="input_ref.errors.pattern">Formato Inválido</span>
+                            <span *ngIf="input_ref.errors.minlength">{{form_input.error_minlength}}</span>
+                        </small>
+                </div>
+                <div *ngIf="form_input.type=='email'" class="form-group">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <input
+                        #input_ref="ngModel" 
+                        [name]="form_input.name" 
+                        [placeholder]="'correo@ejemplo.com'" 
+                        [(ngModel)]="values[form_input.name]"
+                        type="text"
+                        [class]="form_input.class"
+                        [class.is-invalid]="input_ref.invalid && submitted"
+                        [minlength]="form_input.minlength" 
+                        [maxlength]="form_input.maxlength" 
+                        [required]="form_input.required()"
+                        [disabled]="form_input.disabled()"
+                        pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                        (change)="form_input.change($event.target.value)"
+                        (input)="form_input.input()">
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                            <span *ngIf="input_ref.errors.pattern">Correo Inválido</span>
+                            <span *ngIf="input_ref.errors.minlength">{{form_input.error_minlength}}</span>
+                        </small>
+                </div>
+                <div *ngIf="form_input.type=='select'" class="form-group">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <select
+                        #input_ref="ngModel"
+                        [name]="form_input.name"
+                        [(ngModel)]="values[form_input.name]"
+                        [class]="form_input.class"
+                        [class.is-invalid]="input_ref.invalid && submitted"
+                        [required]="form_input.required()"
+                        [disabled]="form_input.disabled()"
+                        (change)="form_input.change($event.target.value)">
+                        <option value="">{{form_input.placeholder}}</option>
+                        <option *ngFor="let x of form_input.list()" [value]="x[form_input.list_data.value]">{{x[form_input.list_data.text]}}</option>
+                    </select>
+                    <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                        <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                    </small>
+                </div>
+                <div *ngIf="form_input.type=='calendar' && !form_input.disabled()">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <div class="input-group">
+                        <input 
+                            [ngClass]="{'calendar-white':!form_input.disabled()}"
+                            #input_ref="ngModel"
+                            [name]="form_input.name"
+                            [placeholder]="'- Seleccione -'" 
+                            [(ngModel)]="values[form_input.name]"
+                            [class]="form_input.class"
+                            [class.is-invalid]="input_ref.invalid && submitted"
+                            [required]="form_input.required()"
+                            [disabled]="form_input.disabled()"
+                            (dateTimeChange)="form_input.change($event.value)"
+                            [readonly]="true"
+                            [owlDateTime]="date_picker"
+                            [owlDateTimeTrigger]="date_picker">
+                        <div class="input-group-append">
+                            <button class="input-group-text calendar-button" [owlDateTimeTrigger]="date_picker" type="button">
+                                <i class="fa fa-calendar-alt"></i>
+                            </button>
+                        </div>
+                        <owl-date-time [pickerMode]="form_input.extra" [pickerType]="'calendar'" #date_picker></owl-date-time>
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                        </small>
+                    </div>
+                </div>
+                <div *ngIf="form_input.type=='calendar' && form_input.disabled()">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <div class="input-group">
+                        <input 
+                            #input_ref="ngModel"
+                            [name]="form_input.name"
+                            [placeholder]="'- Seleccione -'" 
+                            [(ngModel)]="values[form_input.name]"
+                            [class]="form_input.class"
+                            [class.is-invalid]="input_ref.invalid && submitted"
+                            [required]="form_input.required()"
+                            [disabled]="form_input.disabled()"
+                            [readonly]="true">
+                        <div class="input-group-append">
+                            <button [disabled]="form_input.disabled()" class="input-group-text calendar-button" type="button">
+                                <i class="fa fa-calendar-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="form_input.type=='time'">
+                    <label class="form-label"><i *ngIf="form_input.required()" class="fa fa-asterisk text-danger mr-2"></i>{{form_input.label}}</label>
+                    <div class="input-group">
+                        <input 
+                            #input_ref="ngModel" 
+                            [name]="form_input.name"
+                            [(ngModel)]="values[form_input.name]"
+                            type="time"
+                            [class]="form_input.class"
+                            [class.is-invalid]="input_ref.invalid && submitted"
+                            [required]="form_input.required()"
+                            [disabled]="form_input.disabled()"
+                            (change)="form_input.change($event.target.value)">
+                        <div class="input-group-append">
+                            <button [disabled]="form_input.disabled()" (click)="set_time(form_input.name)" class="input-group-text calendar-button" type="button">
+                                <i class="fa fa-clock"></i>
+                            </button>
+                        </div>
+                        <small *ngIf="input_ref.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="input_ref.errors.required">{{form_input.error_required}}</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--<pre>
+    {{values|json}}
+</pre>-->

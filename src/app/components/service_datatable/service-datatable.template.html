@@ -1,0 +1,122 @@
+<div class="row align-items-center" *ngIf="!options">
+    <div class="col-md-12 mb-3">
+        <h5 class="mb-0"><i class="fa fa-list text-primary"></i>&nbsp; Listado</h5>
+    </div>
+</div>
+<div class="row align-items-center" *ngIf="options">
+    <div class="col-md-12 mb-3" *ngIf="options.title && options.icon">
+        <h5 class="mb-0"><i class="fa fa-{{options.icon}} text-primary"></i>&nbsp; {{options.title}}</h5>
+    </div>
+</div>
+<div style="background-color: #fff; border-radius: calc(0.25rem - 1px); border: 1px solid #e8e8e9; position: relative;">
+    <div class="cover-div" *ngIf="loading || !options">
+        <div class="sk-wave sk-primary">
+            <div class="sk-rect sk-rect1" style="background-color: #29abe2;"></div>
+            <div class="sk-rect sk-rect2" style="background-color: #29abe2;"></div>
+            <div class="sk-rect sk-rect3" style="background-color: #29abe2;"></div>
+            <div class="sk-rect sk-rect4" style="background-color: #29abe2;"></div>
+            <div class="sk-rect sk-rect5" style="background-color: #29abe2;"></div>
+        </div>
+    </div>
+    <div class="table-responsive" *ngIf="!options">
+        <table class="table table-hover" style="margin-bottom: 0px !important;">
+            <thead>
+                <tr>
+                    <th style="width:1%; border-bottom-width: 0px !important; border-top-width: 0px !important; cursor: pointer;" class="no-select text-nowrap"></th>
+                    <th style="border-bottom-width: 0px !important; border-top-width: 0px !important; cursor: pointer;" class="no-select">
+                        Columna
+                        <i class= "fa fa-sort"></i>
+                    </th>
+                    <th style="width:1%; border-bottom-width: 0px !important; border-top-width: 0px !important; cursor: pointer;" nowrap class="text-center no-select" colspan="999">
+                        Opciones
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:50px !important;" class="text-center" colspan="999"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-responsive" *ngIf="options">
+        <table class="table table-hover" style="margin-bottom: 0px !important;">
+            <thead>
+                <tr>
+                    <th style="width:1%; border-bottom-width: 0px !important; border-top-width: 0px !important; cursor: pointer;" *ngIf="options.table_icon" class="no-select text-nowrap"></th>
+                    <th style="border-bottom-width: 0px !important; border-top-width: 0px !important; cursor: pointer;" *ngFor="let column of options.columns;let i = index;" class="no-select" (click)="sort_column(i)" [ngClass]="{'text-nowrap':column.wrap_header}">
+                        {{column.header}}
+                        <i class= "fa" [ngClass]="{'fa-arrow-up':ascendent && order==column.column, 'fa-arrow-down':!ascendent && order==column.column, 'fa-sort':order!=column.column}"></i>
+                    </th>
+                    <th style="width:1%; border-bottom-width: 0px !important; border-top-width: 0px !important; cursor: pointer;" *ngIf="options.events && options.events.length > 0" nowrap class="text-center no-select" colspan="999">
+                        Opciones
+                    </th>
+                </tr>
+            </thead>
+            <tbody *ngIf="results_length > 0">
+                <tr *ngFor="let x of results ; let i = index">
+                    <td *ngIf="options.table_icon" class="text-center text-info align-middle">
+                        <i class="{{'fa fa-'+options.table_icon}}"></i>
+                    </td>
+                    <td *ngFor="let column of options.columns; let p = index" class="{{column.class + ' align-middle'}}" [ngClass]="{'text-nowrap':column.wrap_column}">
+                        {{x[column.column]}}
+                    </td>
+                    <td *ngFor="let event of options.events;let m = index" [style]="hovered_index==i &&  hovered_event_index==m ? sanitizer.bypassSecurityTrustStyle(event.hover_style) : sanitizer.bypassSecurityTrustStyle(event.style)" title="{{event.name}}" (mouseover)="hovered_index=i;hovered_event_index=m" (mouseout)="hovered_index=-1;hovered_event_index=-1" (click)="emit_option_event(i,event.name)" class="text-center align-middle datatable-event text-nowrap">
+                        <i class="fa fa-{{event.icon}}"></i><span *ngIf="event.text" class="ml-2">{{event.text}}</span>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="results_length == 0 && !loading">
+                <tr>
+                    <td class="text-center" colspan="999"><h5 class="text-danger mt-4 mb-4">{{options.empty_text}}</h5></td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="results_length == 0 && loading">
+                <tr>
+                    <td style="padding:50px !important;" class="text-center" colspan="999"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row mt-3" *ngIf="!options">
+        <div class="col-md-12 text-right">
+            <select [disabled]="true" [value]="0" style="width:70px;display:inline;height:28px;font-size: 9px;margin-right:10px;" class="form-control mb-3">
+                <option>0</option>
+            </select>
+            <div class="btn-group" role="group">
+                <button [disabled]="true" class="btn btn-primary btn-sm" type="button"><i class="fa fa-arrow-left"></i></button>
+                <button [disabled]="true" type="button" class="btn btn-default btn-sm"><b>Inicio</b></button>
+                
+                <button [disabled]="true" type="button" class="btn btn-default btn-sm"><b>Final</b></button>
+                <button [disabled]="true" class="btn btn-primary btn-sm" type="button"><i class="fa fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+<div class="row mt-3" *ngIf="options">
+    <div class="col-md-12 text-right">
+        <select [disabled]="loading" style="width:70px;display:inline;height:28px;font-size: 9px;margin-right:10px;" class="form-control mb-3" (change)="set_offset_view($event.target.value)" [(ngModel)]="show_length" name="pag">
+            <option *ngFor="let offset of options.navigation_offsets">{{offset}}</option>
+        </select>
+        <div class="btn-group" role="group">
+            <button [disabled]="loading || requestOffsetLeft <=1" class="btn btn-primary btn-sm" type="button" (click)="updateRequestsGoLeft()"><i class="fa fa-arrow-left"></i></button>
+            <button [disabled]="loading || requestOffsetLeft <=1" (click)="pagination_navigation(nav_min_value())" type="button" class="btn btn-default btn-sm"><b>Inicio</b></button>
+
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.min6>=nav_min_value() && navigation_bar.center+3 > nav_max_value()" (click)="pagination_navigation(navigation_bar.min6)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.min6}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.min5>=nav_min_value() && navigation_bar.center+2 > nav_max_value()" (click)="pagination_navigation(navigation_bar.min5)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.min5}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.min4>=nav_min_value() && navigation_bar.center+1 > nav_max_value()" (click)="pagination_navigation(navigation_bar.min4)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.min4}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.min3>=nav_min_value()" (click)="pagination_navigation(navigation_bar.min3)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.min3}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.min2>=nav_min_value()" (click)="pagination_navigation(navigation_bar.min2)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.min2}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.min1>=nav_min_value()" (click)="pagination_navigation(navigation_bar.min1)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.min1}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="results_length > 0" (click)="pagination_navigation(navigation_bar.center)" type="button" class="btn btn-default btn-sm datatable-nav-active">{{navigation_bar.center}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.sum1<=nav_max_value()" (click)="pagination_navigation(navigation_bar.sum1)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.sum1}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.sum2<=nav_max_value()" (click)="pagination_navigation(navigation_bar.sum2)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.sum2}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.sum3<=nav_max_value()" (click)="pagination_navigation(navigation_bar.sum3)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.sum3}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.sum4<=nav_max_value() && navigation_bar.center-3 < nav_min_value()" (click)="pagination_navigation(navigation_bar.sum4)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.sum4}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.sum5<=nav_max_value() && navigation_bar.center-2 < nav_min_value()" (click)="pagination_navigation(navigation_bar.sum5)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.sum5}}</button>
+            <button  [disabled]="loading" style="width:35px; padding-right:0px !important; padding-left:0px !important; font-size: 10px !important;" *ngIf="navigation_bar.sum6<=nav_max_value() && navigation_bar.center-1 < nav_min_value()" (click)="pagination_navigation(navigation_bar.sum6)" type="button" class="btn btn-default btn-sm no-outline">{{navigation_bar.sum6}}</button>
+            <button [disabled]="loading || requestOffsetRight >= results_length" (click)="pagination_navigation(nav_max_value())" type="button" class="btn btn-default btn-sm"><b>Final</b></button>
+            <button [disabled]="loading || requestOffsetRight >= results_length" class="btn btn-primary btn-sm" type="button" (click)="updateRequestsGoRight()"><i class="fa fa-arrow-right"></i></button>
+        </div>
+    </div>
+</div>

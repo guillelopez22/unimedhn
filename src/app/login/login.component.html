@@ -1,0 +1,130 @@
+<div *ngIf="login_view == 1" class="authentication-wrapper authentication-2 ui-bg-cover px-4 fade-in" style="background-image: url('assets/img/login_bg.png'); background-color: #fff;">
+	<img src="assets/img/logo.png" class="d-block sms-logo">
+	<div class="authentication-inner">
+		<div class="">
+			<div class="px-4 px-sm-5">
+				<div class="text-center">
+					<span class="sms-marketing-dark unimed-dark-color login-text"><span class="login-underline">Iniciar Sesión</span></span>
+					<img src="assets/img/border.svg" class="d-block login-text-border">
+					<p class="login-secondary-text">Autenticate para poder acceder los servicios de UNIMED</p>
+					<p routerLink="/recuperar" class="login-secondary-text2">Recuperar Contraseña</p>
+				</div>
+				
+				<form #login_form="ngForm" novalidate="novalidate">
+					<div class="form-group">
+						<label class="form-label">Correo</label>
+						<input 
+							#username="ngModel" 
+							name="username" 
+							[(ngModel)]="login_data.username" 
+							[class.is-invalid]="username.invalid && login_submitted"
+							type="text"
+							class="form-control"
+							pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" 
+							required="true">
+						<small *ngIf="username.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+							<span *ngIf="username.errors.required">Requerido</span>
+							<span *ngIf="username.errors.pattern">Correo inválido</span>
+						</small>
+					</div>
+					<div class="form-group">
+						<label class="form-label">Contraseña</label>
+						<input 
+							#password="ngModel" 
+							name="password" 
+							[(ngModel)]="login_data.password" 
+							[class.is-invalid]="password.invalid && login_submitted"
+							type="password" 
+							class="form-control"
+							required="true">
+						<small class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>Requerido</small>
+					</div>
+					<!--<div class="d-flex justify-content-between align-items-center m-0">
+						<label class="custom-control custom-checkbox m-0">
+							<input 
+								type="checkbox" 
+								class="custom-control-input" 
+								name="remember" 
+								[(ngModel)]="login_data.remember">
+							<span class="custom-control-label">Recordarme</span>
+						</label>
+					</div>-->
+					<br>
+					<button (click)="login()" [disabled]="login_loading" type="submit" class="btn btn-primary login-button btn-block"><span *ngIf="login_loading" class="spinner-border mr-2"></span><i *ngIf="!login_loading" class="fa fa-sign-in-alt mr-2"></i>Conectarme</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div *ngIf="login_view == 2" class="authentication-wrapper authentication-2 ui-bg-cover px-4 fade-in" style="background-image: url('assets/img/recover_bg.png'); background-color: #fff;">
+	<img src="assets/img/sms_logo.svg" class="d-block sms-logo">
+	<div class="authentication-inner">
+		<div class="">
+			<div class="px-4 px-sm-5">
+				<div class="text-center">
+					<span class="sms-marketing-dark unimed-dark-color login-text"><span class="login-underline">Contraseña</span></span>
+					<img src="assets/img/border.svg" class="d-block login-text-border">
+				</div>
+			</div>
+			<div *ngIf="view==1" class="px-4 px-sm-5 fade-in">
+				<div class="text-center">
+					<p class="recovery-secondary-text">Es necesario cambiar tu contraseña</p>
+				</div>
+				<form #password_form="ngForm" novalidate="novalidate" autocomplete="off">
+					<div class="form-group">
+						<input 
+							#change_password="ngModel" 
+							name="change_password" 
+							placeholder="Contraseña" 
+							[(ngModel)]="recover_data.change_password" 
+							[class.is-invalid]="change_password.invalid && recover_submitted"
+							type="password"
+							class="form-control"
+							pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,25}$" 
+							maxlength="25" 
+							required="true">
+						<small *ngIf="change_password.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+							<span *ngIf="change_password.errors.required">Requerido</span>
+							<span *ngIf="change_password.errors.pattern">Se esperaban al menos 6 caracteres, una mayúscula, una minúscula, un número y un caracter especial (@ $ ! % * ? &)</span>
+						</small>
+					</div>
+					<div class="form-group">
+						<input 
+							#confirm_password="ngModel" 
+							name="confirm_password" 
+							placeholder="Confirmar Contraseña" 
+							[(ngModel)]="recover_data.confirm_password" 
+							[class.is-invalid]="(confirm_password.invalid && recover_submitted)||(!change_password.invalid && !confirm_password.invalid && recover_data.change_password != recover_data.confirm_password)"
+							type="password"
+							class="form-control"
+							required="true">
+						<small *ngIf="confirm_password.errors" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+							<span *ngIf="confirm_password.errors.required">Requerido</span>
+						</small>
+						<small *ngIf="!change_password.invalid && !confirm_password.invalid && recover_data.change_password != recover_data.confirm_password" class="invalid-feedback"><i class="fa fa-exclamation-triangle mr-1"></i>
+							<span>Las contraseñas no coinciden</span>
+						</small>
+					</div>
+					<button (click)="request_change_password()" [disabled]="recover_loading" type="button" class="btn btn-primary login-button btn-block"><span *ngIf="recover_loading" class="spinner-border mr-2"></span><i *ngIf="!recover_loading" class="fa fa-unlock mr-2"></i>Cambiar Contraseña</button>
+				</form>
+			</div>
+			<div *ngIf="view==2" class="px-4 px-sm-5 fade-in">
+				<div class="text-center mt-5">
+					<h4 class="text-success">Contraseña actualizada de forma satisfactoria</h4>
+					<div class="sa">
+						<div class="sa-success">
+							<div class="sa-success-tip"></div>
+							<div class="sa-success-long"></div>
+							<div class="sa-success-placeholder"></div>
+							<div class="sa-success-fix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="text-center mt-4">
+				<p (click)="back_login()" class="login-secondary-text2"><i class="fa fa-arrow-left mr-2"></i>Regresar a Inicio de Sesión</p>
+			</div>
+			<!--<pre>{{recover_data|json}}</pre>-->
+		</div>
+	</div>
+</div>

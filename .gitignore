@@ -1,46 +1,68 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
+# Compiled output
 /dist
+/dist-server
 /tmp
 /out-tsc
-# Only exists if Bazel was run
-/bazel-out
 
-# dependencies
+# Dependencies
 /node_modules
 
-# profiling files
-chrome-profiler-events*.json
-speed-measure-plugin*.json
-
 # IDEs and editors
-/.idea
+.idea
+.vscode
+.vs
 .project
 .classpath
 .c9/
 *.launch
 .settings/
 *.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# misc
+# Misc
+.npm
+.eslintcache
+.yarn-integrity
 /.sass-cache
 /connect.lock
 /coverage
 /libpeerconnection.log
-npm-debug.log
-yarn-error.log
 testem.log
 /typings
 
+# e2e
+/e2e/*.js
+/e2e/*.map
+!/e2e/protractor.conf.js
+
 # System Files
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
 Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Windows shortcuts
+*.lnk

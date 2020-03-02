@@ -1,0 +1,12 @@
+<sidenav [orientation]="orientation" [ngClass]="getClasses()">
+	<div class="sms-marketing-brand" *ngIf="orientation !== 'horizontal'">
+	    <span class="sms-marketing-brand-text sidenav-text font-weight-bold ml-2">UNIMED</span>
+  	</div>
+	<div class="sidenav-divider mt-0">
+		
+	</div>
+  	<div class="sidenav-inner" [ngClass]="{ 'py-1': orientation !== 'horizontal' }">
+    	<sidenav-router-link icon="ion ion-md-speedometer" route="/plataforma/inicio" [active]="isActive('/plataforma/inicio')">Inicio</sidenav-router-link>
+    	<sidenav-router-link icon="ion ion-ios-school" route="/plataforma/instituciones" [active]="isActive('/plataforma/instituciones')">Instituciones</sidenav-router-link>
+  	</div>
+</sidenav>
