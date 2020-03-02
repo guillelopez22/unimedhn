@@ -22,7 +22,7 @@ export class AppEndpoints {
     private endpoint:string;
 
     constructor(private httpClient: HttpClient, private router: Router) {
-        this.endpoint = "http://"+window.location.hostname+":8000/api";
+        this.endpoint = "https://unimedhn.herokuapp.com/api";
     }
 
     //########################################################################
