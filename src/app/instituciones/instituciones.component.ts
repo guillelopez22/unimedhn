@@ -828,6 +828,7 @@ export class InstitucionesComponent implements OnInit {
     //INSTITUCIONES ##########################################################
 
     instituciones_datatable_events(event) {
+        console.log(event.event, 'asdasdsadasdasd')
         if (event.event == "Detalle de la Institución") {
             this.open_institucion(event.data);
         } else if (event.event == "Editar Institución") {

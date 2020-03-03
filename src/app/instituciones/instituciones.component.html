@@ -46,10 +46,17 @@
                 </li>
             </ul>
             <div class="custom-nav-content" *ngIf="inner_view==1">
-
+                <div class="row">
+                    <div class="col-4">
+                        <span class="font-weight-bold">Nombre: {{instituciones_data.nombre}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span class="font-weight-bold">Correo: {{instituciones_data.correo}}</span>
+                    </div>
+                </div>
             </div>
             <div class="custom-nav-content" *ngIf="inner_view==2">
-
+                
             </div>
             <div class="custom-nav-content" *ngIf="inner_view==3">
 
