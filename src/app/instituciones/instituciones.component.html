@@ -34,8 +34,11 @@
             class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i class="fa fa-arrow-left mr-2"></i>Regresar</button>
     </div>
     <div class="row">
-        <div class="col-4">
+        <div class="col-3">
             <div class="card">
+                <button style="position: absolute; align-self: flex-end;" (click)="open_update_institucion(instituciones_data)" class="btn">
+                    <i class="fas fa-edit"></i>
+                </button>
                 <div class="card-header">
                     <h3 class="text-center">
                         <i class="fa fa-graduation-cap fa-2x text-primary mb-2"></i>
@@ -44,88 +47,77 @@
                     </h3>
                 </div>
                 <div class="card-body">
+                    <h5 class="card-title text-center">Datos Generales </h5>
                     <div class="row">
                         <div class="col-12">
                             <span class="font-weight-bold float-left">Nombre: </span>
                             <span class="float-right">{{instituciones_data.nombre}}</span>
                         </div>
                         <div class="col-12">
-                            <span class="font-weight-bold float-left">Nombre: </span>
-                            <span class="float-right">{{instituciones_data.nombre}}</span>
+                            <span class="font-weight-bold float-left">Correo: </span>
+                            <span class="float-right">{{instituciones_data.correo}}</span>
+                        </div>
+                        <div class="col-12">
+                            <span class="font-weight-bold float-left">Direccion: </span>
+                            <span class="float-right">{{instituciones_data.direccion}}</span>
+                        </div>
+                        <hr>
+                        <div class="col-12">
+                            <span class="font-weight-bold float-left">Departamento: </span>
+                            <span class="float-right">{{instituciones_data.departamento}}</span>
+                        </div>
+                        <div class="col-12">
+                            <span class="font-weight-bold float-left">Ciudad: </span>
+                            <span class="float-right">{{instituciones_data.ciudad}}</span>
+                        </div>
+                        <hr>
+                        <div class="col-12">
+                            <span class="font-weight-bold float-left">Tipo: </span>
+                            <span class="float-right">{{instituciones_data.tipo}}</span>
+                        </div>
+                        <hr>
+                    </div>
+                    <h5 class="card-title text-center">Contactos </h5>
+                    <div *ngFor=" let contacto of instituciones_data.contactos" class="row">
+                        <div class="col-6">
+                            <span class="font-weight-bold float-left">{{contacto.cargo}}: </span>
+                            <span class="float-right">{{contacto.nombre}}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="font-weight-bold float-left">Telefono: </span>
+                            <span class="float-right">{{contacto.celular}}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- <div class="container-m-nx container-p-x pt-2 text-right mb-2">
-        <button [disabled]="loading" (click)="close_institucion()"
-            class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i class="fa fa-arrow-left mr-2"></i>Regresar</button>
-    </div>
-    <h3 class="text-center">
-        <i class="fa fa-graduation-cap fa-2x text-primary mb-2"></i>
-        <br>
-        {{instituciones_data.nombre}}
-    </h3>
-    <div class="row">
-        <div class="col-12">
+        <div class="col-9">
             <ul class="nav nav-tabs nav-responsive-md">
-                <li (click)="open_generales()" class="nav-item" style="cursor: pointer;">
-                    <span class="nav-link" [class.active]="inner_view==1"><b [class.text-primary]="inner_view==1">Datos
-                            Generales</b></span>
+                <li (click)="open_doctores()" class="nav-item" style="cursor: pointer;">
+                    <span class="nav-link" [class.active]="inner_view==1"><b [class.text-primary]="inner_view==2">Doctores</b></span>
                 </li>
                 <li (click)="open_alumnos()" class="nav-item" style="cursor: pointer;">
-                    <span class="nav-link" [class.active]="inner_view==2"><b
-                            [class.text-primary]="inner_view==2">Alumnos</b></span>
-                </li>
-                <li (click)="open_doctores()" class="nav-item" style="cursor: pointer;">
-                    <span class="nav-link" [class.active]="inner_view==3"><b
-                            [class.text-primary]="inner_view==3">Doctores</b></span>
+                    <span class="nav-link" [class.active]="inner_view==2"><b [class.text-primary]="inner_view==1">Alumnos</b></span>
                 </li>
             </ul>
             <div class="custom-nav-content" *ngIf="inner_view==1">
-                <div class="container">
-                    <div class="card shadow p-3 mb-5 bg-white rounded justify-content-center">
-                        <div class="row">
-                            <div class="col-4">
-                                <span class="font-weight-bold">Nombre: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Correo: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Telefono: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Departamento: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Ciudad: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Nombre: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Nombre: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Nombre: </span>{{instituciones_data.nombre}}
-                            </div>
-                            <div class="col-4">
-                                <span class="font-weight-bold">Nombre: </span>{{instituciones_data.nombre}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <service-datatable #instituciones_datatable_ref [datatable_options]="instituciones_datatable"
+                (option_event)="instituciones_datatable_events($event)"
+                (get_results_offset_change)="instituciones_datatable_get_results_offset_change($event)"
+                (get_results_filter_change)="instituciones_datatable_get_results_filter_change($event)"
+                (get_results_update_list)="instituciones_datatable_get_results_update_list($event)">
+            </service-datatable>
             </div>
             <div class="custom-nav-content" *ngIf="inner_view==2">
-
+                <service-datatable #instituciones_datatable_ref [datatable_options]="instituciones_datatable"
+                (option_event)="instituciones_datatable_events($event)"
+                (get_results_offset_change)="instituciones_datatable_get_results_offset_change($event)"
+                (get_results_filter_change)="instituciones_datatable_get_results_filter_change($event)"
+                (get_results_update_list)="instituciones_datatable_get_results_update_list($event)">
+            </service-datatable>
             </div>
-            <div class="custom-nav-content" *ngIf="inner_view==3">
-
-            </div>
-        </div>
-    </div> -->
+          </div>
+    </div>
 </div>
 <!-- END CONTENT -->
 

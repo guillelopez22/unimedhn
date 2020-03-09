@@ -37,6 +37,7 @@ export class InstitucionesComponent implements OnInit {
     public instituciones_list: any[];
     public instituciones_loading: boolean;
     public instituciones_datatable: any;
+    public patients_datatable: any;
     public instituciones_datatable_loading: boolean;
     public instituciones_inputs = [];
     public instituciones_contactos = [];
@@ -55,7 +56,25 @@ export class InstitucionesComponent implements OnInit {
         alumnos: [],
         doctores: []
     };
-
+    public doctors_datatable: any;
+    public doctors_datatable_loading: boolean;
+    public doctors_inputs = [];
+    public doctors_data = {
+        id: '',
+        id_institucion: '',
+        primer_nombre: '',
+        apellido: '',
+        telefono: '',
+        extension: '',
+        email: '',
+        direccion: '',
+        identidad: '',
+        id_colegiado: '',
+        informacion_academica: [],
+        antecedents: [],
+        puesto: '',
+        horas_trabajadas: [],
+    }
     public instituciones_filters = {
         current_offset: 1,
         view_length: 10,
@@ -800,12 +819,12 @@ export class InstitucionesComponent implements OnInit {
                     hover_style: "cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;",
                     icon: "search"
                 },
-                {
-                    name: "Editar Institución",
-                    style: "color:#ffb300",
-                    hover_style: "cursor:pointer; color:#ffb300; background-color:#FFF7C6 !important;",
-                    icon: "edit"
-                },
+                // {
+                //     name: "Editar Institución",
+                //     style: "color:#ffb300",
+                //     hover_style: "cursor:pointer; color:#ffb300; background-color:#FFF7C6 !important;",
+                //     icon: "edit"
+                // },
                 {
                     name: "Eliminar Institución",
                     style: "color:#FB5D5D",
@@ -828,11 +847,10 @@ export class InstitucionesComponent implements OnInit {
     //INSTITUCIONES ##########################################################
 
     instituciones_datatable_events(event) {
-        console.log(event.event, 'asdasdsadasdasd')
         if (event.event == "Detalle de la Institución") {
             this.open_institucion(event.data);
-        } else if (event.event == "Editar Institución") {
-            this.open_update_institucion(event.data);
+        // } else if (event.event == "Editar Institución") {
+        //     this.open_update_institucion(event.data);
         } else if (event.event == "Eliminar Institución") {
             this.open_delete_institucion(event.data);
         }
@@ -887,7 +905,7 @@ export class InstitucionesComponent implements OnInit {
     }
 
     open_doctores() {
-        this.inner_view = 3;
+        this.inner_view = 1;
     }
 
     instituciones_datatable_get_results_offset_change(data) {
@@ -1081,6 +1099,7 @@ export class InstitucionesComponent implements OnInit {
     }
 
     open_update_institucion(data) {
+        console.log(data)
         this.instituciones_form.clean_form();
         this.instituciones_form.set_values_with_date(data);
         this.instituciones_contactos = data.contactos;
@@ -1255,6 +1274,8 @@ export class InstitucionesComponent implements OnInit {
     }
 
     add_contacto() {
+        console.log(this.instituciones_contactos);
+        
         if (this.contacto_form.valid) {
             this.instituciones_contactos.push(this.contacto_data);
             this.close_add_contacto();
