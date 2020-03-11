@@ -32,6 +32,7 @@ export class InstitucionesComponent implements OnInit {
     @ViewChild('instituciones_form') instituciones_form: FormRendererComponent;
     @ViewChild('instituciones_form_view') instituciones_form_view: FormRendererComponent;
     @ViewChild('instituciones_datatable_ref') instituciones_datatable_ref: ServiceDatatableComponent;
+    @ViewChild('doctors_datatable_ref') doctors_datatable_ref: ServiceDatatableComponent;
     public instituciones_view: number;
     public instituciones_modal_view: number;
     public instituciones_list: any[];
@@ -61,19 +62,20 @@ export class InstitucionesComponent implements OnInit {
     public doctors_inputs = [];
     public doctors_data = {
         id: '',
-        id_institucion: '',
-        primer_nombre: '',
-        apellido: '',
-        telefono: '',
+        institution_id: '',
+        first_name: '',
+        last_name: '',
+        phone: '',
         extension: '',
         email: '',
-        direccion: '',
-        identidad: '',
-        id_colegiado: '',
-        informacion_academica: [],
-        antecedents: [],
-        puesto: '',
-        horas_trabajadas: [],
+        address: '',
+        id_card: '',
+        id_college: '',
+        id_rtn: '',
+        academic_information: [],
+        background_information: [],
+        position: '',
+        working_hours: [],
     }
     public instituciones_filters = {
         current_offset: 1,
@@ -81,7 +83,19 @@ export class InstitucionesComponent implements OnInit {
         sort_order: "",
         sort_ascendent: false
     };
-
+    public doctor_filters = {
+        current_offset: 1,
+        view_length: 10,
+        sort_order: "",
+        sort_ascendent: false
+    };
+    public doctor_search_data = {
+        first_name: "",
+        last_name: "",
+        id_card: "",
+        id_college: "",
+        tipo: ""
+    }
     @ViewChild('instituciones_search_modal') instituciones_search_modal: ModalDirective;
     @ViewChild('instituciones_search_form') instituciones_search_form: FormRendererComponent;
     public instituciones_search_inputs = [];
@@ -431,7 +445,7 @@ export class InstitucionesComponent implements OnInit {
                                 change: (event) => {
                                     this.instituciones_data.ciudad = "";
                                     this.ciudades = [];
-                                    for (var i = 0; i < this.departamentos.length; i++) {
+                                    for (let i = 0; i < this.departamentos.length; i++) {
                                         if (event == this.departamentos[i].name) {
                                             this.ciudades = this.departamentos[i].towns;
                                         }
@@ -712,7 +726,7 @@ export class InstitucionesComponent implements OnInit {
                                 change: (event) => {
                                     this.instituciones_search_data.ciudad = "";
                                     this.ciudades_search = [];
-                                    for (var i = 0; i < this.departamentos_search.length; i++) {
+                                    for (let i = 0; i < this.departamentos_search.length; i++) {
                                         if (event == this.departamentos_search[i].name) {
                                             this.ciudades_search = this.departamentos_search[i].towns;
                                         }
@@ -770,6 +784,68 @@ export class InstitucionesComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.endpoint.get_doctors().subscribe(data => {
+            console.log(data);
+        })
+        this.doctors_datatable = {
+            title: "Listado de Doctores",
+            icon: "user-md",
+            object_description: "instituciones",
+            empty_text: "No se encontraron instituciones",
+            columns: [
+                {
+                    column: "first_name",
+                    wrap_column: false,
+                    header: "Nombre",
+                    wrap_header: true,
+                    type: "text"
+                },
+                {
+                    column: "last_name",
+                    wrap_column: true,
+                    header: "Apellido",
+                    wrap_header: true,
+                    type: "text"
+                },
+                {
+                    column: "id_card",
+                    wrap_column: false,
+                    header: "No. Identidad",
+                    wrap_header: true,
+                    type: "text"
+                },
+                {
+                    column: "institution_name",
+                    wrap_column: true,
+                    header: "Institución",
+                    wrap_header: true,
+                    type: "text"
+                },
+            ],
+            events: [
+                {
+                    name: "Detalle del Médico",
+                    style: "color:#39B7CB",
+                    hover_style: "cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;",
+                    icon: "search"
+                },
+                // {
+                //     name: "Editar Institución",
+                //     style: "color:#ffb300",
+                //     hover_style: "cursor:pointer; color:#ffb300; background-color:#FFF7C6 !important;",
+                //     icon: "edit"
+                // },
+                {
+                    name: "Eliminar Médico",
+                    style: "color:#FB5D5D",
+                    hover_style: "cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;",
+                    icon: "trash-alt"
+                }
+            ],
+            navigation_offsets: [5, 10, 15, 20, 25, 50],
+            show_search_field: true,
+            table_icon: "caret-right"
+        };
         this.instituciones_datatable = {
             title: "Listado de Instituciones",
             icon: "graduation-cap",
@@ -907,6 +983,11 @@ export class InstitucionesComponent implements OnInit {
     open_doctores() {
         this.inner_view = 1;
     }
+    doctors_datatable_get_results_offset_change(data) {
+        this.endpoint.get_doctors().subscribe(data => {
+            console.log(data);
+        })
+    }
 
     instituciones_datatable_get_results_offset_change(data) {
         this.instituciones_filters = {
@@ -915,8 +996,8 @@ export class InstitucionesComponent implements OnInit {
             sort_order: data.sort_order,
             sort_ascendent: data.sort_ascendent
         }
-        var response;
-        var load = {
+        let response;
+        let load = {
             current_offset: this.instituciones_filters.current_offset,
             sort_ascendent: this.instituciones_filters.sort_ascendent,
             sort_order: this.instituciones_filters.sort_order,
@@ -940,12 +1021,14 @@ export class InstitucionesComponent implements OnInit {
             () => {
                 try {
                     console.log(response);
-                    for (var i = 0; i < response.list.length; i++) {
+                    for (let i = 0; i < response.list.length; i++) {
                         response.list[i].contactos = JSON.parse(response.list[i].contactos);
                         response.list[i].inicio_clases = response.list[i].inicio_clases.split("-").reverse().join("/");
                     }
                     this.instituciones_datatable_ref.set_results_offset_change(response.list);
                 } catch (error) {
+                    console.log(error);
+                    
                     this.instituciones_datatable_ref.set_loading(false);
                     this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                 }
@@ -961,8 +1044,8 @@ export class InstitucionesComponent implements OnInit {
             sort_order: data.sort_order,
             sort_ascendent: data.sort_ascendent
         }
-        var response;
-        var load = {
+        let response;
+        let load = {
             current_offset: this.instituciones_filters.current_offset,
             sort_ascendent: this.instituciones_filters.sort_ascendent,
             sort_order: this.instituciones_filters.sort_order,
@@ -986,14 +1069,16 @@ export class InstitucionesComponent implements OnInit {
             () => {
                 try {
                     console.log(response);
-                    for (var i = 0; i < response.list.length; i++) {
-                        for (var i = 0; i < response.list.length; i++) {
+                    for (let i = 0; i < response.list.length; i++) {
+                        for (let i = 0; i < response.list.length; i++) {
                             response.list[i].contactos = JSON.parse(response.list[i].contactos);
                             response.list[i].inicio_clases = response.list[i].inicio_clases.split("-").reverse().join("/");
                         }
                     }
                     this.instituciones_datatable_ref.set_results_filter_change(response.list, response.count);
                 } catch (error) {
+                    console.log(error);
+                    
                     this.instituciones_datatable_ref.set_loading(false);
                     this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                 }
@@ -1008,8 +1093,8 @@ export class InstitucionesComponent implements OnInit {
             sort_order: data.sort_order,
             sort_ascendent: data.sort_ascendent
         }
-        var response;
-        var load = {
+        let response;
+        let load = {
             current_offset: this.instituciones_filters.current_offset,
             sort_ascendent: this.instituciones_filters.sort_ascendent,
             sort_order: this.instituciones_filters.sort_order,
@@ -1033,14 +1118,16 @@ export class InstitucionesComponent implements OnInit {
             () => {
                 try {
                     console.log(response);
-                    for (var i = 0; i < response.list.length; i++) {
-                        for (var i = 0; i < response.list.length; i++) {
+                    for (let i = 0; i < response.list.length; i++) {
+                        for (let i = 0; i < response.list.length; i++) {
                             response.list[i].contactos = JSON.parse(response.list[i].contactos);
                             response.list[i].inicio_clases = response.list[i].inicio_clases.split("-").reverse().join("/");
                         }
                     }
                     this.instituciones_datatable_ref.set_results_update_list(response.list, response.count);
                 } catch (error) {
+                    console.log(error);
+                    
                     this.instituciones_datatable_ref.set_loading(false);
                     this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                 }
@@ -1059,8 +1146,8 @@ export class InstitucionesComponent implements OnInit {
     insert_institucion() {
         if (this.instituciones_form.valid() && this.instituciones_contactos.length > 0) {
             this.instituciones_loading = true;
-            var form_values = this.instituciones_form.get_values();
-            var load = {
+            let form_values = this.instituciones_form.get_values();
+            let load = {
                 nombre: form_values.nombre,
                 correo: form_values.correo,
                 telefono: form_values.telefono,
@@ -1072,7 +1159,7 @@ export class InstitucionesComponent implements OnInit {
                 tipo: form_values.tipo,
                 contactos: JSON.stringify(this.instituciones_contactos)
             };
-            var response;
+            let response;
             this.endpoint.insert_institucion(load).subscribe(
                 data => response = data,
                 err => {
@@ -1090,6 +1177,8 @@ export class InstitucionesComponent implements OnInit {
                         this.alertService.alert_success(response.title, response.message);
                         this.instituciones_loading = false;
                     } catch (error) {
+                        console.log(error);
+                        
                         this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                         this.instituciones_loading = false;
                     }
@@ -1120,8 +1209,8 @@ export class InstitucionesComponent implements OnInit {
             this.alertService.option_alert("Editar Institución", "¿Está seguro que desea editar la institución seleccionada?", "Sí, Editar").then((result) => {
                 if (result.value) {
                     this.instituciones_loading = true;
-                    var form_values = this.instituciones_form.get_values();
-                    var load = {
+                    let form_values = this.instituciones_form.get_values();
+                    let load = {
                         id: form_values.id,
                         nombre: form_values.nombre,
                         correo: form_values.correo,
@@ -1134,7 +1223,7 @@ export class InstitucionesComponent implements OnInit {
                         tipo: form_values.tipo,
                         contactos: JSON.stringify(this.instituciones_contactos)
                     };
-                    var response;
+                    let response;
                     this.endpoint.update_institucion(load).subscribe(
                         data => response = data,
                         err => {
@@ -1152,6 +1241,8 @@ export class InstitucionesComponent implements OnInit {
                                 this.alertService.alert_success(response.title, response.message);
                                 this.instituciones_loading = false;
                             } catch (error) {
+                                console.log(error);
+                                
                                 this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                                 this.instituciones_loading = false;
                             }
@@ -1172,10 +1263,10 @@ export class InstitucionesComponent implements OnInit {
 
     delete_institucion(id) {
         this.instituciones_datatable_loading = true;
-        var load = {
+        let load = {
             id: id
         };
-        var response;
+        let response;
         this.endpoint.delete_institucion(load).subscribe(
             data => response = data,
             err => {
@@ -1192,6 +1283,8 @@ export class InstitucionesComponent implements OnInit {
                     this.alertService.alert_success(response.title, response.message);
                     this.instituciones_datatable_loading = false;
                 } catch (error) {
+                    console.log(error);
+                    
                     this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                     this.instituciones_datatable_loading = false;
                 }

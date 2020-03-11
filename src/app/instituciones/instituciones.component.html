@@ -101,7 +101,7 @@
                 </li>
             </ul>
             <div class="custom-nav-content" *ngIf="inner_view==1">
-                <service-datatable #instituciones_datatable_ref [datatable_options]="instituciones_datatable"
+                <service-datatable #doctors_datatable_ref [datatable_options]="doctors_datatable"
                 (option_event)="instituciones_datatable_events($event)"
                 (get_results_offset_change)="instituciones_datatable_get_results_offset_change($event)"
                 (get_results_filter_change)="instituciones_datatable_get_results_filter_change($event)"

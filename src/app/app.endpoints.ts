@@ -138,4 +138,27 @@ export class AppEndpoints {
 
     //INSTITUCIONES ##########################################################
     //########################################################################
+
+    //########################################################################
+    //DOCTORS ################################################################
+        get_doctors():Observable<any> {
+            return this.httpClient.get(this.endpoint + '/doctors_list', { headers:this.get_headers(), responseType: 'json' });
+        }
+
+        insert_doctors(payload):Observable<any> {
+            return this.httpClient.get(this.endpoint + '/insert_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
+        }
+
+        update_doctor(payload):Observable<any> {
+            return this.httpClient.get(this.endpoint + '/update_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
+        }
+
+        delete_doctor(payload):Observable<any> {
+            return this.httpClient.get(this.endpoint + '/delete_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
+        }
+
+    
+
+    //DOCTORS ################################################################
+    //########################################################################
 }
