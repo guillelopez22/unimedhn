@@ -133,6 +133,7 @@ export class InstitucionesComponent implements OnInit {
         this.instituciones_list = [];
         this.instituciones_loading = false;
         this.instituciones_datatable_loading = false;
+        this.doctors_datatable_loading = false;
         this.instituciones_inputs = [
             {
                 class: "row",
@@ -784,9 +785,6 @@ export class InstitucionesComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.endpoint.get_doctors().subscribe(data => {
-            console.log(data);
-        })
         this.doctors_datatable = {
             title: "Listado de Doctores",
             icon: "user-md",
@@ -984,8 +982,30 @@ export class InstitucionesComponent implements OnInit {
         this.inner_view = 1;
     }
     doctors_datatable_get_results_offset_change(data) {
-        this.endpoint.get_doctors().subscribe(data => {
-            console.log(data);
+        this.doctor_filters = {
+            current_offset: data.current_offset,
+            view_length: data.view_length,
+            sort_order: data.sort_order,
+            sort_ascendent: data.sort_ascendent
+        }
+        let response;
+        this.endpoint.get_doctors().subscribe(data => 
+            response = data,
+         err => {
+            this.doctors_datatable_ref.set_loading(false);
+            if (err.status && err.error) {
+                this.alertService.alert_message(err.status, err.error);
+            } else {
+                this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+            }
+        },
+        () => {
+            try {
+                this.doctors_datatable_ref.set_results_offset_change(response)
+            } catch (error) {
+                this.doctors_datatable_ref.set_loading(false);
+                this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+            }
         })
     }
 

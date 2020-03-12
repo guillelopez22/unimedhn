@@ -103,7 +103,7 @@
             <div class="custom-nav-content" *ngIf="inner_view==1">
                 <service-datatable #doctors_datatable_ref [datatable_options]="doctors_datatable"
                 (option_event)="instituciones_datatable_events($event)"
-                (get_results_offset_change)="instituciones_datatable_get_results_offset_change($event)"
+                (get_results_offset_change)="doctors_datatable_get_results_offset_change($event)"
                 (get_results_filter_change)="instituciones_datatable_get_results_filter_change($event)"
                 (get_results_update_list)="instituciones_datatable_get_results_update_list($event)">
             </service-datatable>
