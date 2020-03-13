@@ -29,7 +29,9 @@ export class InstitucionesComponent implements OnInit {
     public loading: boolean;
 
     @ViewChild('instituciones_modal') instituciones_modal: ModalDirective;
+    @ViewChild('doctores_modal') doctores_modal: ModalDirective;
     @ViewChild('instituciones_form') instituciones_form: FormRendererComponent;
+    @ViewChild('doctor_form') doctor_form: FormRendererComponent;
     @ViewChild('instituciones_form_view') instituciones_form_view: FormRendererComponent;
     @ViewChild('instituciones_datatable_ref') instituciones_datatable_ref: ServiceDatatableComponent;
     @ViewChild('doctors_datatable_ref') doctors_datatable_ref: ServiceDatatableComponent;
@@ -60,23 +62,6 @@ export class InstitucionesComponent implements OnInit {
     public doctors_datatable: any;
     public doctors_datatable_loading: boolean;
     public doctors_inputs = [];
-    public doctors_data = {
-        id: '',
-        institution_id: '',
-        first_name: '',
-        last_name: '',
-        phone: '',
-        extension: '',
-        email: '',
-        address: '',
-        id_card: '',
-        id_college: '',
-        id_rtn: '',
-        academic_information: [],
-        background_information: [],
-        position: '',
-        working_hours: [],
-    }
     public instituciones_filters = {
         current_offset: 1,
         view_length: 10,
@@ -96,6 +81,7 @@ export class InstitucionesComponent implements OnInit {
         id_college: "",
         tipo: ""
     }
+    public doctor_background_information = [];
     @ViewChild('instituciones_search_modal') instituciones_search_modal: ModalDirective;
     @ViewChild('instituciones_search_form') instituciones_search_form: FormRendererComponent;
     public instituciones_search_inputs = [];
@@ -117,7 +103,8 @@ export class InstitucionesComponent implements OnInit {
     }
     public phone_mask = [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
 
-    constructor(private appService: AppService, public endpoint: AppEndpoints, private layoutService: LayoutService, private alertService: AlertService, private excelService: ExcelService) {
+    constructor(private appService: AppService, public endpoint: AppEndpoints, private layoutService: LayoutService, 
+        private alertService: AlertService, private excelService: ExcelService) {
         this.appService.pageTitle = 'Instituciones';
         this.view = 1;
         this.inner_view = 1;
@@ -133,7 +120,6 @@ export class InstitucionesComponent implements OnInit {
         this.instituciones_list = [];
         this.instituciones_loading = false;
         this.instituciones_datatable_loading = false;
-        this.doctors_datatable_loading = false;
         this.instituciones_inputs = [
             {
                 class: "row",
@@ -540,7 +526,9 @@ export class InstitucionesComponent implements OnInit {
                 ]
             },
         ];
-        this.instituciones_search_inputs = [
+        this.contacto_view_ref = 1;
+
+        this.doctors_inputs = [
             {
                 class: "row",
                 columns: [
@@ -550,8 +538,8 @@ export class InstitucionesComponent implements OnInit {
                             {
                                 type: "text",
                                 extra: "",
-                                name: "nombre",
-                                label: "Nombre de la Institución",
+                                name: "first_name",
+                                label: "Primer nombre del Médico",
                                 icon: "",
                                 class: "form-control",
                                 placeholder: "",
@@ -572,7 +560,92 @@ export class InstitucionesComponent implements OnInit {
                                     return false;
                                 },
                                 required: () => {
+                                    return true;
+                                },
+                                disabled: () => {
                                     return false;
+                                },
+                                change: (event) => {
+                                },
+                                input: () => {
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        class: "col-md-6",
+                        inputs: [
+                            {
+                                type: "text",
+                                extra: "",
+                                name: "last_name",
+                                label: "Apellido del Médico",
+                                icon: "",
+                                class: "form-control",
+                                placeholder: "",
+                                minlength: null,
+                                maxlength: "100",
+                                pattern: null,
+                                error_required: "Requerido",
+                                error_pattern: "Formato Inválido",
+                                error_minlength: "",
+                                list_data: {
+                                    value: "",
+                                    text: ""
+                                },
+                                list: () => {
+                                    return []
+                                },
+                                textmask: () => {
+                                    return false;
+                                },
+                                required: () => {
+                                    return true;
+                                },
+                                disabled: () => {
+                                    return false;
+                                },
+                                change: (event) => {
+                                },
+                                input: () => {
+                                }
+                            }
+                        ]
+                    },
+                ]
+            },
+            {
+                class: "row",
+                columns: [
+                    {
+                        class: "col-md-6",
+                        inputs: [
+                            {
+                                type: "email",
+                                extra: "",
+                                name: "correo",
+                                label: "Correo Electrónico",
+                                icon: "",
+                                class: "form-control",
+                                placeholder: "",
+                                minlength: null,
+                                maxlength: "100",
+                                pattern: null,
+                                error_required: "Requerido",
+                                error_pattern: "",
+                                error_minlength: "",
+                                list_data: {
+                                    value: "",
+                                    text: ""
+                                },
+                                list: () => {
+                                    return []
+                                },
+                                textmask: () => {
+                                    return false;
+                                },
+                                required: () => {
+                                    return true;
                                 },
                                 disabled: () => {
                                     return false;
@@ -588,37 +661,28 @@ export class InstitucionesComponent implements OnInit {
                         class: "col-md-3",
                         inputs: [
                             {
-                                type: "select",
+                                type: "text",
                                 extra: "",
-                                name: "calendario",
-                                label: "Calendario Académico",
+                                name: "telefono",
+                                label: "Teléfono",
                                 icon: "",
                                 class: "form-control",
-                                placeholder: "- Seleccione -",
+                                placeholder: "",
                                 minlength: null,
                                 maxlength: null,
-                                pattern: null,
+                                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
                                 error_required: "Requerido",
-                                error_pattern: "",
+                                error_pattern: "Formato Inválido",
                                 error_minlength: "",
                                 list_data: {
-                                    value: "value",
-                                    text: "text"
+                                    value: "",
+                                    text: ""
                                 },
                                 list: () => {
-                                    return [
-                                        {
-                                            value: "Hondureño",
-                                            text: "Hondureño"
-                                        },
-                                        {
-                                            value: "Estados Unidos",
-                                            text: "Estados Unidos"
-                                        }
-                                    ]
+                                    return []
                                 },
                                 textmask: () => {
-                                    return false;
+                                    return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
                                 },
                                 required: () => {
                                     return false;
@@ -637,41 +701,28 @@ export class InstitucionesComponent implements OnInit {
                         class: "col-md-3",
                         inputs: [
                             {
-                                type: "select",
+                                type: "text",
                                 extra: "",
-                                name: "tipo",
-                                label: "Idiomas",
+                                name: "extension",
+                                label: "Extensión",
                                 icon: "",
                                 class: "form-control",
-                                placeholder: "- Seleccione -",
+                                placeholder: "",
                                 minlength: null,
                                 maxlength: null,
-                                pattern: null,
+                                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
                                 error_required: "Requerido",
-                                error_pattern: "",
+                                error_pattern: "Formato Inválido",
                                 error_minlength: "",
                                 list_data: {
-                                    value: "value",
-                                    text: "text"
+                                    value: "",
+                                    text: ""
                                 },
                                 list: () => {
-                                    return [
-                                        {
-                                            value: "Monolingüe",
-                                            text: "Monolingüe"
-                                        },
-                                        {
-                                            value: "Bilingüe",
-                                            text: "Bilingüe"
-                                        },
-                                        {
-                                            value: "Trilingüe",
-                                            text: "Trilingüe"
-                                        }
-                                    ]
+                                    return []
                                 },
                                 textmask: () => {
-                                    return false;
+                                    return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
                                 },
                                 required: () => {
                                     return false;
@@ -685,7 +736,7 @@ export class InstitucionesComponent implements OnInit {
                                 }
                             }
                         ]
-                    }
+                    },
                 ]
             },
             {
@@ -713,23 +764,23 @@ export class InstitucionesComponent implements OnInit {
                                     text: "name"
                                 },
                                 list: () => {
-                                    return this.departamentos_search;
+                                    return this.departamentos;
                                 },
                                 textmask: () => {
                                     return false;
                                 },
                                 required: () => {
-                                    return false;
+                                    return true;
                                 },
                                 disabled: () => {
                                     return false;
                                 },
                                 change: (event) => {
-                                    this.instituciones_search_data.ciudad = "";
-                                    this.ciudades_search = [];
-                                    for (let i = 0; i < this.departamentos_search.length; i++) {
-                                        if (event == this.departamentos_search[i].name) {
-                                            this.ciudades_search = this.departamentos_search[i].towns;
+                                    this.instituciones_data.ciudad = "";
+                                    this.ciudades = [];
+                                    for (let i = 0; i < this.departamentos.length; i++) {
+                                        if (event == this.departamentos[i].name) {
+                                            this.ciudades = this.departamentos[i].towns;
                                         }
                                     }
                                 },
@@ -760,13 +811,53 @@ export class InstitucionesComponent implements OnInit {
                                     text: "name"
                                 },
                                 list: () => {
-                                    return this.ciudades_search;
+                                    return this.ciudades;
                                 },
                                 textmask: () => {
                                     return false;
                                 },
                                 required: () => {
+                                    return true;
+                                },
+                                disabled: () => {
                                     return false;
+                                },
+                                change: (event) => {
+                                },
+                                input: () => {
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        class: "col-md-6",
+                        inputs: [
+                            {
+                                type: "text",
+                                extra: "",
+                                name: "direccion",
+                                label: "Dirección",
+                                icon: "",
+                                class: "form-control",
+                                placeholder: "",
+                                minlength: null,
+                                maxlength: "200",
+                                pattern: null,
+                                error_required: "Requerido",
+                                error_pattern: "Formato Inválido",
+                                error_minlength: "",
+                                list_data: {
+                                    value: "",
+                                    text: ""
+                                },
+                                list: () => {
+                                    return []
+                                },
+                                textmask: () => {
+                                    return false;
+                                },
+                                required: () => {
+                                    return true;
                                 },
                                 disabled: () => {
                                     return false;
@@ -781,69 +872,9 @@ export class InstitucionesComponent implements OnInit {
                 ]
             },
         ];
-        this.contacto_view_ref = 1;
     }
 
     ngOnInit() {
-        this.doctors_datatable = {
-            title: "Listado de Doctores",
-            icon: "user-md",
-            object_description: "instituciones",
-            empty_text: "No se encontraron instituciones",
-            columns: [
-                {
-                    column: "first_name",
-                    wrap_column: false,
-                    header: "Nombre",
-                    wrap_header: true,
-                    type: "text"
-                },
-                {
-                    column: "last_name",
-                    wrap_column: true,
-                    header: "Apellido",
-                    wrap_header: true,
-                    type: "text"
-                },
-                {
-                    column: "id_card",
-                    wrap_column: false,
-                    header: "No. Identidad",
-                    wrap_header: true,
-                    type: "text"
-                },
-                {
-                    column: "institution_name",
-                    wrap_column: true,
-                    header: "Institución",
-                    wrap_header: true,
-                    type: "text"
-                },
-            ],
-            events: [
-                {
-                    name: "Detalle del Médico",
-                    style: "color:#39B7CB",
-                    hover_style: "cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;",
-                    icon: "search"
-                },
-                // {
-                //     name: "Editar Institución",
-                //     style: "color:#ffb300",
-                //     hover_style: "cursor:pointer; color:#ffb300; background-color:#FFF7C6 !important;",
-                //     icon: "edit"
-                // },
-                {
-                    name: "Eliminar Médico",
-                    style: "color:#FB5D5D",
-                    hover_style: "cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;",
-                    icon: "trash-alt"
-                }
-            ],
-            navigation_offsets: [5, 10, 15, 20, 25, 50],
-            show_search_field: true,
-            table_icon: "caret-right"
-        };
         this.instituciones_datatable = {
             title: "Listado de Instituciones",
             icon: "graduation-cap",
@@ -931,23 +962,25 @@ export class InstitucionesComponent implements OnInit {
     }
 
     open_institucion(data) {
+        this.endpoint.doctor_by_institution({institution_id: data.id}).subscribe(doctors => {
+            this.instituciones_data = {
+                id: data.id,
+                nombre: data.nombre,
+                correo: data.correo,
+                telefono: data.telefono,
+                departamento: data.departamento,
+                ciudad: data.ciudad,
+                direccion: data.direccion,
+                inicio_clases: data.inicio_clases,
+                calendario: data.calendario,
+                tipo: data.tipo,
+                contactos: data.contactos,
+                alumnos: [],
+                doctores: doctors
+            };
+        });
         this.view = 2;
         this.inner_view = 1;
-        this.instituciones_data = {
-            id: data.id,
-            nombre: data.nombre,
-            correo: data.correo,
-            telefono: data.telefono,
-            departamento: data.departamento,
-            ciudad: data.ciudad,
-            direccion: data.direccion,
-            inicio_clases: data.inicio_clases,
-            calendario: data.calendario,
-            tipo: data.tipo,
-            contactos: data.contactos,
-            alumnos: [],
-            doctores: []
-        };
     }
 
     close_institucion() {
@@ -980,33 +1013,6 @@ export class InstitucionesComponent implements OnInit {
 
     open_doctores() {
         this.inner_view = 1;
-    }
-    doctors_datatable_get_results_offset_change(data) {
-        this.doctor_filters = {
-            current_offset: data.current_offset,
-            view_length: data.view_length,
-            sort_order: data.sort_order,
-            sort_ascendent: data.sort_ascendent
-        }
-        let response;
-        this.endpoint.get_doctors().subscribe(data => 
-            response = data,
-         err => {
-            this.doctors_datatable_ref.set_loading(false);
-            if (err.status && err.error) {
-                this.alertService.alert_message(err.status, err.error);
-            } else {
-                this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
-            }
-        },
-        () => {
-            try {
-                this.doctors_datatable_ref.set_results_offset_change(response)
-            } catch (error) {
-                this.doctors_datatable_ref.set_loading(false);
-                this.alertService.alert_aplication_error("Error Interno del Aplicativo");
-            }
-        })
     }
 
     instituciones_datatable_get_results_offset_change(data) {
@@ -1161,6 +1167,13 @@ export class InstitucionesComponent implements OnInit {
         this.instituciones_contactos = [];
         this.instituciones_modal_view = 1;
         this.instituciones_modal.show();
+    }
+
+    open_insert_doctor() {
+        this.doctor_form.clean_form();
+        this.doctor_background_information = [];
+        this.instituciones_modal_view = 1;
+        this.doctores_modal.show();
     }
 
     insert_institucion() {
@@ -1386,6 +1399,10 @@ export class InstitucionesComponent implements OnInit {
         this.instituciones_contactos.splice(index, 1);
     }
 
+    remove_doctor(index) {
+        this.instituciones_data.doctores.splice(index, 1);
+    }
+
     add_contacto() {
         console.log(this.instituciones_contactos);
         
@@ -1395,6 +1412,10 @@ export class InstitucionesComponent implements OnInit {
         } else {
             this.contacto_submitted = true;
         }
+    }
+
+    add_doctor() {
+        this.open_insert_doctor();
     }
 
     //INSTITUCIONES ##########################################################

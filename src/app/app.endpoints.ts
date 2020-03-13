@@ -145,6 +145,10 @@ export class AppEndpoints {
             return this.httpClient.get(this.endpoint + '/doctors_list', { headers:this.get_headers(), responseType: 'json' });
         }
 
+        doctor_by_institution(data):Observable<any> {
+            return this.httpClient.get(this.endpoint + '/doctors_institution_list?institution_id=' + data.institution_id, { headers:this.get_headers(), responseType: 'json' });
+        }
+
         insert_doctors(payload):Observable<any> {
             return this.httpClient.get(this.endpoint + '/insert_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
         }
