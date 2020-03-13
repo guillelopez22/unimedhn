@@ -133,7 +133,7 @@
                         </tbody>
                     </table>
                     <button class="float-right btn btn-success btn-sm" (click)="add_doctor()"><i class="fa fa-check"></i> Agregar
-                        Doctor</button>
+                        Médico</button>
                 </div>
             </div>
             <div class="custom-nav-content" *ngIf="inner_view==2">
@@ -311,7 +311,7 @@
                     (click)="instituciones_modal.hide()"><i class="fa fa-times"></i> Cerrar</button>
                 <button *ngIf="instituciones_modal_view==1" [disabled]="instituciones_loading"
                     class="btn btn-success btn-sm" (click)="insert_institucion()"><i class="fa fa-check"></i> Registrar
-                    Institución</button>
+                    Médico</button>
                 <button *ngIf="instituciones_modal_view==2" [disabled]="instituciones_loading"
                     class="btn btn-warning btn-sm" (click)="update_institucion()"><i class="fa fa-edit"></i> Editar
                     Institución</button>
