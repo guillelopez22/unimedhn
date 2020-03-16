@@ -60,11 +60,24 @@ export class InstitucionesComponent implements OnInit {
         alumnos: [],
         doctores: []
     };
+    public antecedentes_view = false;
+    public jornada_view = false;
+    public insert_doctor_main_view = true;
+    public academic_view = false;
     public working_schedule = {
       hours_day: '',
       hours_start: '',
       hours_end: ''
     };
+    public academic_date = '';
+    public academic_title = '';
+    public academic_institution = '';
+    public academic_info = {
+        academic_date: '',
+        academic_title: '',
+        academic_institution: ''
+    }
+    public academic_data = [];
     public antecedente_date = '';
     public antecedente_desc = '';
     public complete_antecedente = {
@@ -83,9 +96,10 @@ export class InstitucionesComponent implements OnInit {
       id_college: '',
       id_rtn: '',
       academic_information: [],
-      background_informatcion: [],
+      background_information: [],
       position: '',
-      working_hours: []
+      working_hours: [],
+      foto: null
     };
     public doctors = [];
     public patient_data = {};
@@ -1124,6 +1138,34 @@ export class InstitucionesComponent implements OnInit {
         this.inner_view = 1;
     }
 
+    add_jornada() {
+        this.insert_doctor_main_view = false;
+        this.jornada_view = true;
+        this.antecedentes_view = false;
+        this.academic_view = false;
+    }
+
+    add_antecedentes() {
+        this.insert_doctor_main_view = false;
+        this.jornada_view = false;
+        this.antecedentes_view = true;
+        this.academic_view = false;
+    }
+
+    add_academic_info() {
+        this.insert_doctor_main_view = false;
+        this.jornada_view = false;
+        this.antecedentes_view = false;
+        this.academic_view = true;
+    }
+
+    return_insert_view() {
+        this.insert_doctor_main_view = true;
+        this.jornada_view = false;
+        this.antecedentes_view = false;
+        this.academic_view = false;
+    }
+
     instituciones_datatable_get_results_offset_change(data) {
         this.instituciones_filters = {
             current_offset: data.current_offset,
@@ -1299,14 +1341,35 @@ export class InstitucionesComponent implements OnInit {
           id_card: form_values.id_card,
           id_college: form_values.id_college,
           id_rtn: form_values.id_rtn,
-          background_informatcion: this.antecedentes,
+          background_information: this.antecedentes,
           position: form_values.position,
           working_hours: this.doctor_schedule,
-          academic_information: []
+          academic_information: this.academic_data,
+          foto: null
         };
         console.log(this.doctor_data);
         this.doctors.push(this.doctor_data);
-        this.instituciones_data.doctores = this.doctors;
+        this.instituciones_data.doctores = [...this.instituciones_data.doctores, ...this.doctors];
+        let response;
+        this.endpoint.insert_doctors(this.doctor_data).subscribe(
+            data => response = data,
+            err => {
+                this.instituciones_loading = false;
+                if (err.status && err.error) {
+                    this.alertService.alert_message(err.status, err.error);
+                } else {
+                    this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
+                }
+            },
+            () => {
+                try {
+                    this.doctores_modal.hide();
+                    this.alertService.alert_success(response.title, response.message);
+                } catch (error) {
+                    this.alertService.alert_aplication_error('Error Interno del Aplicativo');
+                }
+            }
+        )
       }
     }
 
@@ -1544,6 +1607,10 @@ export class InstitucionesComponent implements OnInit {
       this.antecedentes.splice(index, 1);
     }
 
+    remove_academic(index) {
+        this.academic_data.splice(index, 1);
+      }
+
     add_contacto() {
         console.log(this.instituciones_contactos);
 
@@ -1576,6 +1643,23 @@ export class InstitucionesComponent implements OnInit {
       this.hours_day = '';
       this.hours_start = '';
       this.hours_end = '';
+    }
+
+    add_doctor_academics() {
+        this.academic_info = {
+            academic_date: this.academic_date,
+            academic_institution: this.academic_institution,
+            academic_title: this.academic_title
+        }
+        this.academic_data.push(this.academic_info);
+        this.academic_title = '';
+        this.academic_institution = '';
+        this.academic_date = '';
+        this.academic_info = {
+            academic_date: '',
+            academic_institution: '',
+            academic_title: ''
+        }
     }
 
     add_doctor_antecedente() {

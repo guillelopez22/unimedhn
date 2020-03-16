@@ -150,7 +150,8 @@ export class AppEndpoints {
         }
 
         insert_doctors(payload):Observable<any> {
-            return this.httpClient.get(this.endpoint + '/insert_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
+            console.log(payload)
+            return this.httpClient.post(this.endpoint + "/insert_doctor", payload, { headers:this.get_headers(), responseType: 'json'});
         }
 
         update_doctor(payload):Observable<any> {
