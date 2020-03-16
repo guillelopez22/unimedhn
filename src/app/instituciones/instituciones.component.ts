@@ -37,6 +37,7 @@ export class InstitucionesComponent implements OnInit {
     @ViewChild('doctors_datatable_ref') doctors_datatable_ref: ServiceDatatableComponent;
     public instituciones_view: number;
     public instituciones_modal_view: number;
+    public doctor_modal_view: number;
     public instituciones_list: any[];
     public instituciones_loading: boolean;
     public instituciones_datatable: any;
@@ -45,65 +46,100 @@ export class InstitucionesComponent implements OnInit {
     public instituciones_inputs = [];
     public instituciones_contactos = [];
     public instituciones_data = {
-        id: "",
-        nombre: "",
-        correo: "",
-        telefono: "",
-        departamento: "",
-        ciudad: "",
-        direccion: "",
-        inicio_clases: "",
-        calendario: "",
-        tipo: "",
+        id: '',
+        nombre: '',
+        correo: '',
+        telefono: '',
+        departamento: '',
+        ciudad: '',
+        direccion: '',
+        inicio_clases: '',
+        calendario: '',
+        tipo: '',
         contactos: [],
         alumnos: [],
         doctores: []
     };
+    public working_schedule = {
+      hours_day: '',
+      hours_start: '',
+      hours_end: ''
+    };
+    public antecedente_date = '';
+    public antecedente_desc = '';
+    public complete_antecedente = {
+      antecedente_date: '',
+      antecedente_desc: ''
+    };
+    public doctor_data = {
+      institution_id: '',
+      first_name: '',
+      last_name: '',
+      phone: '',
+      extension: '',
+      email: '',
+      address: '',
+      id_card: '',
+      id_college: '',
+      id_rtn: '',
+      academic_information: [],
+      background_informatcion: [],
+      position: '',
+      working_hours: []
+    };
+    public doctors = [];
+    public patient_data = {};
+    public patients = [];
+    public antecedentes = [];
+    public hours_day = '';
+    public hours_start = '';
+    public hours_end = '';
+    public doctor_schedule = []
     public doctors_datatable: any;
     public doctors_datatable_loading: boolean;
     public doctors_inputs = [];
     public instituciones_filters = {
         current_offset: 1,
         view_length: 10,
-        sort_order: "",
+        sort_order: '',
         sort_ascendent: false
     };
     public doctor_filters = {
         current_offset: 1,
         view_length: 10,
-        sort_order: "",
+        sort_order: '',
         sort_ascendent: false
     };
     public doctor_search_data = {
-        first_name: "",
-        last_name: "",
-        id_card: "",
-        id_college: "",
-        tipo: ""
+        first_name: '',
+        last_name: '',
+        id_card: '',
+        id_college: '',
+        tipo: ''
     }
     public doctor_background_information = [];
     @ViewChild('instituciones_search_modal') instituciones_search_modal: ModalDirective;
     @ViewChild('instituciones_search_form') instituciones_search_form: FormRendererComponent;
     public instituciones_search_inputs = [];
     public instituciones_search_data = {
-        nombre: "",
-        ciudad: "",
-        departamento: "",
-        calendario: "",
-        tipo: ""
+        nombre: '',
+        ciudad: '',
+        departamento: '',
+        calendario: '',
+        tipo: ''
     }
 
     @ViewChild('contacto_form') contacto_form: FormControlDirective;
     public contacto_submitted: boolean;
     public contacto_view_ref: number;
     public contacto_data = {
-        nombre: "",
-        cargo: "",
-        celular: ""
+        nombre: '',
+        cargo: '',
+        celular: ''
     }
     public phone_mask = [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
 
-    constructor(private appService: AppService, public endpoint: AppEndpoints, private layoutService: LayoutService, 
+    constructor(private appService: AppService, public endpoint: AppEndpoints, private layoutService: LayoutService,
         private alertService: AlertService, private excelService: ExcelService) {
         this.appService.pageTitle = 'Instituciones';
         this.view = 1;
@@ -122,28 +158,28 @@ export class InstitucionesComponent implements OnInit {
         this.instituciones_datatable_loading = false;
         this.instituciones_inputs = [
             {
-                class: "row",
+                class: 'row',
                 columns: [
                     {
-                        class: "col-md-6",
+                        class: 'col-md-6',
                         inputs: [
                             {
-                                type: "text",
-                                extra: "",
-                                name: "nombre",
-                                label: "Nombre de la Institución",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'text',
+                                extra: '',
+                                name: 'nombre',
+                                label: 'Nombre de la Institución',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
-                                maxlength: "100",
+                                maxlength: '100',
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
@@ -165,35 +201,35 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-3",
+                        class: 'col-md-3',
                         inputs: [
                             {
-                                type: "select",
-                                extra: "",
-                                name: "calendario",
-                                label: "Calendario Académico",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "- Seleccione -",
+                                type: 'select',
+                                extra: '',
+                                name: 'calendario',
+                                label: 'Calendario Académico',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '- Seleccione -',
                                 minlength: null,
                                 maxlength: null,
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: '',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "value",
-                                    text: "text"
+                                    value: 'value',
+                                    text: 'text'
                                 },
                                 list: () => {
                                     return [
                                         {
-                                            value: "Hondureño",
-                                            text: "Hondureño"
+                                            value: 'Hondureño',
+                                            text: 'Hondureño'
                                         },
                                         {
-                                            value: "Estados Unidos",
-                                            text: "Estados Unidos"
+                                            value: 'Estados Unidos',
+                                            text: 'Estados Unidos'
                                         }
                                     ]
                                 },
@@ -214,39 +250,39 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-3",
+                        class: 'col-md-3',
                         inputs: [
                             {
-                                type: "select",
-                                extra: "",
-                                name: "tipo",
-                                label: "Idiomas",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "- Seleccione -",
+                                type: 'select',
+                                extra: '',
+                                name: 'tipo',
+                                label: 'Idiomas',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '- Seleccione -',
                                 minlength: null,
                                 maxlength: null,
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: '',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "value",
-                                    text: "text"
+                                    value: 'value',
+                                    text: 'text'
                                 },
                                 list: () => {
                                     return [
                                         {
-                                            value: "Monolingüe",
-                                            text: "Monolingüe"
+                                            value: 'Monolingüe',
+                                            text: 'Monolingüe'
                                         },
                                         {
-                                            value: "Bilingüe",
-                                            text: "Bilingüe"
+                                            value: 'Bilingüe',
+                                            text: 'Bilingüe'
                                         },
                                         {
-                                            value: "Trilingüe",
-                                            text: "Trilingüe"
+                                            value: 'Trilingüe',
+                                            text: 'Trilingüe'
                                         }
                                     ]
                                 },
@@ -269,28 +305,28 @@ export class InstitucionesComponent implements OnInit {
                 ]
             },
             {
-                class: "row",
+                class: 'row',
                 columns: [
                     {
-                        class: "col-md-6",
+                        class: 'col-md-6',
                         inputs: [
                             {
-                                type: "email",
-                                extra: "",
-                                name: "correo",
-                                label: "Correo Electrónico",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'email',
+                                extra: '',
+                                name: 'correo',
+                                label: 'Correo Electrónico',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
-                                maxlength: "100",
+                                maxlength: '100',
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: '',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
@@ -312,25 +348,25 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-3",
+                        class: 'col-md-3',
                         inputs: [
                             {
-                                type: "text",
-                                extra: "",
-                                name: "telefono",
-                                label: "Teléfono",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'text',
+                                extra: '',
+                                name: 'telefono',
+                                label: 'Teléfono',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
                                 maxlength: null,
-                                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
+                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
@@ -352,25 +388,25 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-3",
+                        class: 'col-md-3',
                         inputs: [
                             {
-                                type: "calendar",
-                                extra: "popup",
-                                name: "inicio_clases",
-                                label: "Inicio de Clases",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'calendar',
+                                extra: 'popup',
+                                name: 'inicio_clases',
+                                label: 'Inicio de Clases',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
                                 maxlength: null,
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
@@ -394,28 +430,28 @@ export class InstitucionesComponent implements OnInit {
                 ]
             },
             {
-                class: "row",
+                class: 'row',
                 columns: [
                     {
-                        class: "col-md-3",
+                        class: 'col-md-3',
                         inputs: [
                             {
-                                type: "select",
-                                extra: "",
-                                name: "departamento",
-                                label: "Departamento",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "- Seleccione -",
+                                type: 'select',
+                                extra: '',
+                                name: 'departamento',
+                                label: 'Departamento',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '- Seleccione -',
                                 minlength: null,
                                 maxlength: null,
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: '',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "name",
-                                    text: "name"
+                                    value: 'name',
+                                    text: 'name'
                                 },
                                 list: () => {
                                     return this.departamentos;
@@ -430,7 +466,7 @@ export class InstitucionesComponent implements OnInit {
                                     return false;
                                 },
                                 change: (event) => {
-                                    this.instituciones_data.ciudad = "";
+                                    this.instituciones_data.ciudad = '';
                                     this.ciudades = [];
                                     for (let i = 0; i < this.departamentos.length; i++) {
                                         if (event == this.departamentos[i].name) {
@@ -444,25 +480,25 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-3",
+                        class: 'col-md-3',
                         inputs: [
                             {
-                                type: "select",
-                                extra: "",
-                                name: "ciudad",
-                                label: "Ciudad",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "- Seleccione -",
+                                type: 'select',
+                                extra: '',
+                                name: 'ciudad',
+                                label: 'Ciudad',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '- Seleccione -',
                                 minlength: null,
                                 maxlength: null,
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: '',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "name",
-                                    text: "name"
+                                    value: 'name',
+                                    text: 'name'
                                 },
                                 list: () => {
                                     return this.ciudades;
@@ -484,25 +520,25 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-6",
+                        class: 'col-md-6',
                         inputs: [
                             {
-                                type: "text",
-                                extra: "",
-                                name: "direccion",
-                                label: "Dirección",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'text',
+                                extra: '',
+                                name: 'direccion',
+                                label: 'Dirección',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
-                                maxlength: "200",
+                                maxlength: '200',
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
@@ -530,28 +566,28 @@ export class InstitucionesComponent implements OnInit {
 
         this.doctors_inputs = [
             {
-                class: "row",
+                class: 'row',
                 columns: [
                     {
-                        class: "col-md-6",
+                        class: 'col-md-6',
                         inputs: [
                             {
-                                type: "text",
-                                extra: "",
-                                name: "first_name",
-                                label: "Primer nombre del Médico",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'text',
+                                extra: '',
+                                name: 'first_name',
+                                label: 'Primer nombre del Médico',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
-                                maxlength: "100",
+                                maxlength: '100',
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
@@ -573,31 +609,196 @@ export class InstitucionesComponent implements OnInit {
                         ]
                     },
                     {
-                        class: "col-md-6",
+                        class: 'col-md-6',
                         inputs: [
                             {
-                                type: "text",
-                                extra: "",
-                                name: "last_name",
-                                label: "Apellido del Médico",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
+                                type: 'text',
+                                extra: '',
+                                name: 'last_name',
+                                label: 'Apellido del Médico',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
                                 minlength: null,
-                                maxlength: "100",
+                                maxlength: '100',
                                 pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
                                 list_data: {
-                                    value: "",
-                                    text: ""
+                                    value: '',
+                                    text: ''
                                 },
                                 list: () => {
                                     return []
                                 },
                                 textmask: () => {
                                     return false;
+                                },
+                                required: () => {
+                                    return true;
+                                },
+                                disabled: () => {
+                                    return false;
+                                },
+                                change: (event) => {
+                                },
+                                input: () => {
+                                }
+                            }
+                        ]
+                    },
+                    {
+                      class: 'col-md-12',
+                      inputs: [
+                          {
+                              type: 'text',
+                              extra: '',
+                              name: 'address',
+                              label: 'Direccion',
+                              icon: '',
+                              class: 'form-control',
+                              placeholder: '',
+                              minlength: null,
+                              maxlength: '100',
+                              pattern: null,
+                              error_required: 'Requerido',
+                              error_pattern: 'Formato Inválido',
+                              error_minlength: '',
+                              list_data: {
+                                  value: '',
+                                  text: ''
+                              },
+                              list: () => {
+                                  return []
+                              },
+                              textmask: () => {
+                                  return false;
+                              },
+                              required: () => {
+                                  return true;
+                              },
+                              disabled: () => {
+                                  return false;
+                              },
+                              change: (event) => {
+                              },
+                              input: () => {
+                              }
+                          }
+                      ]
+                  },
+                ]
+            },
+            {
+                class: 'row',
+                columns: [
+                    {
+                        class: 'col-md-6',
+                        inputs: [
+                            {
+                                type: 'email',
+                                extra: '',
+                                name: 'email',
+                                label: 'Correo Electrónico',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
+                                minlength: null,
+                                maxlength: '100',
+                                pattern: null,
+                                error_required: 'Requerido',
+                                error_pattern: '',
+                                error_minlength: '',
+                                list_data: {
+                                    value: '',
+                                    text: ''
+                                },
+                                list: () => {
+                                    return []
+                                },
+                                textmask: () => {
+                                    return false;
+                                },
+                                required: () => {
+                                    return true;
+                                },
+                                disabled: () => {
+                                    return false;
+                                },
+                                change: (event) => {
+                                },
+                                input: () => {
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        class: 'col-md-3',
+                        inputs: [
+                            {
+                                type: 'text',
+                                extra: '',
+                                name: 'phone',
+                                label: 'Teléfono',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
+                                minlength: null,
+                                maxlength: null,
+                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
+                                list_data: {
+                                    value: '',
+                                    text: ''
+                                },
+                                list: () => {
+                                    return []
+                                },
+                                textmask: () => {
+                                    return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
+                                },
+                                required: () => {
+                                    return true;
+                                },
+                                disabled: () => {
+                                    return false;
+                                },
+                                change: (event) => {
+                                },
+                                input: () => {
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        class: 'col-md-3',
+                        inputs: [
+                            {
+                                type: 'text',
+                                extra: '',
+                                name: 'extension',
+                                label: 'Extensión',
+                                icon: '',
+                                class: 'form-control',
+                                placeholder: '',
+                                minlength: null,
+                                maxlength: null,
+                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+                                error_required: 'Requerido',
+                                error_pattern: 'Formato Inválido',
+                                error_minlength: '',
+                                list_data: {
+                                    value: '',
+                                    text: ''
+                                },
+                                list: () => {
+                                    return []
+                                },
+                                textmask: () => {
+                                    return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
                                 },
                                 required: () => {
                                     return true;
@@ -615,314 +816,222 @@ export class InstitucionesComponent implements OnInit {
                 ]
             },
             {
-                class: "row",
-                columns: [
-                    {
-                        class: "col-md-6",
-                        inputs: [
-                            {
-                                type: "email",
-                                extra: "",
-                                name: "correo",
-                                label: "Correo Electrónico",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
-                                minlength: null,
-                                maxlength: "100",
-                                pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
-                                list_data: {
-                                    value: "",
-                                    text: ""
-                                },
-                                list: () => {
-                                    return []
-                                },
-                                textmask: () => {
-                                    return false;
-                                },
-                                required: () => {
-                                    return true;
-                                },
-                                disabled: () => {
-                                    return false;
-                                },
-                                change: (event) => {
-                                },
-                                input: () => {
-                                }
+              class: 'row',
+              columns: [
+                {
+                  class: 'col-md-3',
+                  inputs: [
+                      {
+                          type: 'text',
+                          extra: '',
+                          name: 'id_card',
+                          label: 'Identidad',
+                          icon: '',
+                          class: 'form-control',
+                          placeholder: '',
+                          minlength: null,
+                          maxlength: null,
+                          pattern: '^[0-9]{4}-[0-9]{4}-[0-9]{5}$',
+                          error_required: 'Requerido',
+                          error_pattern: 'Formato Inválido',
+                          error_minlength: '',
+                          list_data: {
+                              value: '',
+                              text: ''
+                          },
+                          list: () => {
+                              return []
+                          },
+                          textmask: () => {
+                              return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/];
+                          },
+                          required: () => {
+                              return true;
+                          },
+                          disabled: () => {
+                              return false;
+                          },
+                          change: (event) => {
+                          },
+                          input: () => {
+                          }
+                      }
+                  ]
+              },
+                  {
+                      class: 'col-md-3',
+                      inputs: [
+                          {
+                              type: 'text',
+                              extra: '',
+                              name: 'id_rtn',
+                              label: 'RTN',
+                              icon: '',
+                              class: 'form-control',
+                              placeholder: '',
+                              minlength: null,
+                              maxlength: null,
+                              pattern: '^[0-9]{4}-[0-9]{4}-[0-9]{6}$',
+                              error_required: 'Requerido',
+                              error_pattern: 'Formato Inválido',
+                              error_minlength: '',
+                              list_data: {
+                                  value: '',
+                                  text: ''
+                              },
+                              list: () => {
+                                  return []
+                              },
+                              textmask: () => {
+                                return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/];
+                              },
+                              required: () => {
+                                  return true;
+                              },
+                              disabled: () => {
+                                  return false;
+                              },
+                              change: (event) => {
+                              },
+                              input: () => {
+                              }
+                          }
+                      ]
+                  },
+                  {
+                    class: 'col-md-3',
+                    inputs: [
+                        {
+                            type: 'text',
+                            extra: '',
+                            name: 'position',
+                            label: 'Posicion',
+                            icon: '',
+                            class: 'form-control',
+                            placeholder: '',
+                            minlength: null,
+                            maxlength: '100',
+                            pattern: null,
+                            error_required: 'Requerido',
+                            error_pattern: 'Formato Inválido',
+                            error_minlength: '',
+                            list_data: {
+                                value: '',
+                                text: ''
+                            },
+                            list: () => {
+                                return []
+                            },
+                            textmask: () => {
+                                return false;
+                            },
+                            required: () => {
+                                return true;
+                            },
+                            disabled: () => {
+                                return false;
+                            },
+                            change: (event) => {
+                            },
+                            input: () => {
                             }
-                        ]
-                    },
-                    {
-                        class: "col-md-3",
-                        inputs: [
-                            {
-                                type: "text",
-                                extra: "",
-                                name: "telefono",
-                                label: "Teléfono",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
-                                minlength: null,
-                                maxlength: null,
-                                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
-                                list_data: {
-                                    value: "",
-                                    text: ""
-                                },
-                                list: () => {
-                                    return []
-                                },
-                                textmask: () => {
-                                    return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
-                                },
-                                required: () => {
-                                    return false;
-                                },
-                                disabled: () => {
-                                    return false;
-                                },
-                                change: (event) => {
-                                },
-                                input: () => {
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        class: "col-md-3",
-                        inputs: [
-                            {
-                                type: "text",
-                                extra: "",
-                                name: "extension",
-                                label: "Extensión",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
-                                minlength: null,
-                                maxlength: null,
-                                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
-                                list_data: {
-                                    value: "",
-                                    text: ""
-                                },
-                                list: () => {
-                                    return []
-                                },
-                                textmask: () => {
-                                    return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
-                                },
-                                required: () => {
-                                    return false;
-                                },
-                                disabled: () => {
-                                    return false;
-                                },
-                                change: (event) => {
-                                },
-                                input: () => {
-                                }
-                            }
-                        ]
-                    },
-                ]
-            },
-            {
-                class: "row",
-                columns: [
-                    {
-                        class: "col-md-3",
-                        inputs: [
-                            {
-                                type: "select",
-                                extra: "",
-                                name: "departamento",
-                                label: "Departamento",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "- Seleccione -",
-                                minlength: null,
-                                maxlength: null,
-                                pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
-                                list_data: {
-                                    value: "name",
-                                    text: "name"
-                                },
-                                list: () => {
-                                    return this.departamentos;
-                                },
-                                textmask: () => {
-                                    return false;
-                                },
-                                required: () => {
-                                    return true;
-                                },
-                                disabled: () => {
-                                    return false;
-                                },
-                                change: (event) => {
-                                    this.instituciones_data.ciudad = "";
-                                    this.ciudades = [];
-                                    for (let i = 0; i < this.departamentos.length; i++) {
-                                        if (event == this.departamentos[i].name) {
-                                            this.ciudades = this.departamentos[i].towns;
-                                        }
-                                    }
-                                },
-                                input: () => {
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        class: "col-md-3",
-                        inputs: [
-                            {
-                                type: "select",
-                                extra: "",
-                                name: "ciudad",
-                                label: "Ciudad",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "- Seleccione -",
-                                minlength: null,
-                                maxlength: null,
-                                pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "",
-                                error_minlength: "",
-                                list_data: {
-                                    value: "name",
-                                    text: "name"
-                                },
-                                list: () => {
-                                    return this.ciudades;
-                                },
-                                textmask: () => {
-                                    return false;
-                                },
-                                required: () => {
-                                    return true;
-                                },
-                                disabled: () => {
-                                    return false;
-                                },
-                                change: (event) => {
-                                },
-                                input: () => {
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        class: "col-md-6",
-                        inputs: [
-                            {
-                                type: "text",
-                                extra: "",
-                                name: "direccion",
-                                label: "Dirección",
-                                icon: "",
-                                class: "form-control",
-                                placeholder: "",
-                                minlength: null,
-                                maxlength: "200",
-                                pattern: null,
-                                error_required: "Requerido",
-                                error_pattern: "Formato Inválido",
-                                error_minlength: "",
-                                list_data: {
-                                    value: "",
-                                    text: ""
-                                },
-                                list: () => {
-                                    return []
-                                },
-                                textmask: () => {
-                                    return false;
-                                },
-                                required: () => {
-                                    return true;
-                                },
-                                disabled: () => {
-                                    return false;
-                                },
-                                change: (event) => {
-                                },
-                                input: () => {
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
+                        }
+                    ]
+                },
+                {
+                  class: 'col-md-3',
+                  inputs: [
+                      {
+                          type: 'text',
+                          extra: '',
+                          name: 'id_college',
+                          label: 'No. Colegiado',
+                          icon: '',
+                          class: 'form-control',
+                          placeholder: '',
+                          minlength: null,
+                          maxlength: '100',
+                          pattern: null,
+                          error_required: 'Requerido',
+                          error_pattern: 'Formato Inválido',
+                          error_minlength: '',
+                          list_data: {
+                              value: '',
+                              text: ''
+                          },
+                          list: () => {
+                              return []
+                          },
+                          textmask: () => {
+                              return false;
+                          },
+                          required: () => {
+                              return true;
+                          },
+                          disabled: () => {
+                              return false;
+                          },
+                          change: (event) => {
+                          },
+                          input: () => {
+                          }
+                      }
+                  ]
+              },
+              ]
+          },
         ];
     }
 
     ngOnInit() {
         this.instituciones_datatable = {
-            title: "Listado de Instituciones",
-            icon: "graduation-cap",
-            object_description: "instituciones",
-            empty_text: "No se encontraron instituciones",
+            title: 'Listado de Instituciones',
+            icon: 'graduation-cap',
+            object_description: 'instituciones',
+            empty_text: 'No se encontraron instituciones',
             columns: [
                 {
-                    column: "nombre",
+                    column: 'nombre',
                     wrap_column: false,
-                    header: "Institución",
+                    header: 'Institución',
                     wrap_header: true,
-                    type: "text"
+                    type: 'text'
                 },
                 {
-                    column: "departamento",
+                    column: 'departamento',
                     wrap_column: true,
-                    header: "Departamento",
+                    header: 'Departamento',
                     wrap_header: true,
-                    type: "text"
+                    type: 'text'
                 },
                 {
-                    column: "ciudad",
+                    column: 'ciudad',
                     wrap_column: false,
-                    header: "Ciudad",
+                    header: 'Ciudad',
                     wrap_header: true,
-                    type: "text"
+                    type: 'text'
                 },
                 {
-                    column: "calendario",
+                    column: 'calendario',
                     wrap_column: true,
-                    header: "Calendario Académico",
+                    header: 'Calendario Académico',
                     wrap_header: true,
-                    type: "text"
+                    type: 'text'
                 },
                 {
-                    column: "tipo",
+                    column: 'tipo',
                     wrap_column: true,
-                    header: "Idiomas",
+                    header: 'Idiomas',
                     wrap_header: true,
-                    type: "text"
+                    type: 'text'
                 }
             ],
             events: [
                 {
-                    name: "Detalle de la Institución",
-                    style: "color:#39B7CB",
-                    hover_style: "cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;",
-                    icon: "search"
+                    name: 'Detalle de la Institución',
+                    style: 'color:#39B7CB',
+                    hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+                    icon: 'search'
                 },
                 // {
                 //     name: "Editar Institución",
@@ -931,15 +1040,15 @@ export class InstitucionesComponent implements OnInit {
                 //     icon: "edit"
                 // },
                 {
-                    name: "Eliminar Institución",
-                    style: "color:#FB5D5D",
-                    hover_style: "cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;",
-                    icon: "trash-alt"
+                    name: 'Eliminar Institución',
+                    style: 'color:#FB5D5D',
+                    hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+                    icon: 'trash-alt'
                 }
             ],
             navigation_offsets: [5, 10, 15, 20, 25, 50],
             show_search_field: true,
-            table_icon: "caret-right"
+            table_icon: 'caret-right'
         }
     }
 
@@ -952,11 +1061,11 @@ export class InstitucionesComponent implements OnInit {
     //INSTITUCIONES ##########################################################
 
     instituciones_datatable_events(event) {
-        if (event.event == "Detalle de la Institución") {
+        if (event.event == 'Detalle de la Institución') {
             this.open_institucion(event.data);
         // } else if (event.event == "Editar Institución") {
         //     this.open_update_institucion(event.data);
-        } else if (event.event == "Eliminar Institución") {
+        } else if (event.event == 'Eliminar Institución') {
             this.open_delete_institucion(event.data);
         }
     }
@@ -987,16 +1096,16 @@ export class InstitucionesComponent implements OnInit {
         this.view = 1;
         this.inner_view = 1;
         this.instituciones_data = {
-            id: "",
-            nombre: "",
-            correo: "",
-            telefono: "",
-            departamento: "",
-            ciudad: "",
-            direccion: "",
-            inicio_clases: "",
-            calendario: "",
-            tipo: "",
+            id: '',
+            nombre: '',
+            correo: '',
+            telefono: '',
+            departamento: '',
+            ciudad: '',
+            direccion: '',
+            inicio_clases: '',
+            calendario: '',
+            tipo: '',
             contactos: [],
             alumnos: [],
             doctores: []
@@ -1041,7 +1150,7 @@ export class InstitucionesComponent implements OnInit {
                 if (err.status && err.error) {
                     this.alertService.alert_message(err.status, err.error);
                 } else {
-                    this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+                    this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
                 }
             },
             () => {
@@ -1049,14 +1158,14 @@ export class InstitucionesComponent implements OnInit {
                     console.log(response);
                     for (let i = 0; i < response.list.length; i++) {
                         response.list[i].contactos = JSON.parse(response.list[i].contactos);
-                        response.list[i].inicio_clases = response.list[i].inicio_clases.split("-").reverse().join("/");
+                        response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
                     }
                     this.instituciones_datatable_ref.set_results_offset_change(response.list);
                 } catch (error) {
                     console.log(error);
-                    
+
                     this.instituciones_datatable_ref.set_loading(false);
-                    this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+                    this.alertService.alert_aplication_error('Error Interno del Aplicativo');
                 }
 
             }
@@ -1089,7 +1198,7 @@ export class InstitucionesComponent implements OnInit {
                 if (err.status && err.error) {
                     this.alertService.alert_message(err.status, err.error);
                 } else {
-                    this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+                    this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
                 }
             },
             () => {
@@ -1098,15 +1207,15 @@ export class InstitucionesComponent implements OnInit {
                     for (let i = 0; i < response.list.length; i++) {
                         for (let i = 0; i < response.list.length; i++) {
                             response.list[i].contactos = JSON.parse(response.list[i].contactos);
-                            response.list[i].inicio_clases = response.list[i].inicio_clases.split("-").reverse().join("/");
+                            response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
                         }
                     }
                     this.instituciones_datatable_ref.set_results_filter_change(response.list, response.count);
                 } catch (error) {
                     console.log(error);
-                    
+
                     this.instituciones_datatable_ref.set_loading(false);
-                    this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+                    this.alertService.alert_aplication_error('Error Interno del Aplicativo');
                 }
             }
         );
@@ -1138,7 +1247,7 @@ export class InstitucionesComponent implements OnInit {
                 if (err.status && err.error) {
                     this.alertService.alert_message(err.status, err.error);
                 } else {
-                    this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+                    this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
                 }
             },
             () => {
@@ -1147,15 +1256,15 @@ export class InstitucionesComponent implements OnInit {
                     for (let i = 0; i < response.list.length; i++) {
                         for (let i = 0; i < response.list.length; i++) {
                             response.list[i].contactos = JSON.parse(response.list[i].contactos);
-                            response.list[i].inicio_clases = response.list[i].inicio_clases.split("-").reverse().join("/");
+                            response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
                         }
                     }
                     this.instituciones_datatable_ref.set_results_update_list(response.list, response.count);
                 } catch (error) {
                     console.log(error);
-                    
+
                     this.instituciones_datatable_ref.set_loading(false);
-                    this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+                    this.alertService.alert_aplication_error('Error Interno del Aplicativo');
                 }
             }
         );
@@ -1172,8 +1281,33 @@ export class InstitucionesComponent implements OnInit {
     open_insert_doctor() {
         this.doctor_form.clean_form();
         this.doctor_background_information = [];
-        this.instituciones_modal_view = 1;
+        this.doctor_modal_view = 1;
         this.doctores_modal.show();
+    }
+
+    insert_doctor() {
+      if (this.doctor_form.valid()) {
+        let form_values = this.doctor_form.get_values();
+        this.doctor_data = {
+          institution_id: this.instituciones_data.id,
+          first_name: form_values.first_name,
+          last_name: form_values.last_name,
+          phone: form_values.phone,
+          extension: form_values.extension,
+          email: form_values.email,
+          address: form_values.address,
+          id_card: form_values.id_card,
+          id_college: form_values.id_college,
+          id_rtn: form_values.id_rtn,
+          background_informatcion: this.antecedentes,
+          position: form_values.position,
+          working_hours: this.doctor_schedule,
+          academic_information: []
+        };
+        console.log(this.doctor_data);
+        this.doctors.push(this.doctor_data);
+        this.instituciones_data.doctores = this.doctors;
+      }
     }
 
     insert_institucion() {
@@ -1187,7 +1321,7 @@ export class InstitucionesComponent implements OnInit {
                 departamento: form_values.departamento,
                 ciudad: form_values.ciudad,
                 direccion: form_values.direccion,
-                inicio_clases: form_values.inicio_clases.split("/").reverse().join("-"),
+                inicio_clases: form_values.inicio_clases.split('/').reverse().join('-'),
                 calendario: form_values.calendario,
                 tipo: form_values.tipo,
                 contactos: JSON.stringify(this.instituciones_contactos)
@@ -1200,7 +1334,7 @@ export class InstitucionesComponent implements OnInit {
                     if (err.status && err.error) {
                         this.alertService.alert_message(err.status, err.error);
                     } else {
-                        this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+                        this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
                     }
                 },
                 () => {
@@ -1211,8 +1345,8 @@ export class InstitucionesComponent implements OnInit {
                         this.instituciones_loading = false;
                     } catch (error) {
                         console.log(error);
-                        
-                        this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+
+                        this.alertService.alert_aplication_error('Error Interno del Aplicativo');
                         this.instituciones_loading = false;
                     }
                 }
@@ -1239,7 +1373,7 @@ export class InstitucionesComponent implements OnInit {
 
     update_institucion() {
         if (this.instituciones_form.valid() && this.instituciones_contactos.length > 0) {
-            this.alertService.option_alert("Editar Institución", "¿Está seguro que desea editar la institución seleccionada?", "Sí, Editar").then((result) => {
+            this.alertService.option_alert('Editar Institución', '¿Está seguro que desea editar la institución seleccionada?', 'Sí, Editar').then((result) => {
                 if (result.value) {
                     this.instituciones_loading = true;
                     let form_values = this.instituciones_form.get_values();
@@ -1251,7 +1385,7 @@ export class InstitucionesComponent implements OnInit {
                         departamento: form_values.departamento,
                         ciudad: form_values.ciudad,
                         direccion: form_values.direccion,
-                        inicio_clases: form_values.inicio_clases.split("/").reverse().join("-"),
+                        inicio_clases: form_values.inicio_clases.split('/').reverse().join('-'),
                         calendario: form_values.calendario,
                         tipo: form_values.tipo,
                         contactos: JSON.stringify(this.instituciones_contactos)
@@ -1264,7 +1398,7 @@ export class InstitucionesComponent implements OnInit {
                             if (err.status && err.error) {
                                 this.alertService.alert_message(err.status, err.error);
                             } else {
-                                this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+                                this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
                             }
                         },
                         () => {
@@ -1275,8 +1409,8 @@ export class InstitucionesComponent implements OnInit {
                                 this.instituciones_loading = false;
                             } catch (error) {
                                 console.log(error);
-                                
-                                this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+
+                                this.alertService.alert_aplication_error('Error Interno del Aplicativo');
                                 this.instituciones_loading = false;
                             }
                         }
@@ -1287,7 +1421,7 @@ export class InstitucionesComponent implements OnInit {
     }
 
     open_delete_institucion(data) {
-        this.alertService.option_alert("Eliminar Institución", "¿Está seguro que desea eliminar la institución seleccionada?<br><br><b>Institución:<br></b><b class='text-success'> " + data.nombre + "</b>", "Sí, Eliminar").then((result) => {
+        this.alertService.option_alert('Eliminar Institución', '¿Está seguro que desea eliminar la institución seleccionada?<br><br><b>Institución:<br></b><b class=\'text-success\'> ' + data.nombre + '</b>', 'Sí, Eliminar').then((result) => {
             if (result.value) {
                 this.delete_institucion(data.id);
             }
@@ -1307,7 +1441,7 @@ export class InstitucionesComponent implements OnInit {
                 if (err.status && err.error) {
                     this.alertService.alert_message(err.status, err.error);
                 } else {
-                    this.alertService.alert_internal_server_error("Error interno del servidor", "Revise su conexión de internet o inténtelo más tarde");
+                    this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
                 }
             },
             () => {
@@ -1317,8 +1451,8 @@ export class InstitucionesComponent implements OnInit {
                     this.instituciones_datatable_loading = false;
                 } catch (error) {
                     console.log(error);
-                    
-                    this.alertService.alert_aplication_error("Error Interno del Aplicativo");
+
+                    this.alertService.alert_aplication_error('Error Interno del Aplicativo');
                     this.instituciones_datatable_loading = false;
                 }
             }
@@ -1335,27 +1469,27 @@ export class InstitucionesComponent implements OnInit {
             if (this.instituciones_search_form.get_values().nombre) {
                 this.instituciones_search_data.nombre = this.instituciones_search_form.get_values().nombre;
             } else {
-                this.instituciones_search_data.nombre = "";
+                this.instituciones_search_data.nombre = '';
             }
             if (this.instituciones_search_form.get_values().ciudad) {
                 this.instituciones_search_data.ciudad = this.instituciones_search_form.get_values().ciudad;
             } else {
-                this.instituciones_search_data.ciudad = "";
+                this.instituciones_search_data.ciudad = '';
             }
             if (this.instituciones_search_form.get_values().departamento) {
                 this.instituciones_search_data.departamento = this.instituciones_search_form.get_values().departamento;
             } else {
-                this.instituciones_search_data.departamento = "";
+                this.instituciones_search_data.departamento = '';
             }
             if (this.instituciones_search_form.get_values().calendario) {
                 this.instituciones_search_data.calendario = this.instituciones_search_form.get_values().calendario;
             } else {
-                this.instituciones_search_data.calendario = "";
+                this.instituciones_search_data.calendario = '';
             }
             if (this.instituciones_search_form.get_values().tipo) {
                 this.instituciones_search_data.tipo = this.instituciones_search_form.get_values().tipo;
             } else {
-                this.instituciones_search_data.tipo = "";
+                this.instituciones_search_data.tipo = '';
             }
             this.instituciones_search_modal.hide();
             this.instituciones_datatable_ref.emit_get_results_filter_change();
@@ -1364,11 +1498,11 @@ export class InstitucionesComponent implements OnInit {
 
     clean_search_instituciones() {
         this.instituciones_search_data = {
-            nombre: "",
-            ciudad: "",
-            departamento: "",
-            calendario: "",
-            tipo: ""
+            nombre: '',
+            ciudad: '',
+            departamento: '',
+            calendario: '',
+            tipo: ''
         }
         this.instituciones_search_modal.hide();
         this.instituciones_datatable_ref.emit_get_results_filter_change();
@@ -1378,9 +1512,9 @@ export class InstitucionesComponent implements OnInit {
         this.contacto_view_ref = this.instituciones_modal_view + 0;
         this.contacto_submitted = false;
         this.contacto_data = {
-            nombre: "",
-            cargo: "",
-            celular: ""
+            nombre: '',
+            cargo: '',
+            celular: ''
         }
         this.instituciones_modal_view = 3;
     }
@@ -1388,9 +1522,9 @@ export class InstitucionesComponent implements OnInit {
     close_add_contacto() {
         this.contacto_submitted = false;
         this.contacto_data = {
-            nombre: "",
-            cargo: "",
-            celular: ""
+            nombre: '',
+            cargo: '',
+            celular: ''
         }
         this.instituciones_modal_view = this.contacto_view_ref + 0;
     }
@@ -1402,10 +1536,17 @@ export class InstitucionesComponent implements OnInit {
     remove_doctor(index) {
         this.instituciones_data.doctores.splice(index, 1);
     }
+    remove_doctor_hours(index) {
+      this.doctor_schedule.splice(index, 1);
+    }
+
+    remove_antecedente(index) {
+      this.antecedentes.splice(index, 1);
+    }
 
     add_contacto() {
         console.log(this.instituciones_contactos);
-        
+
         if (this.contacto_form.valid) {
             this.instituciones_contactos.push(this.contacto_data);
             this.close_add_contacto();
@@ -1418,20 +1559,38 @@ export class InstitucionesComponent implements OnInit {
         this.open_insert_doctor();
     }
 
-    //INSTITUCIONES ##########################################################
-    //########################################################################
+    add_doctor_schedule() {
+      this.working_schedule = {
+        hours_day: this.hours_day,
+        hours_start: this.hours_start,
+        hours_end: this.hours_end
+      };
+      this.doctor_schedule.push(
+        this.working_schedule
+      );
+      this.working_schedule = {
+        hours_day: '',
+        hours_start: '',
+        hours_end: ''
+      };
+      this.hours_day = '';
+      this.hours_start = '';
+      this.hours_end = '';
+    }
 
-    //########################################################################
-    //CATALOGS ###############################################################
-
-    //CATALOGS ###############################################################
-    //########################################################################
-
-    //########################################################################
-    //MISC ###################################################################
-
-    //MISC ###################################################################
-    //########################################################################
+    add_doctor_antecedente() {
+      this.complete_antecedente = {
+        antecedente_date: this.antecedente_date,
+        antecedente_desc: this.antecedente_desc
+      };
+      this.antecedentes.push(this.complete_antecedente);
+      this.antecedente_date = '';
+      this.antecedente_desc = '';
+      this.complete_antecedente = {
+        antecedente_date: '',
+        antecedente_desc: ''
+      };
+    }
 
     ngOnDestroy() {
         setTimeout(() => this.layoutService.off('resize.app-home'));
