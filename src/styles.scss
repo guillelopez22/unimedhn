@@ -359,7 +359,7 @@ ngb-typeahead-window .dropdown-item {
 }
 
 .fade-in {
-  -webkit-animation: fadein 0.7s; 
+  -webkit-animation: fadein 0.7s;
      -moz-animation: fadein 0.7s;
       -ms-animation: fadein 0.7s;
        -o-animation: fadein 0.7s;
@@ -420,7 +420,7 @@ ngb-typeahead-window .dropdown-item {
   width: 100%;
   position: relative;
   margin: 20px 0;
-  
+
   &:after {
     content: "";
     display: table;
@@ -692,7 +692,7 @@ ngb-typeahead-window .dropdown-item {
   background-color: #fff;
   opacity: 0.9;
   display: flex;
-  align-items: center; 
+  align-items: center;
   z-index: 1001;
 }
 
@@ -706,13 +706,13 @@ ngb-typeahead-window .dropdown-item {
 }
 
 .custom-modal-body{
-  position: relative; 
+  position: relative;
   padding:15px !important;
   background-color:#F5F5F5;
 }
 
 .custom-modal-header{
-  padding:15px !important; 
+  padding:15px !important;
   background-color: #17b3a3;
   color:#fff;
 }
@@ -728,7 +728,9 @@ ngb-typeahead-window .dropdown-item {
 .time-picker-header{
   background-color: #17b3a3 !important;
 }
-
+#time-picker-wrapper{
+  z-index:1151 !important;
+}
 .time-picker-clock > button.active{
   background: #17b3a3 !important;
 }
@@ -788,7 +790,7 @@ ngb-typeahead-window .dropdown-item {
 }
 
 .datatable-event{
-  padding-right: 15px !important; 
+  padding-right: 15px !important;
   padding-left: 15px !important;
 }
 
@@ -832,8 +834,8 @@ ngb-typeahead-window .dropdown-item {
   background-color:#D6E4FF !important;
 }
 
-.ui-timepicker-container{ 
-     z-index:1151 !important; 
+.ui-timepicker-container{
+     z-index:1151 !important;
 }
 
 .cdk-global-overlay-wrapper, .cdk-overlay-container {
@@ -855,4 +857,8 @@ ngb-typeahead-window .dropdown-item {
   border-right: 1px solid rgba(24, 28, 33, 0.06);
   padding:20px;
   // background-color: #fff;
+}
+
+.custom-accept-button {
+  height: 35px;
 }

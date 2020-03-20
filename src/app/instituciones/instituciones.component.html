@@ -98,11 +98,19 @@
       <ul class="nav nav-tabs nav-responsive-md">
         <li (click)="open_doctores()" class="nav-item" style="cursor: pointer;">
           <span class="nav-link" [class.active]="inner_view==1"><b
-              [class.text-primary]="inner_view==2">Doctores</b></span>
+              [class.text-primary]="inner_view==1">Doctores</b></span>
         </li>
         <li (click)="open_alumnos()" class="nav-item" style="cursor: pointer;">
           <span class="nav-link" [class.active]="inner_view==2"><b
-              [class.text-primary]="inner_view==1">Alumnos</b></span>
+              [class.text-primary]="inner_view==2">Alumnos</b></span>
+        </li>
+        <li (click)="open_medicamentos()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="inner_view==3"><b
+              [class.text-primary]="inner_view==3">Medicamentos</b></span>
+        </li>
+        <li (click)="open_insumos()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="inner_view==4"><b
+              [class.text-primary]="inner_view==4">Insumos</b></span>
         </li>
       </ul>
       <div class="custom-nav-content" *ngIf="inner_view==1">
@@ -128,7 +136,7 @@
             <tbody *ngIf="instituciones_data.doctores.length == 0">
               <tr [class.custom-table-error]="instituciones_data.doctores.length == 0">
                 <th colspan="3" class="text-center text-danger p-2">No se han agregado doctores
-                  de la institución</th>
+                  a la institución</th>
               </tr>
             </tbody>
           </table>
@@ -137,12 +145,37 @@
         </div>
       </div>
       <div class="custom-nav-content" *ngIf="inner_view==2">
-        <service-datatable #instituciones_datatable_ref [datatable_options]="instituciones_datatable"
-          (option_event)="instituciones_datatable_events($event)"
-          (get_results_offset_change)="instituciones_datatable_get_results_offset_change($event)"
-          (get_results_filter_change)="instituciones_datatable_get_results_filter_change($event)"
-          (get_results_update_list)="instituciones_datatable_get_results_update_list($event)">
-        </service-datatable>
+        <div class="table-responsive">
+          <table class="table">
+            <thead style="background-color: #fff;">
+              <tr>
+                <th class="p-2 w-25">Nombre</th>
+                <th class="p-2 w-25">Apellido</th>
+                <th class="p-2 w-25">Grado</th>
+                <th class="p-2 w-25">Seccion</th>
+                <th class="p-2 text-center" style="width: 1%;">Opciones</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="instituciones_data.doctores.length > 0">
+              <tr *ngFor="let x of instituciones_data.doctores; let i = index">
+                <th class="p-2">{{x.first_name}}</th>
+                <th class="p-2">{{x.last_name}}</th>
+                <td class="p-2">{{x.grado}}</td>
+                <td class="p-2">{{x.seccion}}</td>
+                <td (click)="remove_doctor(i)" class="p-2" class="text-center custom-datatable-red"><i
+                    class="fa fa-times mr-2 ml-2"></i></td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="instituciones_data.doctores.length == 0">
+              <tr [class.custom-table-error]="instituciones_data.doctores.length == 0">
+                <th colspan="3" class="text-center text-danger p-2">No se han agregado alumnos
+                  a la institución</th>
+              </tr>
+            </tbody>
+          </table>
+          <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i> Agregar
+            Alumno</button>
+        </div>
       </div>
     </div>
   </div>
@@ -316,7 +349,18 @@
               Jornada de Trabajo
             </h4>
           </div>
-          <div class="col-md-3">
+          <div class="col-12">
+            <form-renderer #jornada_form [config]="jornadas_inputs"></form-renderer>
+          </div>
+          <div class="col-12">
+            <div class="input-group-append float-right">
+                <button class="btn btn-secondary mr-2" name="cancelar"
+                (click)="cancel_doctor_schedule()"><i class="fa fa-check"></i> Cancelar</button>
+                <button class="btn btn-success" name="agregar"
+                (click)="add_doctor_schedule()"><i class="fa fa-check"></i>Agregar</button>
+            </div>
+          </div>
+          <!-- <div class="col-md-3">
             <label for="hours_day"><span class="font-weight-bold">Dia de Trabajo</span></label>
             <input type="text" class="form-control" [(ngModel)]="hours_day" name="hours_day">
           </div>
@@ -327,11 +371,7 @@
           <div class="col-md-3">
             <label for="hours_end"><span class="font-weight-bold">Fin de Jornada</span></label>
             <input type="text" class="form-control" [(ngModel)]="hours_end" name="hours_end">
-          </div>
-          <div class="col-md-3 align-self-end">
-            <button class="btn btn-success" name="agregar" [disabled]='hours_day === "" || hours_start === "" || hours_end === ""' 
-            (click)="add_doctor_schedule()"><i class="fa fa-check"></i></button>
-          </div>
+          </div> -->
           <div class="col-md-12 pt-5">
             <div class="table-responsive">
               <table class="table">
@@ -367,17 +407,24 @@
               Antecedentes
             </h4>
           </div>
-          <div class="col-md-4">
+          <div class="col-12">
+            <form-renderer #antecedentes_form [config]="antecedentes_inputs"></form-renderer>
+          </div>
+          <!-- <div class="col-md-4">
             <label for="hours_day"><span class="font-weight-bold">Fecha</span></label>
             <input type="text" class="form-control" [(ngModel)]="antecedente_date" name="hours_day">
           </div>
           <div class="col-md-4">
             <label for="hours_start"><span class="font-weight-bold">Descripcion</span></label>
             <input type="text" class="form-control" [(ngModel)]="antecedente_desc" name="hours_start">
-          </div>
-          <div class="col-md-4 align-self-end">
-            <button class="btn btn-success" name="agregar" [disabled]='antecedente_date === "" || antecedente_desc === ""'
-             (click)="add_doctor_antecedente()"><i class="fa fa-check"></i></button>
+          </div> -->
+          <div class="col-12">
+            <div class="input-group-append float-right">
+                <button class="btn btn-secondary mr-2" name="cancelar"
+                (click)="cancel_doctor_antecedente()"><i class="fa fa-check"></i> Cancelar</button>
+                <button class="btn btn-success" name="agregar"
+                (click)="add_doctor_antecedente()"><i class="fa fa-check"></i>Agregar</button>
+            </div>
           </div>
           <div class="col-md-12 pt-5">
             <div class="table-responsive">
@@ -412,7 +459,7 @@
               Información Académica
             </h4>
           </div>
-          <div class="col-md-3">
+          <!-- <div class="col-md-3">
             <label for="hours_day"><span class="font-weight-bold">Institución</span></label>
             <input type="text" class="form-control" [(ngModel)]="academic_institution" name="academic_institution">
           </div>
@@ -423,10 +470,17 @@
           <div class="col-md-3">
             <label for="hours_start"><span class="font-weight-bold">Fecha</span></label>
             <input type="text" class="form-control" [(ngModel)]="academic_date" name="academic_date">
+          </div> -->
+          <div class="col-12">
+            <form-renderer #academic_form [config]="academic_inputs" ></form-renderer>
           </div>
-          <div class="col-md-3 align-self-end">
-            <button class="btn btn-success" name="agregar" [disabled]='academic_date === "" || academic_institution === "" || academic_title === ""'
-             (click)="add_doctor_academics()"><i class="fa fa-check"></i></button>
+          <div class="col-12">
+            <div class="input-group-append float-right">
+                <button class="btn btn-secondary mr-2" name="cancelar"
+                (click)="cancel_doctor_academics()"><i class="fa fa-check"></i> Cancelar</button>
+                <button class="btn btn-success" name="agregar"
+                (click)="add_doctor_academics()"><i class="fa fa-check"></i>Agregar</button>
+            </div>
           </div>
           <div class="col-md-12 pt-5">
             <div class="table-responsive">
@@ -461,6 +515,45 @@
       <div class="modal-footer custom-modal-footer text-left">
         <button *ngIf="instituciones_modal_view==1 || instituciones_modal_view==2" [disabled]="instituciones_loading"
           class="btn btn-danger btn-sm" (click)="doctores_modal.hide();return_insert_view()"><i class="fa fa-times"></i> Cerrar</button>
+        <button *ngIf="doctor_modal_view==1" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
+          (click)="insert_doctor()"><i class="fa fa-check"></i> Registrar
+          Médico</button>
+        <button *ngIf="doctor_modal_view==3" [disabled]="instituciones_loading" class="btn btn-danger btn-sm"
+          (click)="close_add_contacto()"><i class="fa fa-arrow-left"></i>
+          Regresar</button>
+        <button *ngIf="doctor_modal_view==3" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
+          (click)="add_contacto()"><i class="fa fa-check"></i> Agregar
+          Contacto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #alumnos_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-user-md mr-2"></i>Adicionar Alumno</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <div class="cover-div" *ngIf="instituciones_loading">
+          <div class="sk-wave sk-primary">
+            <div class="sk-rect sk-rect1 custom-loader"></div>
+            <div class="sk-rect sk-rect2 custom-loader"></div>
+            <div class="sk-rect sk-rect3 custom-loader"></div>
+            <div class="sk-rect sk-rect4 custom-loader"></div>
+            <div class="sk-rect sk-rect5 custom-loader"></div>
+          </div>
+        </div>
+        <div class="fade-in">
+          <form-renderer #alumno_form [config]="alumno_inputs">
+          </form-renderer>
+        </div>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button
+          class="btn btn-danger btn-sm" (click)="alumnos_modal.hide()"><i class="fa fa-times"></i> Cerrar</button>
         <button *ngIf="doctor_modal_view==1" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
           (click)="insert_doctor()"><i class="fa fa-check"></i> Registrar
           Médico</button>
