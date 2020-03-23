@@ -1,0 +1,16 @@
+<h4 class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>Administrar Alumnos
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los alumnos</small></div>
+  </div>
+</h4>
+
+<div class="fade-in">
+  <datatable #alumnos_datatable_ref
+    [options]="alumnos_datatable"
+    [loading]="alumnos_datatable_loading"
+    [data_array]="alumnos"
+    >
+  </datatable>
+</div>
+

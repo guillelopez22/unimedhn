@@ -1,0 +1,15 @@
+<h4 class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>Administrar Medicos
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los medicos</small></div>
+  </div>
+</h4>
+
+<div class="fade-in">
+  <datatable #medicos_datatable_ref
+    [options]="medicos_datatable"
+    [loading]="medicos_datatable_loading"
+    [data_array]="medicos"
+    >
+  </datatable>
+</div>

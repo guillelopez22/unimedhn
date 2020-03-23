@@ -1,5 +1,5 @@
-import { Injectable } from  '@angular/core';
-import { HttpClient, HttpParams, HttpUrlEncodingCodec, HttpParameterCodec, HttpHeaders } from  '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams, HttpUrlEncodingCodec, HttpParameterCodec, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import 'rxjs/add/observable/of';
@@ -11,159 +11,569 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/throw';
 
 export class FormQueryEncoder implements HttpParameterCodec {
-    encodeKey(k: string): string { return encodeURIComponent(k); }
-    encodeValue(v: string): string { return encodeURIComponent(v); }
-    decodeKey(k: string): string { return encodeURIComponent(k); }
-    decodeValue(v: string): string { return encodeURIComponent(v); }
+  encodeKey(k: string): string { return encodeURIComponent(k); }
+  encodeValue(v: string): string { return encodeURIComponent(v); }
+  decodeKey(k: string): string { return encodeURIComponent(k); }
+  decodeValue(v: string): string { return encodeURIComponent(v); }
 }
 
 @Injectable()
 export class AppEndpoints {
-    private endpoint:string;
+  private endpoint: string;
 
-    constructor(private httpClient: HttpClient, private router: Router) {
-        this.endpoint = "http://"+window.location.hostname+":8000/api";
+  constructor(private httpClient: HttpClient, private router: Router) {
+    this.endpoint = "http://" + window.location.hostname + ":8000/api";
+  }
+
+  //########################################################################
+  //CATALOGS ###############################################################
+
+
+  //CATALOGS ###############################################################
+  //########################################################################
+
+  //########################################################################
+  //AUTH ###################################################################
+
+  login(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('username', payload.username)
+      .set('password', payload.password);
+    return this.httpClient.get(this.endpoint + "/login", { params: params, responseType: 'json' });
+  }
+
+  request_recovery_code(payload): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/request_recovery_code", payload, { responseType: 'json' });
+  }
+
+  validate_recovery_code(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('id', payload.id)
+      .set('user_email', payload.user_email)
+      .set('restore_code', payload.restore_code);
+    return this.httpClient.get(this.endpoint + "/validate_recovery_code", { params: params, responseType: 'json' });
+  }
+
+  request_password_change(payload): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/request_password_change", payload, { responseType: 'json' });
+  }
+
+  request_password_change_first_login(payload): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/request_password_change_first_login", payload, { responseType: 'json' });
+  }
+
+  logout() {
+    this.reset_session();
+  }
+
+  get_session() {
+    if (localStorage.getItem('unimed_session')) {
+      var object = JSON.parse(localStorage.getItem('unimed_session'));
+      if (object) {
+        return {
+          name: object.name,
+          token: object.token,
+          valid: true
+        };
+        return object;
+      } else {
+        return {
+          name: "",
+          token: "",
+          valid: false
+        };
+      }
+    } else {
+      return {
+        name: "",
+        token: "",
+        valid: false
+      };
+    }
+  }
+
+  set_session(session) {
+    console.log(session);
+    localStorage.setItem('unimed_session', JSON.stringify(session));
+  }
+
+  reset_session() {
+    this.router.navigateByUrl('/conectarse');
+    localStorage.removeItem('unimed_session');
+  }
+
+  get_headers() {
+    if (this.get_session() && this.get_session().token) {
+      var headers = new HttpHeaders({
+        'Authorization': this.get_session().token
+      });
+      return headers;
+    } else {
+      return null;
     }
 
-    //########################################################################
-    //CATALOGS ###############################################################
+  }
+
+  //AUTH ###################################################################
+  //########################################################################
+
+  //########################################################################
+  //INSTITUCIONES ##########################################################
+
+  get_instituciones(payload): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_instituciones", { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
+
+  insert_institucion(payload): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/insert_institucion", payload, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  update_institucion(payload): Observable<any> {
+    return this.httpClient.put(this.endpoint + "/update_institucion", payload, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  delete_institucion(payload): Observable<any> {
+    return this.httpClient.delete(this.endpoint + "/delete_institucion", { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
+
+  //INSTITUCIONES ##########################################################
+  //########################################################################
+
+  //########################################################################
+  //DOCTORS ################################################################
+  get_doctors(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/doctors_list', { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  doctor_by_institution(data): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/doctors_institution_list?institution_id=' + data.institution_id, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  insert_doctors(payload): Observable<any> {
+    console.log(payload)
+    return this.httpClient.post(this.endpoint + "/insert_doctor", payload, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  update_doctor(payload): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/update_doctor', { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
+
+  delete_doctor(payload): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/delete_doctor', { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
 
 
-    //CATALOGS ###############################################################
-    //########################################################################
 
-    //########################################################################
-    //AUTH ###################################################################
+  //DOCTORS ################################################################
+  //########################################################################
 
-        login(payload):Observable<any>{
-            let params = new HttpParams({encoder: new FormQueryEncoder()})
-            .set('username', payload.username)
-            .set('password', payload.password);
-            return this.httpClient.get(this.endpoint + "/login", {params:params, responseType: 'json'});
-        }
+  //########################################################################
+  //DOCTORS ################################################################
 
-        request_recovery_code(payload):Observable<any>{
-            return this.httpClient.post(this.endpoint + "/request_recovery_code", payload, {responseType: 'json'});
-        }
+  get_alumnos(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/patient_list', { headers: this.get_headers(), responseType: 'json' });
+  }
 
-        validate_recovery_code(payload):Observable<any>{
-            let params = new HttpParams({encoder: new FormQueryEncoder()})
-            .set('id', payload.id)
-            .set('user_email', payload.user_email)
-            .set('restore_code', payload.restore_code);
-            return this.httpClient.get(this.endpoint + "/validate_recovery_code", {params:params, responseType: 'json'});
-        }
+  alumno_by_institution(data): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/patients_institution_list?institution_id=' + data.institution_id, { headers: this.get_headers(), responseType: 'json' });
+  }
 
-        request_password_change(payload):Observable<any>{
-            return this.httpClient.post(this.endpoint + "/request_password_change", payload, {responseType: 'json'});
-        }
+  insert_alumno(payload): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/insert_patient', payload, { headers: this.get_headers(), responseType: 'json' });
+  }
 
-        request_password_change_first_login(payload):Observable<any>{
-            return this.httpClient.post(this.endpoint + "/request_password_change_first_login", payload, {responseType: 'json'});
-        }
+  update_alumno(payload): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/update_patient', { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
 
-        logout(){
-            this.reset_session();
-        }
+  delete_alumno(payload): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/delete_patient', { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
 
-        get_session(){
-            if(localStorage.getItem('unimed_session')){
-                var object = JSON.parse(localStorage.getItem('unimed_session'));
-                if(object){
-                    return{
-                        name:object.name,
-                        token:object.token,
-                        valid:true
-                    };
-                    return object;
-                }else{
-                    return{
-                        name:"",
-                        token:"",
-                        valid:false
-                    };
-                }
-            }else{
-                return{
-                    name:"",
-                    token:"",
-                    valid:false
-                };
-            }
-        }
+  //DOCTORS ################################################################
+  //########################################################################
 
-        set_session(session){
-            console.log(session);
-            localStorage.setItem('unimed_session', JSON.stringify(session));
-        }
+  //########################################################################
+  //ACTIVE PRINCIPLES ######################################################
 
-        reset_session(){
-            this.router.navigateByUrl('/conectarse');
-            localStorage.removeItem('unimed_session');
-        }
+  get_all_insumos(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_all_insumos", { responseType: 'json' });
+  }
 
-        get_headers(){
-            if(this.get_session() && this.get_session().token){
-                var headers = new HttpHeaders({
-                    'Authorization': this.get_session().token
-                });
-                return headers;
-            }else{
-                return null;
-            }
-            
-        }
+  get_all_medicamentos(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_all_medicamentos", { responseType: 'json' });
+  }
 
-    //AUTH ###################################################################
-    //########################################################################
+  insert_active_principle(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('name', payload.name)
+      .set('description', payload.description);
+    return this.httpClient.post(this.endpoint + "/insert_active_principle", params, { responseType: 'json' });
+  }
 
-    //########################################################################
-    //INSTITUCIONES ##########################################################
+  update_active_principle(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('active_principle_id', payload.active_principle_id)
+      .set('name', payload.name)
+      .set('description', payload.description);
+    return this.httpClient.put(this.endpoint + "/update_active_principle", params, { responseType: 'json' });
+  }
 
-        get_instituciones(payload):Observable<any>{
-            return this.httpClient.get(this.endpoint + "/get_instituciones", { params:payload, headers:this.get_headers(), responseType: 'json' });
-        }
+  delete_active_principle(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('active_principle_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_active_principle", { params: params, responseType: 'json' });
+  }
 
-        insert_institucion(payload):Observable<any>{
-            return this.httpClient.post(this.endpoint + "/insert_institucion", payload, { headers:this.get_headers(), responseType: 'json'});
-        }
+  //ACTIVE PRINCIPLES ######################################################
+  //########################################################################
 
-        update_institucion(payload):Observable<any>{
-            return this.httpClient.put(this.endpoint + "/update_institucion", payload, { headers:this.get_headers(), responseType: 'json'});
-        }
 
-        delete_institucion(payload):Observable<any>{
-            return this.httpClient.delete(this.endpoint + "/delete_institucion", { params:payload, headers:this.get_headers(), responseType: 'json' });
-        }
+  //########################################################################
+  //TRADENAMES #############################################################
 
-    //INSTITUCIONES ##########################################################
-    //########################################################################
+  get_tradename_list(active_principle_id): Observable<any> {
+    return this.httpClient.get(this.endpoint +
+      '/get_tradename_list?active_principle_id=' + active_principle_id , { headers: this.get_headers(), responseType: 'json' });
+  }
 
-    //########################################################################
-    //DOCTORS ################################################################
-        get_doctors():Observable<any> {
-            return this.httpClient.get(this.endpoint + '/doctors_list', { headers:this.get_headers(), responseType: 'json' });
-        }
+  insert_tradename(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('active_principle_id', payload.active_principle_id)
+      .set('name', payload.name)
+      .set('description', payload.description);
+    return this.httpClient.post(this.endpoint + "/insert_tradename", params, { responseType: 'json' });
+  }
 
-        doctor_by_institution(data):Observable<any> {
-            return this.httpClient.get(this.endpoint + '/doctors_institution_list?institution_id=' + data.institution_id, { headers:this.get_headers(), responseType: 'json' });
-        }
+  update_tradename(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('tradename_id', payload.tradename_id)
+      .set('name', payload.name)
+      .set('description', payload.description);
+    return this.httpClient.put(this.endpoint + "/update_tradename", params, { responseType: 'json' });
+  }
 
-        insert_doctors(payload):Observable<any> {
-            console.log(payload)
-            return this.httpClient.post(this.endpoint + "/insert_doctor", payload, { headers:this.get_headers(), responseType: 'json'});
-        }
+  delete_tradename(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('tradename_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_tradename", { params: params, responseType: 'json' });
+  }
 
-        update_doctor(payload):Observable<any> {
-            return this.httpClient.get(this.endpoint + '/update_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
-        }
+  //TRADENAMES #############################################################
+  //########################################################################
 
-        delete_doctor(payload):Observable<any> {
-            return this.httpClient.get(this.endpoint + '/delete_doctor', { params:payload, headers:this.get_headers(), responseType: 'json' });
-        }
+  //########################################################################
+  //CONCENTRATIONS #########################################################
 
-    
 
-    //DOCTORS ################################################################
-    //########################################################################
+  get_concentrations_list(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_concentrations_list", { responseType: 'json' });
+  }
+
+  insert_concentrations(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('quantity1', payload.quantity1)
+      .set('measure_unit_id1', payload.measure_unit_id1)
+      .set('quantity2', payload.quantity2)
+      .set('measure_unit_id2', payload.measure_unit_id2)
+      .set('description', payload.description);
+    return this.httpClient.post(this.endpoint + "/insert_concentrations", params, { responseType: 'json' });
+  }
+
+  update_concentrations(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('concentration_id', payload.concentration_id)
+      .set('quantity1', payload.quantity1)
+      .set('measure_unit_id1', payload.measure_unit_id1)
+      .set('quantity2', payload.quantity2)
+      .set('measure_unit_id2', payload.measure_unit_id2)
+      .set('description', payload.description);
+    return this.httpClient.put(this.endpoint + "/update_concentrations", params, { responseType: 'json' });
+  }
+
+  delete_concentrations(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('concentration_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_concentrations", { params: params, responseType: 'json' });
+  }
+
+  //CONCENTRATIONS #########################################################
+  //########################################################################
+
+  get_presentation_list(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_presentation_list", { responseType: 'json' });
+  }
+
+  get_measure_units_list(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_measure_units_list", { responseType: 'json' });
+  }
+
+  get_products_list(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_products_list", { responseType: 'json' });
+  }
+
+  insert_producto(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('tradename_id', payload.tradename_id)
+      .set('presentation_id', payload.presentation_id)
+      .set('concentration_id', payload.concentration_id)
+      .set('presentation_quantity', payload.presentation_quantity)
+      .set('presentation_measure_unit_id', payload.presentation_measure_unit_id)
+      .set('aus_quantity', payload.aus_quantity)
+      .set('aus_measure_unit_id', payload.aus_measure_unit_id)
+      .set('description', payload.description);
+    return this.httpClient.post(this.endpoint + "/insert_producto", params, { responseType: 'json' });
+  }
+
+  update_producto(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('product_id', payload.product_id)
+      .set('tradename_id', payload.tradename_id)
+      .set('presentation_id', payload.presentation_id)
+      .set('concentration_id', payload.concentration_id)
+      .set('presentation_quantity', payload.presentation_quantity)
+      .set('presentation_measure_unit_id', payload.presentation_measure_unit_id)
+      .set('aus_quantity', payload.aus_quantity)
+      .set('aus_measure_unit_id', payload.aus_measure_unit_id)
+      .set('description', payload.description);
+    return this.httpClient.put(this.endpoint + "/update_producto", params, { responseType: 'json' });
+  }
+
+  delete_producto(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('product_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_producto", { params: params, responseType: 'json' });
+  }
+
+  get_batchs_list(product_id): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('product_id', product_id);
+    return this.httpClient.get(this.endpoint + "/get_batchs_list", { params: params, responseType: 'json' });
+  }
+
+  insert_batch(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('product_id', payload.product_id)
+      .set('expiration_date', payload.expiration_date)
+      .set('purchase_date', payload.purchase_date)
+      .set('batch_price', payload.batch_price)
+      .set('batch_quantity', payload.batch_quantity)
+      .set('observation', payload.observation);
+    return this.httpClient.post(this.endpoint + "/insert_batch", params, { responseType: 'json' });
+  }
+
+  update_batch(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('batch_id', payload.batch_id)
+      .set('product_id', payload.product_id)
+      .set('expiration_date', payload.expiration_date)
+      .set('purchase_date', payload.purchase_date)
+      .set('batch_price', payload.batch_price)
+      .set('batch_quantity', payload.batch_quantity)
+      .set('observation', payload.observation);
+    return this.httpClient.put(this.endpoint + "/update_batch", params, { responseType: 'json' });
+  }
+
+  delete_batch(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('batch_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_batch", { params: params, responseType: 'json' });
+  }
+
+  get_active_principle_total_list(): Observable<any> {
+    return this.httpClient.get(this.endpoint + "/get_active_principles_list", { responseType: 'json' });
+  }
+
+  get_batchs_for_asign_list(product_id): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('product_id', product_id);
+    return this.httpClient.get(this.endpoint + "/get_batchs_for_asign_list", { params: params, responseType: 'json' });
+  }
+
+  insert_cartera_productos(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('cartera_id', payload.cartera_id)
+      .set('product_id', payload.product_id)
+      .set('batch_id', payload.batch_id)
+      .set('quantity', payload.quantity);
+    return this.httpClient.post(this.endpoint + "/insert_cartera_productos", params, { responseType: 'json' });
+  }
+
+  get_cartera_productos_list(product_id): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('product_id', product_id);
+    return this.httpClient.get(this.endpoint + "/get_cartera_productos_list", { params: params, responseType: 'json' });
+  }
+
+  update_cartera_productos(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('cartera_medicamentos_id', payload.cartera_medicamentos_id)
+      .set('cartera_id', payload.cartera_id)
+      .set('product_id', payload.product_id)
+      .set('batch_id', payload.batch_id)
+      .set('quantity', payload.quantity);
+    return this.httpClient.put(this.endpoint + "/update_cartera_productos", params, { responseType: 'json' });
+  }
+
+  delete_cartera_productos(payload): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('cartera_medicamentos_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_cartera_productos", { params: params, responseType: 'json' });
+  }
+
+  get_carteras_by_active_principle_list(active_principle_id): Observable<any> {
+    let params = new HttpParams({ encoder: new FormQueryEncoder() })
+      .set('active_principle_id', active_principle_id);
+    return this.httpClient.get(this.endpoint + "/get_carteras_by_active_principle_list", { params: params, responseType: 'json' });
+  }
+
+
+
+  // medicamentos
+  insert_medicamento(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('nombre', payload.nombre)
+    .set('nombre_comercial', payload.nombre_comercial)
+    .set('presentacion', payload.presentacion)
+    .set('concentracion', payload.concentracion);
+    return this.httpClient.post(this.endpoint + "/insert_medicamento", params, {responseType: 'json'});
+  }
+
+  update_medicamento(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('medicamento_id', payload.medicamento_id)
+    .set('nombre', payload.nombre)
+    .set('nombre_comercial', payload.nombre_comercial)
+    .set('presentacion', payload.presentacion)
+    .set('concentracion', payload.concentracion);
+    return this.httpClient.put(this.endpoint + "/update_medicamento", params, {responseType: 'json'});
+  }
+
+  delete_medicamento(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('medicamento_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_medicamento", {params:params, responseType: 'json'});
+  }
+
+  get_medicamentos_list():Observable<any>{
+    return this.httpClient.get(this.endpoint + "/get_medicamentos_list", {responseType: 'json'});
+  }
+
+  get_medicamentos_list_cartera():Observable<any>{
+    return this.httpClient.get(this.endpoint + "/get_medicamentos_list_cartera", {responseType: 'json'});
+  }
+
+  insert_inventario_medicamento(payload, medicamento_id):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('costo_compra', payload.costo_compra.replace(/,/g, ''))
+    .set('cantidad_dosis', payload.cantidad_dosis.replace(/,/g, ''))
+    .set('costo_dosis', payload.costo_dosis.replace(/,/g, ''))
+    .set('entrada_inventario', payload.entrada_inventario.replace(/,/g, ''))
+    .set('salida_inventario', payload.salida_inventario.replace(/,/g, ''))
+    .set('saldo_inventario', payload.saldo_inventario.replace(/,/g, ''))
+    .set('vencimiento', payload.vencimiento)
+    .set('comentarios', payload.comentarios)
+    .set('numero_inventario', payload.numero_inventario)
+    .set('medicamento_id', medicamento_id);
+    return this.httpClient.post(this.endpoint + "/insert_inventario_medicamento", params, {responseType: 'json'});
+  }
+
+  update_inventario_medicamento(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('inventario_id', payload.inventario_id)
+    .set('costo_compra', payload.costo_compra.replace(/,/g, ''))
+    .set('cantidad_dosis', payload.cantidad_dosis.replace(/,/g, ''))
+    .set('costo_dosis', payload.costo_dosis.replace(/,/g, ''))
+    .set('vencimiento', payload.vencimiento)
+    .set('comentarios', payload.comentarios)
+    .set('numero_inventario', payload.numero_inventario);
+    return this.httpClient.put(this.endpoint + "/update_inventario_medicamento", params, {responseType: 'json'});
+  }
+
+  delete_inventario_medicamento(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('inventario_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_inventario_medicamento", {params:params, responseType: 'json'});
+  }
+
+  get_inventario_medicamentos_list(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('medicamento_id', payload);
+    return this.httpClient.get(this.endpoint + "/get_inventario_medicamentos_list", {params:params, responseType: 'json'});
+  }
+
+  //insumos
+
+  insert_inventario_insumo(payload, insumo_id):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('costo_compra', payload.costo_compra.replace(/,/g, ''))
+    .set('cantidad', payload.cantidad.replace(/,/g, ''))
+    .set('costos_atencion', payload.costos_atencion.replace(/,/g, ''))
+    .set('entrada_inventario', payload.entrada_inventario.replace(/,/g, ''))
+    .set('salida_inventario', payload.salida_inventario.replace(/,/g, ''))
+    .set('saldo_inventario', payload.saldo_inventario.replace(/,/g, ''))
+    .set('vencimiento', payload.vencimiento)
+    .set('comentarios', payload.comentarios)
+    .set('numero_inventario', payload.numero_inventario)
+    .set('insumo_id', insumo_id);
+    return this.httpClient.post(this.endpoint + "/insert_inventario_insumo", params, {responseType: 'json'});
+  }
+
+  update_inventario_insumo(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('inventario_id', payload.inventario_id)
+    .set('costo_compra', payload.costo_compra.replace(/,/g, ''))
+    .set('cantidad', payload.cantidad.replace(/,/g, ''))
+    .set('costos_atencion', payload.costos_atencion.replace(/,/g, ''))
+    .set('vencimiento', payload.vencimiento)
+    .set('comentarios', payload.comentarios)
+    .set('numero_inventario', payload.numero_inventario);
+    return this.httpClient.put(this.endpoint + "/update_inventario_insumo", params, {responseType: 'json'});
+  }
+
+  delete_inventario_insumo(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('inventario_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_inventario_insumo", {params:params, responseType: 'json'});
+  }
+
+  get_inventario_insumos_list(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('insumo_id', payload);
+    return this.httpClient.get(this.endpoint + "/get_inventario_insumos_list", {params:params, responseType: 'json'});
+  }
+
+  insert_insumo(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('nombre_comercial', payload.nombre_comercial)
+    .set('tipo_insumo', payload.tipo_insumo)
+    .set('presentacion', payload.presentacion);
+    return this.httpClient.post(this.endpoint + "/insert_insumo", params, {responseType: 'json'});
+  }
+
+  update_insumo(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('insumo_id', payload.insumo_id)
+    .set('nombre_comercial', payload.nombre_comercial)
+    .set('tipo_insumo', payload.tipo_insumo)
+    .set('presentacion', payload.presentacion);
+    return this.httpClient.put(this.endpoint + "/update_insumo", params, {responseType: 'json'});
+  }
+
+  delete_insumo(payload):Observable<any>{
+    let params = new HttpParams({encoder: new FormQueryEncoder()})
+    .set('insumo_id', payload);
+    return this.httpClient.delete(this.endpoint + "/delete_insumo", {params:params, responseType: 'json'});
+  }
+
+  get_insumos_list():Observable<any>{
+    return this.httpClient.get(this.endpoint + "/get_insumos_list", {responseType: 'json'});
+  }
+
+  get_insumos_list_cartera():Observable<any>{
+    return this.httpClient.get(this.endpoint + "/get_insumos_list_cartera", {responseType: 'json'});
+  }
 }
+
+
+

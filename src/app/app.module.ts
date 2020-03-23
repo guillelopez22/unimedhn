@@ -37,7 +37,12 @@ import { RecoverPasswordComponent } from './recover_password/recover_password.co
 import { NotFoundComponent } from './not_found/not_found.component';
 import { HomeComponent } from './home/home.component';
 import { InstitucionesComponent } from './instituciones/instituciones.component';
-
+import { MedicosComponent } from './medicos/medicos.component';
+import { AlumnosComponent } from './alumnos/alumnos.component';
+import { InsumosComponent } from './insumos/insumos.component';
+import { MedicamentosComponent } from './medicamentos/medicamentos.component';
+import { PresentacionComponent } from './presentaciones/presentacion.component';
+import { ConsultaComponent } from './consultas/consulta.component';
 // *******************************************************************************
 //
 
@@ -49,7 +54,13 @@ import { InstitucionesComponent } from './instituciones/instituciones.component'
     NotFoundComponent,
     FirstLoginComponent,
     HomeComponent,
-    InstitucionesComponent
+    InstitucionesComponent,
+    MedicamentosComponent,
+    InsumosComponent,
+    AlumnosComponent,
+    MedicosComponent,
+    PresentacionComponent,
+    ConsultaComponent
   ],
 
   imports: [
@@ -76,7 +87,7 @@ import { InstitucionesComponent } from './instituciones/instituciones.component'
     ExcelService,
     LoginGuard,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-    
+
   ],
 
   bootstrap: [

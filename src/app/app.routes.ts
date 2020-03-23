@@ -16,65 +16,100 @@ import { RecoverPasswordComponent } from './recover_password/recover_password.co
 import { NotFoundComponent } from './not_found/not_found.component';
 import { HomeComponent } from './home/home.component';
 import { InstitucionesComponent } from './instituciones/instituciones.component';
-
+import { MedicamentosComponent } from './medicamentos/medicamentos.component';
+import { AlumnosComponent } from './alumnos/alumnos.component';
+import { MedicosComponent } from './medicos/medicos.component';
+import { InsumosComponent } from './insumos/insumos.component';
+import { PresentacionComponent } from './presentaciones/presentacion.component';
+import { ConsultaComponent } from './consultas/consulta.component';
 // *******************************************************************************
 // Routes
 
 const routes: Routes = [
-    { 
-        path: '', 
-        redirectTo: '/conectarse', 
-        pathMatch: 'full' 
-    },
-    { 
-        path: 'conectarse', 
-        component: LoginComponent 
-    },
-    { 
-        path: 'recuperar', 
-        component: RecoverPasswordComponent 
-    },
-    { 
-        path: 'cambiar_contraseña_primera_vez', 
-        component: FirstLoginComponent 
-    },
-    { 
-        path: '404', 
-        component: NotFoundComponent 
-    },
-    { 
-        path: 'plataforma', 
-        component: LayoutComponent,
-        children: [
-            { 
-                path: '', 
-                redirectTo: 'inicio', 
-                pathMatch: 'full'
-            },
-            { 
-                path: 'inicio', 
-                component: HomeComponent,
-                canActivate:[LoginGuard]
-            },
-            { 
-                path: 'instituciones', 
-                component: InstitucionesComponent,
-                canActivate:[LoginGuard]
-            }
-        ]
-    },
-    { 
-        path: '**', 
-        redirectTo: '/404', 
+  {
+    path: '',
+    redirectTo: '/conectarse',
+    pathMatch: 'full'
+  },
+  {
+    path: 'conectarse',
+    component: LoginComponent
+  },
+  {
+    path: 'recuperar',
+    component: RecoverPasswordComponent
+  },
+  {
+    path: 'cambiar_contraseña_primera_vez',
+    component: FirstLoginComponent
+  },
+  {
+    path: '404',
+    component: NotFoundComponent
+  },
+  {
+    path: 'plataforma',
+    component: LayoutComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'inicio',
         pathMatch: 'full'
-    }
+      },
+      {
+        path: 'inicio',
+        component: HomeComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'instituciones',
+        component: InstitucionesComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'medicos',
+        component: MedicosComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'alumnos',
+        component: AlumnosComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'insumos',
+        component: InsumosComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'medicamentos',
+        component: MedicamentosComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'presentaciones',
+        component: PresentacionComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'consultas',
+        component: ConsultaComponent,
+        canActivate: [LoginGuard]
+      },
+    ]
+  },
+  {
+    path: '**',
+    redirectTo: '/404',
+    pathMatch: 'full'
+  }
 ];
 
 // *******************************************************************************
 //
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

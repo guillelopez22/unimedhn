@@ -28,6 +28,8 @@ export class InstitucionesComponent implements OnInit {
   public view: number;
   public inner_view: number;
   public loading: boolean;
+  public alumno_main_view = true;
+  public alumno_contacto_view = false;
   @ViewChild('alumnos_modal') alumnos_modal: ModalDirective;
   @ViewChild('medicamentos_modal') meidcamentos_modal: ModalDirective;
   @ViewChild('insumos_modal') insumos_modal: ModalDirective;
@@ -39,6 +41,7 @@ export class InstitucionesComponent implements OnInit {
   @ViewChild('doctor_form') doctor_form: FormRendererComponent;
   @ViewChild('academic_form') academic_form: FormRendererComponent;
   @ViewChild('alumno_form') alumno_form: FormRendererComponent;
+  @ViewChild('alumno_contact_form') alumno_contact_form: FormRendererComponent;
   @ViewChild('instituciones_form_view') instituciones_form_view: FormRendererComponent;
   @ViewChild('instituciones_datatable_ref') instituciones_datatable_ref: ServiceDatatableComponent;
   @ViewChild('doctors_datatable_ref') doctors_datatable_ref: ServiceDatatableComponent;
@@ -108,6 +111,8 @@ export class InstitucionesComponent implements OnInit {
     working_hours: [],
     foto: null
   };
+  public alumno_contacto_inputs = [];
+  public alumno_contacts = [];
   public medicamento_inputs = [];
   public insumos_inputs = [];
   public alumno_inputs = [];
@@ -404,7 +409,7 @@ export class InstitucionesComponent implements OnInit {
                   return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
                 },
                 required: () => {
-                  return false;
+                  return true;
                 },
                 disabled: () => {
                   return false;
@@ -1744,7 +1749,7 @@ export class InstitucionesComponent implements OnInit {
                   return []
                 },
                 textmask: () => {
-                  return [];
+                  return false;
                 },
                 required: () => {
                   return true;
@@ -1784,7 +1789,7 @@ export class InstitucionesComponent implements OnInit {
                   return []
                 },
                 textmask: () => {
-                  return [];
+                  return false;
                 },
                 required: () => {
                   return true;
@@ -1824,7 +1829,7 @@ export class InstitucionesComponent implements OnInit {
                   return []
                 },
                 textmask: () => {
-                  return [];
+                  return false;
                 },
                 required: () => {
                   return true;
@@ -1970,6 +1975,133 @@ export class InstitucionesComponent implements OnInit {
       },
 
     ];
+    this.alumno_contacto_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'emergency_contact_name',
+                label: 'Nombre',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'email',
+                extra: '',
+                name: 'emergency_contact_email',
+                label: 'Correo',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'emergency_contact_phone',
+                label: 'Teléfono',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: null,
+                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
+                },
+                required: () => {
+                  return false;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
   }
 
   ngOnInit() {
@@ -2062,23 +2194,23 @@ export class InstitucionesComponent implements OnInit {
   }
 
   open_institucion(data) {
-    this.endpoint.doctor_by_institution({ institution_id: data.id }).subscribe(doctors => {
-      this.instituciones_data = {
-        id: data.id,
-        nombre: data.nombre,
-        correo: data.correo,
-        telefono: data.telefono,
-        departamento: data.departamento,
-        ciudad: data.ciudad,
-        direccion: data.direccion,
-        inicio_clases: data.inicio_clases,
-        calendario: data.calendario,
-        tipo: data.tipo,
-        contactos: data.contactos,
-        alumnos: [],
-        doctores: doctors
-      };
-    });
+    this.instituciones_data = {
+      id: data.id,
+      nombre: data.nombre,
+      correo: data.correo,
+      telefono: data.telefono,
+      departamento: data.departamento,
+      ciudad: data.ciudad,
+      direccion: data.direccion,
+      inicio_clases: data.inicio_clases,
+      calendario: data.calendario,
+      tipo: data.tipo,
+      contactos: data.contactos,
+      alumnos: [],
+      doctores: []
+    };
+
+
     this.view = 2;
     this.inner_view = 1;
   }
@@ -2109,6 +2241,9 @@ export class InstitucionesComponent implements OnInit {
 
   open_alumnos() {
     this.inner_view = 2;
+    this.endpoint.alumno_by_institution({ institution_id: this.instituciones_data.id}).subscribe(alumnos => {
+      this.instituciones_data.alumnos = alumnos;
+    });
   }
 
   open_medicamentos() {
@@ -2121,6 +2256,9 @@ export class InstitucionesComponent implements OnInit {
 
   open_doctores() {
     this.inner_view = 1;
+    this.endpoint.doctor_by_institution({ institution_id: this.instituciones_data.id }).subscribe(doctors =>{
+      this.instituciones_data.doctores = doctors;
+    });
   }
 
   add_jornada() {
@@ -2149,6 +2287,11 @@ export class InstitucionesComponent implements OnInit {
     this.jornada_view = false;
     this.antecedentes_view = false;
     this.academic_view = false;
+  }
+
+  return_alumno_main_view() {
+    this.alumno_contacto_view = false;
+    this.alumno_main_view = true;
   }
 
   instituciones_datatable_get_results_offset_change(data) {
@@ -2279,10 +2422,8 @@ export class InstitucionesComponent implements OnInit {
         try {
           console.log(response);
           for (let i = 0; i < response.list.length; i++) {
-            for (let i = 0; i < response.list.length; i++) {
               response.list[i].contactos = JSON.parse(response.list[i].contactos);
               response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
-            }
           }
           this.instituciones_datatable_ref.set_results_update_list(response.list, response.count);
         } catch (error) {
@@ -2315,14 +2456,62 @@ export class InstitucionesComponent implements OnInit {
     this.doctores_modal.show();
   }
 
+  insert_alumno() {
+    if (this.alumno_form.valid()) {
+      const form_values = this.alumno_form.get_values();
+      const alumno_data = {
+        institution_id: this.instituciones_data.id,
+        first_name: form_values.first_name,
+        last_name: form_values.last_name,
+        grado: form_values.grado,
+        gender: form_values.gender,
+        birth_place: form_values.birth_place,
+        birth_date: form_values.birth_date,
+        address_place: form_values.address_place,
+        address_avenue: form_values.address_avenue,
+        address_street: form_values.address_street,
+        address_block: form_values.address_block,
+        address_house: form_values.address_house,
+        address_city: form_values.address_city,
+        address_state: form_values.address_state,
+        phone: form_values.phone,
+        emergency_contacts: this.alumno_contacts,
+        foto: null,
+        tipo_paciente: 'Alumno',
+        seccion: form_values.seccion
+      };
+      this.alumnos.push(alumno_data);
+      this.instituciones_data.alumnos = [...this.instituciones_data.alumnos, ...this.alumnos];
+      console.log(this.instituciones_data);
+
+      let response;
+      this.endpoint.insert_alumno(alumno_data).subscribe(
+        data => response = data,
+        err => {
+          this.instituciones_loading = false;
+          if (err.status && err.error) {
+            this.alertService.alert_message(err.status, err.error);
+          } else {
+            this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
+          }
+        },
+        () => {
+          try {
+            this.alumno_main_view = true;
+            this.alumno_contacto_view = false;
+            this.alumnos_modal.hide();
+            this.alertService.alert_success(response.title, response.message);
+          } catch (error) {
+            this.alertService.alert_aplication_error('Error Interno del Aplicativo');
+          }
+        }
+      );
+    }
+  }
+
   insert_doctor() {
     if (this.doctor_form.valid()) {
       const form_values = this.doctor_form.get_values();
-      this.antecedentes.forEach(el => {
-        el = JSON.stringify(el)
-      });
-      console.log(this.antecedentes);
-
       this.doctor_data = {
         institution_id: this.instituciones_data.id,
         first_name: form_values.first_name,
@@ -2576,6 +2765,11 @@ export class InstitucionesComponent implements OnInit {
     this.instituciones_modal_view = 3;
   }
 
+  open_add_alumno_contacto() {
+    this.alumno_contacto_view = true;
+    this.alumno_main_view = false;
+  }
+
   close_add_contacto() {
     this.contacto_submitted = false;
     this.contacto_data = {
@@ -2606,14 +2800,28 @@ export class InstitucionesComponent implements OnInit {
   }
 
   add_contacto() {
-    console.log(this.instituciones_contactos);
-
     if (this.contacto_form.valid) {
       this.instituciones_contactos.push(this.contacto_data);
       this.close_add_contacto();
     } else {
       this.contacto_submitted = true;
     }
+  }
+
+  add_alumno_contacto() {
+    if (this.alumno_contact_form.valid()) {
+      const form_data = this.alumno_contact_form.get_values();
+      this.alumno_contacts.push({
+        emergency_contact_name: form_data.emergency_contact_name,
+        emergency_contact_email: form_data.emergency_contact_email,
+        emergency_contact_phone: form_data.emergency_contact_phone
+      });
+      this.alumno_contact_form.clean_form();
+    }
+  }
+
+  cancel_alumno_contacto() {
+    this.alumno_contact_form.clean_form();
   }
 
   add_doctor() {

@@ -1,0 +1,127 @@
+<h4 class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>Administrar Inventario
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los medicamentos e
+        insumos</small></div>
+  </div>
+</h4>
+
+<div *ngIf="main_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <datatable #tradename_datatable_ref [options]="tradenames_datatable" [loading]="tradenames_datatable_loading"
+        [data_array]="tradenames">
+      </datatable>
+      <div class="col mb-3">
+        <button class="float-right btn btn-info btn-sm" (click)="open_detail_view()"><i class="fa fa-check"></i>Agregar
+          a Inventario</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="detail_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+    <button (click)="open_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+        class="fa fa-arrow-left mr-2"></i>Regresar</button>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <ul class="nav nav-tabs nav-responsive-md">
+        <li (click)="open_meds()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="med"><b [class.text-primary]="med">Medicamentos</b></span>
+        </li>
+        <li (click)="open_ins()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="ins"><b [class.text-primary]="ins">Insumos</b></span>
+        </li>
+      </ul>
+      <div class="custom-nav-content" *ngIf="med">
+        <div class="fade-in">
+          <datatable #medicamentos_datatable_ref [options]="medicamentos_datatable"
+            [loading]="medicamentos_datatable_loading" [data_array]="medicamentos">
+          </datatable>
+        </div>
+        <div class="col mb-3">
+          <button class="float-right btn btn-success btn-sm" (click)="add_medicamentos()"><i
+              class="fa fa-check"></i>Agregar Medicamento</button>
+        </div>
+      </div>
+      <div class="custom-nav-content" *ngIf="ins">
+        <div class="fade-in">
+          <datatable #insumos_datatable_ref [options]="insumos_datatable"
+            [loading]="medicamentos_datatable_loading" [data_array]="insumos">
+          </datatable>
+          <div class="col mb-3">
+            <button class="float-right btn btn-success btn-sm" (click)="add_medicamentos()"><i
+                class="fa fa-check"></i>Agregar Insumo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="create_med_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+    <button (click)="open_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+        class="fa fa-arrow-left mr-2"></i>Regresar</button>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-content mt-4 ml-4 mb-4 mr-4">
+            <form-renderer #medicamentos_form [config]="medicamento_inputs"></form-renderer>
+            <div class="col-md-12 text-center">
+              <button class="btn btn-sm btn-outline-success" (click)="add_jornada()">Agregar Principal Activo</button>
+              <button class="btn btn-sm btn-outline-success" (click)="add_antecedentes()">Agregar Nombre Comercial</button>
+            </div>
+        </div>
+        <div class="card-footer text-right">
+          <button class="btn btn-danger btn-sm" (click)="instituciones_modal.hide()"><i
+            class="fa fa-times"></i> Cancelar
+        </button>
+        <button class="btn btn-success btn-sm" (click)="insert_institucion()"><i class="fa fa-check"></i> Registrar Medicamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #medicamentos_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Medicamento</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #medicamentos_form [config]="medicamento_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="medicamentos_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #insumos_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Insumo</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #insumos_form [config]="medicamento_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="medicamentos_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -156,8 +156,8 @@
                 <th class="p-2 text-center" style="width: 1%;">Opciones</th>
               </tr>
             </thead>
-            <tbody *ngIf="instituciones_data.doctores.length > 0">
-              <tr *ngFor="let x of instituciones_data.doctores; let i = index">
+            <tbody *ngIf="instituciones_data.alumnos.length > 0">
+              <tr *ngFor="let x of instituciones_data.alumnos; let i = index">
                 <th class="p-2">{{x.first_name}}</th>
                 <th class="p-2">{{x.last_name}}</th>
                 <td class="p-2">{{x.grado}}</td>
@@ -166,8 +166,8 @@
                     class="fa fa-times mr-2 ml-2"></i></td>
               </tr>
             </tbody>
-            <tbody *ngIf="instituciones_data.doctores.length == 0">
-              <tr [class.custom-table-error]="instituciones_data.doctores.length == 0">
+            <tbody *ngIf="instituciones_data.alumnos.length == 0">
+              <tr [class.custom-table-error]="instituciones_data.alumnos.length == 0">
                 <th colspan="3" class="text-center text-danger p-2">No se han agregado alumnos
                   a la institución</th>
               </tr>
@@ -360,18 +360,6 @@
                 (click)="add_doctor_schedule()"><i class="fa fa-check"></i>Agregar</button>
             </div>
           </div>
-          <!-- <div class="col-md-3">
-            <label for="hours_day"><span class="font-weight-bold">Dia de Trabajo</span></label>
-            <input type="text" class="form-control" [(ngModel)]="hours_day" name="hours_day">
-          </div>
-          <div class="col-md-3">
-            <label for="hours_start"><span class="font-weight-bold">Inicio de Jornada</span></label>
-            <input type="text" class="form-control" [(ngModel)]="hours_start" name="hours_start">
-          </div>
-          <div class="col-md-3">
-            <label for="hours_end"><span class="font-weight-bold">Fin de Jornada</span></label>
-            <input type="text" class="form-control" [(ngModel)]="hours_end" name="hours_end">
-          </div> -->
           <div class="col-md-12 pt-5">
             <div class="table-responsive">
               <table class="table">
@@ -410,14 +398,6 @@
           <div class="col-12">
             <form-renderer #antecedentes_form [config]="antecedentes_inputs"></form-renderer>
           </div>
-          <!-- <div class="col-md-4">
-            <label for="hours_day"><span class="font-weight-bold">Fecha</span></label>
-            <input type="text" class="form-control" [(ngModel)]="antecedente_date" name="hours_day">
-          </div>
-          <div class="col-md-4">
-            <label for="hours_start"><span class="font-weight-bold">Descripcion</span></label>
-            <input type="text" class="form-control" [(ngModel)]="antecedente_desc" name="hours_start">
-          </div> -->
           <div class="col-12">
             <div class="input-group-append float-right">
                 <button class="btn btn-secondary mr-2" name="cancelar"
@@ -459,18 +439,6 @@
               Información Académica
             </h4>
           </div>
-          <!-- <div class="col-md-3">
-            <label for="hours_day"><span class="font-weight-bold">Institución</span></label>
-            <input type="text" class="form-control" [(ngModel)]="academic_institution" name="academic_institution">
-          </div>
-          <div class="col-md-3">
-            <label for="hours_start"><span class="font-weight-bold">Título/Certificado</span></label>
-            <input type="text" class="form-control" [(ngModel)]="academic_title" name="academic_title">
-          </div>
-          <div class="col-md-3">
-            <label for="hours_start"><span class="font-weight-bold">Fecha</span></label>
-            <input type="text" class="form-control" [(ngModel)]="academic_date" name="academic_date">
-          </div> -->
           <div class="col-12">
             <form-renderer #academic_form [config]="academic_inputs" ></form-renderer>
           </div>
@@ -546,22 +514,64 @@
             <div class="sk-rect sk-rect5 custom-loader"></div>
           </div>
         </div>
-        <div class="fade-in">
+        <div [hidden]="!alumno_main_view" class="fade-in">
+          <div class="col-12 text-center">
+            <h4>
+              Datos Generales
+            </h4>
+          </div>
           <form-renderer #alumno_form [config]="alumno_inputs">
           </form-renderer>
+          <div class="col-md-12 pt-5">
+            <div class="table-responsive">
+              <table class="table">
+                <thead style="background-color: #fff;">
+                  <tr>
+                    <th class="p-2 w-25">Nombre</th>
+                    <th class="p-2 w-50">Correo</th>
+                    <th class="p-2 w-25">Telefono</th>
+                    <th class="p-2 text-center" style="width: 1%;">OP</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="alumno_contacts.length > 0">
+                  <tr *ngFor="let x of alumno_contacts; let i = index">
+                    <th class="p-2">{{x.emergency_contact_name}}</th>
+                    <th class="p-2">{{x.emergency_contact_email}}</th>
+                    <td class="p-2">{{x.emergency_contact_phone}}</td>
+                    <td (click)="remove_doctor_hours(i)" class="p-2" class="text-center custom-datatable-red"><i
+                        class="fa fa-times mr-2 ml-2"></i></td>
+                  </tr>
+                </tbody>
+                <tbody *ngIf="alumno_contacts.length == 0">
+                  <tr [class.custom-table-error]="alumno_contacts.length == 0">
+                    <th colspan="3" class="text-center text-danger p-2">No se han agregado contactos de emergencia</th>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="text-center">
+                <button (click)="open_add_alumno_contacto()" class="btn btn-sm btn-info"><i class="fa fa-user mr-2"></i>Agregar
+                  Contacto</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="alumno_contacto_view" class="row">
+          <div class="col-12">
+            <form-renderer #alumno_contact_form [config]="alumno_contacto_inputs"></form-renderer>
+          </div>
         </div>
       </div>
       <div class="modal-footer custom-modal-footer text-left">
-        <button
-          class="btn btn-danger btn-sm" (click)="alumnos_modal.hide()"><i class="fa fa-times"></i> Cerrar</button>
-        <button *ngIf="doctor_modal_view==1" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
-          (click)="insert_doctor()"><i class="fa fa-check"></i> Registrar
-          Médico</button>
-        <button *ngIf="doctor_modal_view==3" [disabled]="instituciones_loading" class="btn btn-danger btn-sm"
-          (click)="close_add_contacto()"><i class="fa fa-arrow-left"></i>
+        <button *ngIf="alumno_main_view"
+          class="btn btn-danger btn-sm" (click)="alumnos_modal.hide();"><i class="fa fa-times"></i> Cerrar</button>
+        <button *ngIf="alumno_main_view" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
+          (click)="insert_alumno()"><i class="fa fa-check"></i> Registrar
+          Alumno</button>
+        <button *ngIf="alumno_contacto_view" [disabled]="instituciones_loading" class="btn btn-danger btn-sm"
+          (click)="return_alumno_main_view()"><i class="fa fa-arrow-left"></i>
           Regresar</button>
-        <button *ngIf="doctor_modal_view==3" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
-          (click)="add_contacto()"><i class="fa fa-check"></i> Agregar
+        <button *ngIf="alumno_contacto_view" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
+          (click)="add_alumno_contacto()"><i class="fa fa-check"></i> Agregar
           Contacto</button>
       </div>
     </div>
@@ -576,15 +586,6 @@
         <h5 class="mb-0"><i class="fa fa-filter mr-2"></i>Buscar Clientes</h5>
       </div>
       <div class="modal-body custom-modal-body fade-in">
-        <!-- <div class="cover-div" *ngIf="instituciones_search_loading">
-                    <div class="sk-wave sk-primary">
-                        <div class="sk-rect sk-rect1 custom-loader"></div>
-                        <div class="sk-rect sk-rect2 custom-loader"></div>
-                        <div class="sk-rect sk-rect3 custom-loader"></div>
-                        <div class="sk-rect sk-rect4 custom-loader"></div>
-                        <div class="sk-rect sk-rect5 custom-loader"></div>
-                    </div>
-                </div> -->
         <form-renderer #instituciones_search_form [config]="instituciones_search_inputs">
         </form-renderer>
       </div>
