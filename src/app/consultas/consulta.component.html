@@ -1,0 +1,33 @@
+<h4 class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>Administrar Consultas
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra las consultas hechas en las instituciones</small></div>
+  </div>
+</h4>
+
+<div *ngIf="main_view" class="fade-in">
+  <datatable #consulta_datatable_ref
+    [options]="consultas_datatable"
+    [loading]="consultas_loading_datatable"
+    [data_array]="consultas"
+    >
+  </datatable>
+  <div class="col mb-3">
+    <button class="float-right btn btn-success btn-sm" (click)="add_consulta()"><i class="fa fa-check"></i> Agregar
+      Médico</button>
+  </div>
+</div>
+
+<div *ngIf="creating_consult_view" class="fade-in">
+  <div *ngIf="creating_consult_view" class="container-m-nx container-p-x pt-2 text-right mb-2">
+    <button (click)="open_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+        class="fa fa-arrow-left mr-2"></i>Regresar</button>
+  </div>
+
+  <service-datatable #instituciones_datatable_ref [datatable_options]="instituciones_datatable"
+  (option_event)="instituciones_datatable_events($event)"
+  (get_results_offset_change)="instituciones_datatable_get_results_offset_change($event)"
+  (get_results_filter_change)="instituciones_datatable_get_results_filter_change($event)"
+  (get_results_update_list)="instituciones_datatable_get_results_update_list($event)">
+</service-datatable>
+</div>

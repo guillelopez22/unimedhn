@@ -126,7 +126,7 @@ export class InstitucionesComponent implements OnInit {
   public hours_day = '';
   public hours_start = '';
   public hours_end = '';
-  public doctor_schedule = []
+  public doctor_schedule = [];
   public doctors_datatable: any;
   public doctors_datatable_loading: boolean;
   public doctors_inputs = [];

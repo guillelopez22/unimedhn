@@ -18,9 +18,17 @@ export class MedicamentosComponent implements OnInit {
   @ViewChild('medicamentos_datatable_ref') medicamentos_datatable_ref: ServiceDatatableComponent;
   @ViewChild('insumos_datatable_ref') insumos_datatable_ref: ServiceDatatableComponent;
   @ViewChild('medicamentos_modal') medicamentos_modal: ModalDirective;
+  @ViewChild('concentration_modal') concentration_modal: ModalDirective;
+  @ViewChild('confirmation_modal') confirmation_modal: ModalDirective;
+  @ViewChild('nombre_comercial_modal') nombre_comercial_modal: ModalDirective;
+  @ViewChild('active_principle_modal') active_principle_modal: ModalDirective;
   @ViewChild('insumos_modal') insumos_modal: ModalDirective;
+  @ViewChild('nombre_comercial_form') nombre_comercial_form: FormRendererComponent;
+  @ViewChild('active_principle_form') active_principle_form: FormRendererComponent;
+  @ViewChild('concentration_form') concentration_form: FormRendererComponent;
   @ViewChild('medicamentos_form') medicamentos_form: FormRendererComponent;
   @ViewChild('insumos_form') insumos_form: FormRendererComponent;
+  @ViewChild('confirmation_form') confirmation_form: FormRendererComponent;
   public create_med_view = false;
   public medicamentos_datatable: any;
   public tradenames_datatable: any;
@@ -34,22 +42,28 @@ export class MedicamentosComponent implements OnInit {
     sort_order: '',
     sort_ascendent: false
   };
+  public created_product_id = "";
   public insumos = [];
   public medicamentos = [];
   public med = true;
   public ins = false;
+  public nombre_comercial_inputs = [];
+  public principal_activo_inputs = [];
+  public concentration_inputs = [];
   public medicamento_inputs = [];
   public tradenames = [];
+  public selected_measure_unit = '';
   public presentations = [];
   public measurement_units = [];
   public concentration_list = [];
   public total_active_principles = [];
+  public confirmation_inputs = [];
   public commercial_names = [];
   public selected_active_desc = '';
   public selected_trade_name_desc = '';
   public main_view = true;
   public detail_view = false;
-  constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService,) {
+  constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService, ) {
     this.appService.pageTitle = 'Inventario';
     this.medicamentos_datatable_loading = true;
     this.tradenames_datatable_loading = true;
@@ -273,7 +287,7 @@ export class MedicamentosComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-2',
             inputs: [
               {
                 type: 'text',
@@ -284,8 +298,8 @@ export class MedicamentosComponent implements OnInit {
                 class: 'form-control',
                 placeholder: '',
                 minlength: 0,
-                maxlength: 9,
-                pattern: '^[0-9]{9}$',
+                maxlength: 3,
+                pattern: '',
                 error_required: 'Requerido',
                 error_pattern: 'Formato Inválido',
                 error_minlength: '',
@@ -313,18 +327,485 @@ export class MedicamentosComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-2',
             inputs: [
               {
                 type: 'select',
                 extra: '',
                 name: 'measure_unit',
-                label: '',
+                label: 'Unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  this.selected_measure_unit = event;
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'concentration',
+                label: 'Concentración',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'description',
+                  text: 'description'
+                },
+                list: () => {
+                  return this.concentration_list;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  this.selected_measure_unit = event;
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'aus',
+                label: 'AUS (Average Unit Served)',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_measure_unit,
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
+    this.nombre_comercial_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'nombre',
+                label: 'Principal Activo',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.total_active_principles;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'n_nombre_comercial',
+                label: 'Nombre',
                 icon: '',
                 class: 'form-control',
                 placeholder: '',
                 minlength: null,
-                maxlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'n_description',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return false;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
+    this.principal_activo_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'p_nombre',
+                label: 'Nombre',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'p_description',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
+    this.concentration_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'quantity1',
+                label: 'Cantidad de Activo',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'measure_unit1',
+                label: 'Unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'quantity2',
+                label: 'Cantidad de Activo',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'measure_unit2',
+                label: 'Unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
                 pattern: null,
                 error_required: 'Requerido',
                 error_pattern: 'Formato Inválido',
@@ -355,7 +836,174 @@ export class MedicamentosComponent implements OnInit {
         ]
       },
     ];
-   }
+    this.confirmation_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'expiration_date',
+                label: 'Fecha de Caducidad',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'purchase_date',
+                label: 'Fecha de Compra',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'batch_price',
+                label: 'Precio',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'batch_quantity',
+                label: 'Cantidad',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ]
+  }
 
   ngOnInit() {
     this.get_insumos();
@@ -509,6 +1157,142 @@ export class MedicamentosComponent implements OnInit {
     };
   }
 
+  cancel_med() {
+    this.medicamentos_form.clean_form();
+  }
+
+  open_nombre_comercial() {
+    this.nombre_comercial_modal.show();
+  }
+
+  open_concentration() {
+    this.concentration_modal.show();
+  }
+
+  open_active_principle() {
+    this.active_principle_modal.show();
+  }
+
+  insert_product() {
+    if (this.medicamentos_form.valid()) {
+      const form_values = this.medicamentos_form.get_values();
+      console.log(this.tradenames);
+
+      const tradename = this.commercial_names.find(el => el.nombre = form_values.commercial_name);
+      console.log(tradename);
+
+      const measure_unit = this.measurement_units.find(el => el.name === form_values.measure_unit);
+      const presentation = this.presentations.find(el => el.name === form_values.presentation)
+      const concentration = this.concentration_list.find(el => el.description === form_values.concentration)
+      const tradename_id = tradename.tradename_id
+      const presentation_id = presentation.presentation_id;
+      const presentation_quantity = form_values.cantidad_presentacion;
+      const presentation_measure_unit_id = measure_unit.measure_unit_id;
+      const aus_measure_unit_id = measure_unit.measure_unit_id;
+      const aus_quantity = form_values.aus;
+
+      this.endpoint.insert_producto({
+        tradename_id,
+        presentation_id,
+        presentation_quantity,
+        presentation_measure_unit_id,
+        aus_measure_unit_id,
+        aus_quantity,
+        concentration_id: concentration.concentration_id,
+        description: ""
+      }).subscribe(data => {
+        this.created_product_id = data.result.insertId;
+      },
+      err => {
+        this.alertService.alert_error(err.title, err.message);
+      },
+      () => {
+        this.confirmation_modal.show();
+        this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria')
+      })
+    }
+  }
+
+  insert_concentration() {
+    if (this.concentration_form.valid()) {
+      const form_values = this.concentration_form.get_values();
+      const found1 = this.measurement_units.find(el => el.name = form_values.measure_unit1);
+      const found2 = this.measurement_units.find(el => el.name = form_values.measure_unit2);
+      this.endpoint.insert_concentrations({
+        quantity1: form_values.quantity1,
+        measure_unit_id1: found1.measure_unit_id,
+        quantity2: form_values.quantity2,
+        measure_unit_id2: found2.measure_unit_id,
+        description: `${form_values.quantity1}${form_values.measure_unit1}/${form_values.quantity2}${form_values.measure_unit2}`
+      }).subscribe(() => { },
+        err => {
+          this.alertService.alert_error(err.title, err.message);
+        },
+        () => {
+          this.concentration_form.clean_form();
+          this.alertService.alert_success('Exito', 'La operacion se ha realizado de manera satisfactoria');
+          this.concentration_modal.hide();
+        })
+    }
+  }
+
+  insert_batch() {
+    if (this.confirmation_form.valid()) {
+      const form_values = this.confirmation_form.get_values();
+       this.endpoint.insert_batch({
+         product_id: this.created_product_id,
+         expiration_date: form_values.expiration_date.split("/").reverse().join("-"),
+         purchase_date: form_values.purchase_date.split("/").reverse().join("-"),
+         batch_price: form_values.batch_price,
+         batch_quantity: form_values.batch_quantity,
+         observation: ''
+       }).subscribe(() => {},
+       err => {
+         this.alertService.alert_error(err.title, err.message);
+       },
+       () => {
+         this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
+         this.concentration_form.clean_form();
+         this.concentration_modal.hide();
+       })
+    }
+  }
+
+  insert_nombre_comercial() {
+    if (this.nombre_comercial_form.valid()) {
+      const form_values = this.nombre_comercial_form.get_values();
+      const found = this.total_active_principles.find(el => el.name === form_values.nombre)
+      this.endpoint.insert_tradename({
+        active_principle_id: found.active_principle_id,
+        name: form_values.n_nombre_comercial,
+        description: form_values.n_description
+      }).subscribe(() => { },
+        err => {
+          this.alertService.alert_error(err.title, err.message);
+        },
+        () => {
+          this.alertService.alert_success('Exito', 'se ha agregado el nombre comercial con exito');
+          this.nombre_comercial_form.clean_form();
+        });
+    }
+  }
+
+  insert_active_principle() {
+    if (this.active_principle_form.valid()) {
+      const form_values = this.active_principle_form.get_values();
+      this.endpoint.insert_active_principle({
+        name: form_values.p_nombre,
+        description: form_values.p_description
+      }).subscribe(() => { },
+        err => {
+          this.alertService.alert_error(err.title, err.message);
+        }, () => {
+          this.alertService.alert_success('Exito', 'Se ha agregado el principal activo con exito')
+          this.active_principle_form.clean_form();
+          this.get_active_principle_total_list();
+        })
+    }
+  }
 
 
   get_all_inventory() {

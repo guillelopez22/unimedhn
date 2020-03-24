@@ -204,11 +204,8 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + "/get_all_medicamentos", { responseType: 'json' });
   }
 
-  insert_active_principle(payload): Observable<any> {
-    let params = new HttpParams({ encoder: new FormQueryEncoder() })
-      .set('name', payload.name)
-      .set('description', payload.description);
-    return this.httpClient.post(this.endpoint + "/insert_active_principle", params, { responseType: 'json' });
+  insert_active_principle(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/insert_active_principle", data, { headers: this.get_headers(), responseType: 'json' });
   }
 
   update_active_principle(payload): Observable<any> {
@@ -237,14 +234,9 @@ export class AppEndpoints {
       '/get_tradename_list?active_principle_id=' + active_principle_id , { headers: this.get_headers(), responseType: 'json' });
   }
 
-  insert_tradename(payload): Observable<any> {
-    let params = new HttpParams({ encoder: new FormQueryEncoder() })
-      .set('active_principle_id', payload.active_principle_id)
-      .set('name', payload.name)
-      .set('description', payload.description);
-    return this.httpClient.post(this.endpoint + "/insert_tradename", params, { responseType: 'json' });
+  insert_tradename(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/insert_tradename", data, { headers: this.get_headers(), responseType: 'json' });
   }
-
   update_tradename(payload): Observable<any> {
     let params = new HttpParams({ encoder: new FormQueryEncoder() })
       .set('tradename_id', payload.tradename_id)
@@ -270,14 +262,8 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + "/get_concentrations_list", { responseType: 'json' });
   }
 
-  insert_concentrations(payload): Observable<any> {
-    let params = new HttpParams({ encoder: new FormQueryEncoder() })
-      .set('quantity1', payload.quantity1)
-      .set('measure_unit_id1', payload.measure_unit_id1)
-      .set('quantity2', payload.quantity2)
-      .set('measure_unit_id2', payload.measure_unit_id2)
-      .set('description', payload.description);
-    return this.httpClient.post(this.endpoint + "/insert_concentrations", params, { responseType: 'json' });
+  insert_concentrations(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/insert_concentration", data, { headers: this.get_headers(), responseType: 'json' });
   }
 
   update_concentrations(payload): Observable<any> {
@@ -351,15 +337,8 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + "/get_batchs_list", { params: params, responseType: 'json' });
   }
 
-  insert_batch(payload): Observable<any> {
-    let params = new HttpParams({ encoder: new FormQueryEncoder() })
-      .set('product_id', payload.product_id)
-      .set('expiration_date', payload.expiration_date)
-      .set('purchase_date', payload.purchase_date)
-      .set('batch_price', payload.batch_price)
-      .set('batch_quantity', payload.batch_quantity)
-      .set('observation', payload.observation);
-    return this.httpClient.post(this.endpoint + "/insert_batch", params, { responseType: 'json' });
+  insert_batch(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + "/insert_batch", data, { headers: this.get_headers(), responseType: 'json' });
   }
 
   update_batch(payload): Observable<any> {
