@@ -6,14 +6,14 @@
 </h4>
 
 <div class="fade-in">
+  <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i> Agregar
+    Alumno</button>
   <datatable #alumnos_datatable_ref
     [options]="alumnos_datatable"
     [loading]="alumnos_datatable_loading"
     [data_array]="alumnos"
     >
   </datatable>
-  <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i> Agregar
-    Alumno</button>
 </div>
 
 <div bsModal #alumnos_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"

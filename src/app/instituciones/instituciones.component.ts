@@ -30,6 +30,12 @@ export class InstitucionesComponent implements OnInit {
   public loading: boolean;
   public alumno_main_view = true;
   public alumno_contacto_view = false;
+  public cartera = [];
+  public cartera_insumos_view = false;
+  public cartera_medicamentos_view = false;
+  public cartera_main_view = true;
+  public inventario_insumo_disponible = [];
+  public inventario_medicamento_disponible = [];
   @ViewChild('alumnos_modal') alumnos_modal: ModalDirective;
   @ViewChild('medicamentos_modal') meidcamentos_modal: ModalDirective;
   @ViewChild('insumos_modal') insumos_modal: ModalDirective;
@@ -38,9 +44,12 @@ export class InstitucionesComponent implements OnInit {
   @ViewChild('instituciones_form') instituciones_form: FormRendererComponent;
   @ViewChild('jornada_form') jornada_form: FormRendererComponent;
   @ViewChild('antecedentes_form') antecedentes_form: FormRendererComponent;
+  @ViewChild('cartera_insumos_form') cartera_insumos_form: FormRendererComponent;
+  @ViewChild('cartera_medicamentos_form') cartera_medicamentos_form: FormRendererComponent;
   @ViewChild('doctor_form') doctor_form: FormRendererComponent;
   @ViewChild('academic_form') academic_form: FormRendererComponent;
   @ViewChild('alumno_form') alumno_form: FormRendererComponent;
+  @ViewChild('cartera_form') cartera_form: FormRendererComponent;
   @ViewChild('alumno_contact_form') alumno_contact_form: FormRendererComponent;
   @ViewChild('instituciones_form_view') instituciones_form_view: FormRendererComponent;
   @ViewChild('instituciones_datatable_ref') instituciones_datatable_ref: ServiceDatatableComponent;
@@ -70,8 +79,10 @@ export class InstitucionesComponent implements OnInit {
     alumnos: [],
     doctores: []
   };
+  public inventory = [];
   public antecedentes_view = false;
   public jornada_view = false;
+  public inventory_loading = true;
   public insert_doctor_main_view = true;
   public academic_view = false;
   public working_schedule = {
@@ -113,7 +124,9 @@ export class InstitucionesComponent implements OnInit {
   };
   public alumno_contacto_inputs = [];
   public alumno_contacts = [];
+  public cartera_inputs = [];
   public medicamento_inputs = [];
+  public inventory_inputs = [];
   public insumos_inputs = [];
   public alumno_inputs = [];
   public alumnos = [];
@@ -133,6 +146,7 @@ export class InstitucionesComponent implements OnInit {
   public antecedentes_inputs = [];
   public jornadas_inputs = [];
   public academic_inputs = [];
+  public inventario_datatable = {};
   public instituciones_filters = {
     current_offset: 1,
     view_length: 10,
@@ -2102,6 +2116,180 @@ export class InstitucionesComponent implements OnInit {
         ]
       },
     ];
+    this.cartera_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'nombre',
+                label: 'Nombre de la Cartera',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'descripcion',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
+    this.inventory_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'nombre',
+                label: 'Nombre de la Cartera',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'descripcion',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return []
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
   }
 
   ngOnInit() {
@@ -2171,6 +2359,40 @@ export class InstitucionesComponent implements OnInit {
       show_search_field: true,
       table_icon: 'caret-right'
     };
+    this.inventario_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No existe inventario disponible',
+      columns: [
+        {
+          column: 'inventory_name',
+          wrap_column: false,
+          header: 'Nombre',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'saldo_inventario',
+          wrap_column: true,
+          header: 'Cantidad Disponible',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Detalle Inventario',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
   }
 
   ngAfterViewInit() {
@@ -2209,10 +2431,16 @@ export class InstitucionesComponent implements OnInit {
       alumnos: [],
       doctores: []
     };
-
-
+    this.open_doctores();
+    this.get_carteras();
     this.view = 2;
     this.inner_view = 1;
+  }
+
+  get_carteras() {
+    this.endpoint.get_institution_cartera(this.instituciones_data.id).subscribe(data => {
+      this.cartera = data;
+    });
   }
 
   close_institucion() {
@@ -2235,6 +2463,20 @@ export class InstitucionesComponent implements OnInit {
     };
   }
 
+  get_inventario_medicamentos() {
+    this.endpoint.get_inventario_medicamento().subscribe(data => {
+      this.inventory = data;
+      this.inventory_loading = false;
+    });
+  }
+
+  get_inventario_insumos() {
+    this.endpoint.get_inventario_insumos().subscribe(data => {
+      this.inventory = data;
+      this.inventory_loading = false;
+    });
+  }
+
   open_generales() {
     this.inner_view = 1;
   }
@@ -2246,12 +2488,38 @@ export class InstitucionesComponent implements OnInit {
     });
   }
 
-  open_medicamentos() {
+  open_cartera() {
+    this.get_carteras();
+    if (this.cartera.length === 0) {
+      this.alertService.alert_error('Institucion sin cartera', 'Actualmente La institucion no cuenta con una cartera');
+    }
     this.inner_view = 3;
   }
 
   open_insumos() {
     this.inner_view = 4;
+  }
+
+  insert_cartera() {
+    if (this.cartera_form.valid()) {
+      const form_values = this.cartera_form.get_values();
+      this.endpoint.insert_cartera({
+        institution_id: this.instituciones_data.id,
+        nombre: form_values.nombre,
+        descripcion: form_values.descripcion
+      }).subscribe(() => {},
+      err => {
+        this.alertService.alert_error(err.title, err.message);
+      }, () => {
+        this.get_carteras();
+        this.cartera_form.clean_form();
+        this.alertService.alert_success('Exito', 'La cartera fue registrada de manera satisfactoria');
+      });
+    }
+  }
+
+  cancel_cartera() {
+    this.cartera_form.clean_form();
   }
 
   open_doctores() {
@@ -2292,6 +2560,32 @@ export class InstitucionesComponent implements OnInit {
   return_alumno_main_view() {
     this.alumno_contacto_view = false;
     this.alumno_main_view = true;
+  }
+
+  open_cartera_medicamentos() {
+    this.get_inventario_medicamentos();
+    this.cartera_main_view = false;
+    this.cartera_insumos_view = false;
+    this.cartera_medicamentos_view = true;
+  }
+
+  open_cartera_insumos() {
+    this.get_inventario_insumos();
+    this.cartera_main_view = false;
+    this.cartera_insumos_view = true;
+    this.cartera_medicamentos_view = false;
+  }
+
+  inventory_datatable_events(event) {
+    console.log('====================================');
+    console.log(event);
+    console.log('====================================');
+  }
+
+  open_cartera_main() {
+    this.cartera_main_view = true;
+    this.cartera_insumos_view = false;
+    this.cartera_medicamentos_view = false;
   }
 
   instituciones_datatable_get_results_offset_change(data) {

@@ -11,13 +11,13 @@
   </div>
   <div class="row">
     <div class="col-12">
+      <div class="col">
+        <button class="float-right btn btn-info btn-sm" (click)="open_detail_view()"><i class="fa fa-check"></i>Agregar
+          Inventario</button>
+      </div>
       <datatable #tradename_datatable_ref [options]="tradenames_datatable" [loading]="tradenames_datatable_loading"
         [data_array]="tradenames">
       </datatable>
-      <div class="col mb-3">
-        <button class="float-right btn btn-info btn-sm" (click)="open_detail_view()"><i class="fa fa-check"></i>Agregar
-          a Inventario</button>
-      </div>
     </div>
   </div>
 </div>
@@ -39,24 +39,24 @@
       </ul>
       <div class="custom-nav-content" *ngIf="med">
         <div class="fade-in">
+          <div class="col">
+            <button class="float-right btn btn-success btn-sm" (click)="add_medicamentos()"><i
+                class="fa fa-check"></i>Agregar Medicamento</button>
+          </div>
           <datatable #medicamentos_datatable_ref [options]="medicamentos_datatable"
             [loading]="medicamentos_datatable_loading" [data_array]="medicamentos">
           </datatable>
         </div>
-        <div class="col mb-3">
-          <button class="float-right btn btn-success btn-sm" (click)="add_medicamentos()"><i
-              class="fa fa-check"></i>Agregar Medicamento</button>
-        </div>
       </div>
       <div class="custom-nav-content" *ngIf="ins">
         <div class="fade-in">
+          <div class="col">
+            <button class="float-right btn btn-success btn-sm" (click)="add_insumos()"><i
+                class="fa fa-check"></i>Agregar Insumo</button>
+          </div>
           <datatable #insumos_datatable_ref [options]="insumos_datatable" [loading]="medicamentos_datatable_loading"
             [data_array]="insumos">
           </datatable>
-          <div class="col mb-3">
-            <button class="float-right btn btn-success btn-sm" (click)="add_medicamentos()"><i
-                class="fa fa-check"></i>Agregar Insumo</button>
-          </div>
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@
 
 <div *ngIf="create_med_view" class="fade-in">
   <div class="container-m-nx container-p-x pt-2 text-right mb-2">
-    <button (click)="open_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+    <button (click)="open_detail_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
         class="fa fa-arrow-left mr-2"></i>Regresar</button>
   </div>
   <div class="row">
@@ -84,8 +84,10 @@
         <div class="card-footer text-right">
           <button class="btn btn-danger btn-sm" (click)="cancel_med()"><i class="fa fa-times"></i> Cancelar
           </button>
-          <button class="btn btn-success btn-sm" (click)="insert_product()"><i class="fa fa-check"></i> Registrar
+          <button *ngIf="inventory_type === 0" class="btn btn-success btn-sm" (click)="insert_product()"><i class="fa fa-check"></i> Registrar
             Medicamento</button>
+            <button *ngIf="inventory_type === 1" class="btn btn-success btn-sm" (click)="insert_product()"><i class="fa fa-check"></i> Registrar
+              Insumo</button>
         </div>
       </div>
     </div>

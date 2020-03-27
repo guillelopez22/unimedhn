@@ -104,13 +104,9 @@
           <span class="nav-link" [class.active]="inner_view==2"><b
               [class.text-primary]="inner_view==2">Alumnos</b></span>
         </li>
-        <li (click)="open_medicamentos()" class="nav-item" style="cursor: pointer;">
+        <li (click)="open_cartera()" class="nav-item" style="cursor: pointer;">
           <span class="nav-link" [class.active]="inner_view==3"><b
-              [class.text-primary]="inner_view==3">Medicamentos</b></span>
-        </li>
-        <li (click)="open_insumos()" class="nav-item" style="cursor: pointer;">
-          <span class="nav-link" [class.active]="inner_view==4"><b
-              [class.text-primary]="inner_view==4">Insumos</b></span>
+              [class.text-primary]="inner_view==3">Cartera</b></span>
         </li>
       </ul>
       <div class="custom-nav-content" *ngIf="inner_view==1">
@@ -173,8 +169,69 @@
               </tr>
             </tbody>
           </table>
-          <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i> Agregar
+          <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i>
+            Agregar
             Alumno</button>
+        </div>
+      </div>
+      <div class="custo-nav-content" *ngIf="inner_view===3">
+        <div *ngIf="cartera.length === 0" class="col-12 mt-4 mb-4">
+          <div class="card">
+            <div class="card-content mt-4 ml-4 mb-4 mr-4">
+              <div class="col-md-12 text-center">
+                <h5>Datos de la Cartera</h5>
+                <form-renderer #cartera_form [config]="cartera_inputs"></form-renderer>
+              </div>
+            </div>
+            <div class="card-footer text-right">
+              <button class="btn btn-danger btn-sm" (click)="cancel_cartera()"><i class="fa fa-times"></i> Cancelar
+              </button>
+              <button class="btn btn-success btn-sm" (click)="insert_cartera()"><i class="fa fa-check"></i> Registrar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="cartera.length > 0 && cartera_main_view" class="col-12 mt-4 mb-4">
+          <div class="card">
+            <div class="card-content mt-4 ml-4 mb-4 mr-4">
+              <div class="col-md-12 text-center">
+                <button class="btn btn-sm btn-outline-success" (click)="open_cartera_medicamentos()">Agregar
+                  Medicamentos</button>
+                <button class="btn btn-sm btn-outline-success" (click)="open_cartera_insumos()">Agregar Insumos</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="cartera_medicamentos_view" class="col-12 mt-4 mb-4">
+          <div class="card">
+            <div class="card-content mt-4 ml-4 mb-4 mr-4">
+              <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+                <button (click)="open_cartera_main()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+                    class="fa fa-arrow-left mr-2"></i>Regresar</button>
+              </div>
+              <div class="col-md-12 text-center">
+                <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
+                  [loading]="inventory_loading" [data_array]="inventory"
+                  (option_event)="inventory_datatable_events($event)">
+                </datatable>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="cartera_insumos_view" class="col-12 mt-4 mb-4">
+          <div class="card">
+            <div class="card-content mt-4 ml-4 mb-4 mr-4">
+              <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+                <button (click)="open_cartera_main()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+                    class="fa fa-arrow-left mr-2"></i>Regresar</button>
+              </div>
+              <div class="col-md-12 text-center">
+                <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
+                  [loading]="inventory_loading" [data_array]="inventory">
+                </datatable>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -317,8 +374,8 @@
       </div>
       <div class="modal-body custom-modal-body fade-in">
         <div class="container-m-nx container-p-x pt-2 text-right mb-2">
-          <button *ngIf="!insert_doctor_main_view" [disabled]="loading" (click)="return_insert_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
-              class="fa fa-arrow-left mr-2"></i>Regresar</button>
+          <button *ngIf="!insert_doctor_main_view" [disabled]="loading" (click)="return_insert_view()"
+            class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i class="fa fa-arrow-left mr-2"></i>Regresar</button>
         </div>
         <div class="cover-div" *ngIf="instituciones_loading">
           <div class="sk-wave sk-primary">
@@ -340,7 +397,8 @@
           <div class="col-md-12 text-right">
             <button class="btn btn-sm btn-outline-success" (click)="add_jornada()">Agregar Horas Laborales</button>
             <button class="btn btn-sm btn-outline-success" (click)="add_antecedentes()">Agregar Antecedents</button>
-            <button class="btn btn-sm btn-outline-success" (click)="add_academic_info()">Agregar Información Académica</button>
+            <button class="btn btn-sm btn-outline-success" (click)="add_academic_info()">Agregar Información
+              Académica</button>
           </div>
         </div>
         <div *ngIf="jornada_view" class="row">
@@ -354,10 +412,10 @@
           </div>
           <div class="col-12">
             <div class="input-group-append float-right">
-                <button class="btn btn-secondary mr-2" name="cancelar"
-                (click)="cancel_doctor_schedule()"><i class="fa fa-check"></i> Cancelar</button>
-                <button class="btn btn-success" name="agregar"
-                (click)="add_doctor_schedule()"><i class="fa fa-check"></i>Agregar</button>
+              <button class="btn btn-secondary mr-2" name="cancelar" (click)="cancel_doctor_schedule()"><i
+                  class="fa fa-check"></i> Cancelar</button>
+              <button class="btn btn-success" name="agregar" (click)="add_doctor_schedule()"><i
+                  class="fa fa-check"></i>Agregar</button>
             </div>
           </div>
           <div class="col-md-12 pt-5">
@@ -400,10 +458,10 @@
           </div>
           <div class="col-12">
             <div class="input-group-append float-right">
-                <button class="btn btn-secondary mr-2" name="cancelar"
-                (click)="cancel_doctor_antecedente()"><i class="fa fa-check"></i> Cancelar</button>
-                <button class="btn btn-success" name="agregar"
-                (click)="add_doctor_antecedente()"><i class="fa fa-check"></i>Agregar</button>
+              <button class="btn btn-secondary mr-2" name="cancelar" (click)="cancel_doctor_antecedente()"><i
+                  class="fa fa-check"></i> Cancelar</button>
+              <button class="btn btn-success" name="agregar" (click)="add_doctor_antecedente()"><i
+                  class="fa fa-check"></i>Agregar</button>
             </div>
           </div>
           <div class="col-md-12 pt-5">
@@ -440,14 +498,14 @@
             </h4>
           </div>
           <div class="col-12">
-            <form-renderer #academic_form [config]="academic_inputs" ></form-renderer>
+            <form-renderer #academic_form [config]="academic_inputs"></form-renderer>
           </div>
           <div class="col-12">
             <div class="input-group-append float-right">
-                <button class="btn btn-secondary mr-2" name="cancelar"
-                (click)="cancel_doctor_academics()"><i class="fa fa-check"></i> Cancelar</button>
-                <button class="btn btn-success" name="agregar"
-                (click)="add_doctor_academics()"><i class="fa fa-check"></i>Agregar</button>
+              <button class="btn btn-secondary mr-2" name="cancelar" (click)="cancel_doctor_academics()"><i
+                  class="fa fa-check"></i> Cancelar</button>
+              <button class="btn btn-success" name="agregar" (click)="add_doctor_academics()"><i
+                  class="fa fa-check"></i>Agregar</button>
             </div>
           </div>
           <div class="col-md-12 pt-5">
@@ -482,7 +540,8 @@
       </div>
       <div class="modal-footer custom-modal-footer text-left">
         <button *ngIf="instituciones_modal_view==1 || instituciones_modal_view==2" [disabled]="instituciones_loading"
-          class="btn btn-danger btn-sm" (click)="doctores_modal.hide();return_insert_view()"><i class="fa fa-times"></i> Cerrar</button>
+          class="btn btn-danger btn-sm" (click)="doctores_modal.hide();return_insert_view()"><i class="fa fa-times"></i>
+          Cerrar</button>
         <button *ngIf="doctor_modal_view==1" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
           (click)="insert_doctor()"><i class="fa fa-check"></i> Registrar
           Médico</button>
@@ -549,7 +608,8 @@
                 </tbody>
               </table>
               <div class="text-center">
-                <button (click)="open_add_alumno_contacto()" class="btn btn-sm btn-info"><i class="fa fa-user mr-2"></i>Agregar
+                <button (click)="open_add_alumno_contacto()" class="btn btn-sm btn-info"><i
+                    class="fa fa-user mr-2"></i>Agregar
                   Contacto</button>
               </div>
             </div>
@@ -562,8 +622,8 @@
         </div>
       </div>
       <div class="modal-footer custom-modal-footer text-left">
-        <button *ngIf="alumno_main_view"
-          class="btn btn-danger btn-sm" (click)="alumnos_modal.hide();"><i class="fa fa-times"></i> Cerrar</button>
+        <button *ngIf="alumno_main_view" class="btn btn-danger btn-sm" (click)="alumnos_modal.hide();"><i
+            class="fa fa-times"></i> Cerrar</button>
         <button *ngIf="alumno_main_view" [disabled]="instituciones_loading" class="btn btn-success btn-sm"
           (click)="insert_alumno()"><i class="fa fa-check"></i> Registrar
           Alumno</button>
@@ -596,6 +656,27 @@
           Limpiar Filtro</button>
         <button class="btn btn-info btn-sm" (click)="search_instituciones()"><i class="fa fa-filter"></i> Buscar
           Instituciones</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #inventory_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-filter mr-2"></i>Registrar en Cartera</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #instituciones_search_form [config]="instituciones_search_inputs">
+        </form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="instituciones_search_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="btn btn-warning btn-sm" (click)="clean_search_instituciones()"><i class="fa fa-ban"></i>
+          Registrar</button>
       </div>
     </div>
   </div>

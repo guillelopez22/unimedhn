@@ -42,7 +42,10 @@ export class MedicamentosComponent implements OnInit {
     sort_order: '',
     sort_ascendent: false
   };
-  public created_product_id = "";
+  public insumo_id = -1;
+  public medicamento_id = -1;
+  public inventory_type = 0;
+  public created_product_id = '';
   public insumos = [];
   public medicamentos = [];
   public med = true;
@@ -308,7 +311,7 @@ export class MedicamentosComponent implements OnInit {
                   text: ''
                 },
                 list: () => {
-                  return []
+                  return [];
                 },
                 textmask: () => {
                   return false;
@@ -407,7 +410,7 @@ export class MedicamentosComponent implements OnInit {
                 }
               }
             ]
-          },
+          }
         ]
       },
       {
@@ -433,6 +436,162 @@ export class MedicamentosComponent implements OnInit {
                 list_data: {
                   value: 'name',
                   text: 'name'
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'cantidad_dosis',
+                label: 'Dosis',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'numero_inventario',
+                label: 'Numero de Inventario',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'comentarios',
+                label: 'Comentarios',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'fecha_compra',
+                label: 'Fecha de Compra',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
                 },
                 list: () => {
                 },
@@ -1002,7 +1161,7 @@ export class MedicamentosComponent implements OnInit {
           },
         ]
       },
-    ]
+    ];
   }
 
   ngOnInit() {
@@ -1182,9 +1341,9 @@ export class MedicamentosComponent implements OnInit {
       console.log(tradename);
 
       const measure_unit = this.measurement_units.find(el => el.name === form_values.measure_unit);
-      const presentation = this.presentations.find(el => el.name === form_values.presentation)
-      const concentration = this.concentration_list.find(el => el.description === form_values.concentration)
-      const tradename_id = tradename.tradename_id
+      const presentation = this.presentations.find(el => el.name === form_values.presentation);
+      const concentration = this.inventory_type === 0 ? this.concentration_list.find(el => el.description === form_values.concentration) : 0;
+      const tradename_id = tradename.tradename_id;
       const presentation_id = presentation.presentation_id;
       const presentation_quantity = form_values.cantidad_presentacion;
       const presentation_measure_unit_id = measure_unit.measure_unit_id;
@@ -1198,18 +1357,64 @@ export class MedicamentosComponent implements OnInit {
         presentation_measure_unit_id,
         aus_measure_unit_id,
         aus_quantity,
-        concentration_id: concentration.concentration_id,
-        description: ""
+        concentration_id: this.inventory_type === 0 ? concentration.concentration_id : 999,
+        description: ''
       }).subscribe(data => {
         this.created_product_id = data.result.insertId;
+        this.endpoint.insert_batch({
+          product_id: this.created_product_id,
+          expiration_date: form_values.expiration_date.split('/').reverse().join('-'),
+          purchase_date: form_values.purchase_date.split('/').reverse().join('-'),
+          batch_price: form_values.batch_price,
+          batch_quantity: form_values.batch_quantity,
+          observation: ''
+        }).subscribe();
+        if (this.inventory_type === 0) {
+          this.endpoint.insert_medicamento({
+            nombre: form_values.active_principle,
+            nombre_comercial: tradename.name,
+            presentacion: presentation.name,
+            concentracion: form_values.concentration
+          }).subscribe(medicamento => {
+            this.medicamento_id = medicamento.medicamento_id;
+            this.endpoint.insert_inventario_medicamento({
+              costo_compra: form_values.batch_price,
+              cantidad_dosis: form_values.cantidad_dosis,
+              entrada_inventario: form_values.batch_quantity,
+              vencimiento: form_values.expiration_date.split('/').reverse().join('-'),
+              numero_inventario: form_values.numero_inventario,
+              comentarios: form_values.comentarios,
+              medicamento_id: this.medicamento_id,
+              fecha_compra: form_values.purchase_date.split('/').reverse().join('-'),
+            }).subscribe();
+          });
+        } else {
+          this.endpoint.insert_insumo({
+            tipo_insumo: form_values.tipo_insumo,
+            nombre_comercial: tradename.name,
+            presentacion: presentation.name,
+          }).subscribe(insumo => {
+            this.insumo_id = insumo.insumo_id;
+            this.endpoint.insert_inventario_insumo({
+              costo_compra: form_values.batch_price,
+              cantidad: form_values.cantidad,
+              entrada_inventario: form_values.batch_quantity,
+              vencimiento: form_values.expiration_date.split('/').reverse().join('-'),
+              numero_inventario: form_values.numero_inventario,
+              comentarios: form_values.comentarios,
+              medicamento_id: this.medicamento_id,
+              fecha_compra: form_values.purchase_date.split('/').reverse().join('-'),
+            }).subscribe();
+          });
+        }
       },
       err => {
         this.alertService.alert_error(err.title, err.message);
       },
       () => {
-        this.confirmation_modal.show();
-        this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria')
-      })
+        this.medicamentos_form.clean_form();
+        this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
+      });
     }
   }
 
@@ -1232,7 +1437,7 @@ export class MedicamentosComponent implements OnInit {
           this.concentration_form.clean_form();
           this.alertService.alert_success('Exito', 'La operacion se ha realizado de manera satisfactoria');
           this.concentration_modal.hide();
-        })
+        });
     }
   }
 
@@ -1241,8 +1446,8 @@ export class MedicamentosComponent implements OnInit {
       const form_values = this.confirmation_form.get_values();
        this.endpoint.insert_batch({
          product_id: this.created_product_id,
-         expiration_date: form_values.expiration_date.split("/").reverse().join("-"),
-         purchase_date: form_values.purchase_date.split("/").reverse().join("-"),
+         expiration_date: form_values.expiration_date.split('/').reverse().join('-'),
+         purchase_date: form_values.purchase_date.split('/').reverse().join('-'),
          batch_price: form_values.batch_price,
          batch_quantity: form_values.batch_quantity,
          observation: ''
@@ -1254,14 +1459,14 @@ export class MedicamentosComponent implements OnInit {
          this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
          this.concentration_form.clean_form();
          this.concentration_modal.hide();
-       })
+       });
     }
   }
 
   insert_nombre_comercial() {
     if (this.nombre_comercial_form.valid()) {
       const form_values = this.nombre_comercial_form.get_values();
-      const found = this.total_active_principles.find(el => el.name === form_values.nombre)
+      const found = this.total_active_principles.find(el => el.name === form_values.nombre);
       this.endpoint.insert_tradename({
         active_principle_id: found.active_principle_id,
         name: form_values.n_nombre_comercial,
@@ -1287,10 +1492,10 @@ export class MedicamentosComponent implements OnInit {
         err => {
           this.alertService.alert_error(err.title, err.message);
         }, () => {
-          this.alertService.alert_success('Exito', 'Se ha agregado el principal activo con exito')
+          this.alertService.alert_success('Exito', 'Se ha agregado el principal activo con exito');
           this.active_principle_form.clean_form();
           this.get_active_principle_total_list();
-        })
+        });
     }
   }
 
@@ -1301,14 +1506,14 @@ export class MedicamentosComponent implements OnInit {
       this.tradenames_datatable_loading = false;
     }, err => {
       this.tradenames_datatable_loading = true;
-      this.alertService.alert_message('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde')
+      this.alertService.alert_message('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
     }, () => {
       this.endpoint.get_all_insumos().subscribe(data => {
         this.tradenames = [...this.tradenames, ...data];
         this.tradenames_datatable_loading = false;
       }, err => {
         this.tradenames_datatable_loading = true;
-        this.alertService.alert_message('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde')
+        this.alertService.alert_message('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
       });
     });
   }
@@ -1358,12 +1563,692 @@ export class MedicamentosComponent implements OnInit {
 
   add_medicamentos() {
     // this.medicamentos_modal.show();
+    this.get_insumos();
+    this.get_medicamentos();
+    this.get_active_principle_total_list();
+    this.get_concentration_list();
+    this.get_measure_unit_list();
+    this.get_all_inventory();
+    this.get_presentation_list();
+    this.inventory_type = 0;
     this.main_view = false;
     this.detail_view = false;
     this.create_med_view = true;
+    this.medicamento_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'active_principle',
+                label: 'Principal Activo',
+                icon: '',
+                class: 'form-control',
+                placeholder: ' - Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.total_active_principles;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  const found = this.total_active_principles.find(el => el.name === event);
+                  this.selected_active_desc = found.description;
+                  this.endpoint.get_tradename_list(found.active_principle_id).subscribe(data => {
+                    this.commercial_names = data;
+                  });
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-8',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'active_principle_desc',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_active_desc,
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return false;
+                },
+                disabled: () => {
+                  return true;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'commercial_name',
+                label: 'Nombre Comercial',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.commercial_names;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+
+                  const found = this.commercial_names.find(el => el.name === event);
+
+                  this.selected_trade_name_desc = found.description;
+
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-8',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'nombre_comercial_desc',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_trade_name_desc,
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'value',
+                  text: 'text'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return false;
+                },
+                disabled: () => {
+                  return true;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'presentation',
+                label: 'Presentación del Fármaco',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.presentations;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-2',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'cantidad_presentacion',
+                label: 'Cantidad por Presentación',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: 0,
+                maxlength: 3,
+                pattern: '',
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-2',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'measure_unit',
+                label: 'Unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  this.selected_measure_unit = event;
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'concentration',
+                label: 'Concentración',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'description',
+                  text: 'description'
+                },
+                list: () => {
+                  return this.concentration_list;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  this.selected_measure_unit = event;
+                },
+                input: () => {
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'decimal',
+                extra: '',
+                name: 'aus',
+                label: 'AUS (Average Unit Served)',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_measure_unit,
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'numero_inventario',
+                label: 'Numero de Inventario',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'decimal',
+                extra: '',
+                name: 'cantidad_dosis',
+                label: 'Dosis',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'comentarios',
+                label: 'Comentarios',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'expiration_date',
+                label: 'Fecha de Caducidad',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'purchase_date',
+                label: 'Fecha de Compra',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'batch_price',
+                label: 'Precio',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'batch_quantity',
+                label: 'Cantidad en Lote',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
   }
 
   open_detail_view() {
+    this.get_insumos();
+    this.get_medicamentos();
+    this.get_active_principle_total_list();
+    this.get_concentration_list();
+    this.get_measure_unit_list();
+    this.get_all_inventory();
+    this.get_presentation_list();
     this.main_view = false;
     this.detail_view = true;
     this.create_med_view = false;
@@ -1376,6 +2261,681 @@ export class MedicamentosComponent implements OnInit {
   }
 
   add_insumos() {
+    this.get_insumos();
+    this.get_medicamentos();
+    this.get_active_principle_total_list();
+    this.get_concentration_list();
+    this.get_measure_unit_list();
+    this.get_all_inventory();
+    this.get_presentation_list();
+    this.inventory_type = 1;
+    this.main_view = false;
+    this.detail_view = false;
+    this.create_med_view = true;
+    this.medicamento_inputs = [
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'active_principle',
+                label: 'Principal Activo',
+                icon: '',
+                class: 'form-control',
+                placeholder: ' - Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.total_active_principles;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  const found = this.total_active_principles.find(el => el.name === event);
+                  this.selected_active_desc = found.description;
+                  this.endpoint.get_tradename_list(found.active_principle_id).subscribe(data => {
+                    this.commercial_names = data;
+                  });
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-8',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'active_principle_desc',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_active_desc,
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return false;
+                },
+                disabled: () => {
+                  return true;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'commercial_name',
+                label: 'Nombre Comercial',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.commercial_names;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
 
+                  const found = this.commercial_names.find(el => el.name === event);
+
+                  this.selected_trade_name_desc = found.description;
+
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-8',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'nombre_comercial_desc',
+                label: 'Descripcion',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_trade_name_desc,
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'value',
+                  text: 'text'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return false;
+                },
+                disabled: () => {
+                  return true;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'presentation',
+                label: 'Presentación del Fármaco',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.presentations;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-2',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'cantidad_presentacion',
+                label: 'Cantidad por Presentación',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: 0,
+                maxlength: 3,
+                pattern: '',
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-2',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'measure_unit',
+                label: 'Unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  this.selected_measure_unit = event;
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'tipo_insumo',
+                label: 'Tipo de Insumo',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: null,
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'description',
+                  text: 'description'
+                },
+                list: () => {
+                  return this.concentration_list;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  this.selected_measure_unit = event;
+                },
+                input: () => {
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        class: 'row',
+        columns: [
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'decimal',
+                extra: '',
+                name: 'aus',
+                label: 'AUS (Average Unit Served)',
+                icon: '',
+                class: 'form-control',
+                placeholder: this.selected_measure_unit,
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'numero_inventario',
+                label: 'Numero de Inventario',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'decimal',
+                extra: '',
+                name: 'cantidad',
+                label: 'Cantidad',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-12',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'comentarios',
+                label: 'Comentarios',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'expiration_date',
+                label: 'Fecha de Caducidad',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'calendar',
+                extra: 'popup',
+                name: 'purchase_date',
+                label: 'Fecha de Compra',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'batch_price',
+                label: 'Precio',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'batch_quantity',
+                label: 'Cantidad en Lote',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+        ]
+      },
+    ];
   }
 }

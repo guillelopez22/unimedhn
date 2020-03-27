@@ -6,7 +6,10 @@ import { AlertService } from '../components/alert_service/alert.service';
 
 @Component({
   selector: 'consultas',
-  templateUrl: 'consulta.component.html'
+  templateUrl: 'consulta.component.html',
+  styleUrls: [
+    '../../vendor/libs/spinkit/spinkit.scss'
+  ]
 })
 
 export class ConsultaComponent implements OnInit {
@@ -327,5 +330,5 @@ export class ConsultaComponent implements OnInit {
       }
     );
   }
-  
+
 }

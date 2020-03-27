@@ -22,6 +22,7 @@ import { MedicosComponent } from './medicos/medicos.component';
 import { InsumosComponent } from './insumos/insumos.component';
 import { PresentacionComponent } from './presentaciones/presentacion.component';
 import { ConsultaComponent } from './consultas/consulta.component';
+import { CarterasComponent } from './carteras/carteras.component';
 // *******************************************************************************
 // Routes
 
@@ -94,6 +95,11 @@ const routes: Routes = [
       {
         path: 'consultas',
         component: ConsultaComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'carteras',
+        component: CarterasComponent,
         canActivate: [LoginGuard]
       },
     ]

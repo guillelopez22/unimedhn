@@ -6,16 +6,16 @@
 </h4>
 
 <div *ngIf="main_view" class="fade-in">
+  <div class="col mb-3">
+    <button class="float-right btn btn-success btn-sm" (click)="add_consulta()"><i class="fa fa-check"></i> Agregar
+      Consulta</button>
+  </div>
   <datatable #consulta_datatable_ref
     [options]="consultas_datatable"
     [loading]="consultas_loading_datatable"
     [data_array]="consultas"
     >
   </datatable>
-  <div class="col mb-3">
-    <button class="float-right btn btn-success btn-sm" (click)="add_consulta()"><i class="fa fa-check"></i> Agregar
-      Médico</button>
-  </div>
 </div>
 
 <div *ngIf="creating_consult_view" class="fade-in">

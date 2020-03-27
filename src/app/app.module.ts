@@ -43,6 +43,7 @@ import { InsumosComponent } from './insumos/insumos.component';
 import { MedicamentosComponent } from './medicamentos/medicamentos.component';
 import { PresentacionComponent } from './presentaciones/presentacion.component';
 import { ConsultaComponent } from './consultas/consulta.component';
+import { CarterasComponent } from './carteras/carteras.component';
 // *******************************************************************************
 //
 
@@ -60,7 +61,8 @@ import { ConsultaComponent } from './consultas/consulta.component';
     AlumnosComponent,
     MedicosComponent,
     PresentacionComponent,
-    ConsultaComponent
+    ConsultaComponent,
+    CarterasComponent,
   ],
 
   imports: [
