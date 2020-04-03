@@ -125,6 +125,10 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + '/get_instituciones', { params: payload, headers: this.get_headers(), responseType: 'json' });
   }
 
+  get_institutions(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_institutions', { headers: this.get_headers(), responseType: 'json' });
+  }
+
   insert_institucion(payload): Observable<any> {
     return this.httpClient.post(this.endpoint + '/insert_institucion', payload, { headers: this.get_headers(), responseType: 'json' });
   }

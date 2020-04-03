@@ -1,0 +1,94 @@
+<h4 class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>Administrar Lotes
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los lotes de medicamentos e insumos</small></div>
+  </div>
+</h4>
+
+<div class="col-12">
+  <ul class="nav nav-tabs nav-responsive-md">
+    <li (click)="open_medicamentos()" class="nav-item" style="cursor: pointer;">
+      <span class="nav-link" [class.active]="inner_view==1"><b
+          [class.text-primary]="inner_view==1">Medicamentos</b></span>
+    </li>
+    <li (click)="open_insumos()" class="nav-item" style="cursor: pointer;">
+      <span class="nav-link" [class.active]="inner_view==2"><b
+          [class.text-primary]="inner_view==2">Insumos</b></span>
+    </li>
+  </ul>
+  <div class="custom-nav-content" *ngIf="inner_view==1">
+    <div class="fade-in">
+      <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="fade-in">
+            <datatable #medicamentos_datatable_ref
+              [options]="medicamentos_datatable"
+              [loading]="medicamentos_datatable_loading"
+              [data_array]="medicamentos"
+              (option_event)="medicamentos_datatable_events($event)"
+            >
+            </datatable>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="custom-nav-content" *ngIf="inner_view==2">
+    <div class="fade-in">
+      <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="fade-in">
+            <datatable #insumos_datatable_ref
+              [options]="insumos_datatable"
+              [loading]="insumos_datatable_loading"
+              [data_array]="insumos"
+              (option_event)="insumos_datatable_events($event)"
+            >
+            </datatable>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div bsModal #confirmation_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Registrar Medicamento en Lote</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #confirmation_form [config]="confirmation_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="confirmation_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_batch();confirmation_modal.hide()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div *ngIf="main_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="fade-in">
+        <div class="col">
+          <button class="float-right btn btn-success btn-sm" (click)="add_insumos()"><i
+              class="fa fa-check"></i>Agregar Insumo</button>
+        </div>
+        <datatable #lotes_datatable_ref [options]="lotes_datatable" [loading]="lotes_datatable_loading"
+          [data_array]="lotes">
+        </datatable>
+      </div>
+    </div>
+  </div>
+</div> -->

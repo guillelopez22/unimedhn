@@ -23,6 +23,7 @@ import { InsumosComponent } from './insumos/insumos.component';
 import { PresentacionComponent } from './presentaciones/presentacion.component';
 import { ConsultaComponent } from './consultas/consulta.component';
 import { CarterasComponent } from './carteras/carteras.component';
+import { LotesComponent } from './lotes/lotes.component';
 // *******************************************************************************
 // Routes
 
@@ -100,6 +101,11 @@ const routes: Routes = [
       {
         path: 'carteras',
         component: CarterasComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'lotes',
+        component: LotesComponent,
         canActivate: [LoginGuard]
       },
     ]

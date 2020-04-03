@@ -1,0 +1,115 @@
+<h4 class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>Administrar Insumos
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los insumos</small></div>
+  </div>
+</h4>
+
+<div *ngIf="main_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="fade-in">
+        <div class="col">
+          <button class="float-right btn btn-success btn-sm" (click)="add_insumos()"><i
+              class="fa fa-check"></i>Agregar Insumo</button>
+        </div>
+        <datatable #insumos_datatable_ref
+          [options]="insumos_datatable"
+          [loading]="insumos_datatable_loading"
+          [data_array]="insumos"
+        >
+        </datatable>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="create_insumo_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+    <button (click)="open_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+        class="fa fa-arrow-left mr-2"></i>Regresar</button>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-content mt-4 ml-4 mb-4 mr-4">
+          <form-renderer #medicamentos_form [config]="insumo_inputs"></form-renderer>
+          <div class="col-md-12 text-center">
+            <button class="btn btn-sm btn-outline-success" (click)="open_active_principle()">Agregar Principal
+              Activo</button>
+            <button class="btn btn-sm btn-outline-success" (click)="open_nombre_comercial()">Agregar Nombre
+              Comercial</button>
+            <button class="btn btn-sm btn-outline-success" (click)="open_concentration()">Agregar Concentracion</button>
+          </div>
+        </div>
+        <div class="card-footer text-right">
+          <button class="btn btn-danger btn-sm" (click)="cancel_med()"><i class="fa fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-success btn-sm" (click)="insert_product()"><i class="fa fa-check"></i> Registrar Insumo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #nombre_comercial_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Nombre Comercial</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #nombre_comercial_form [config]="nombre_comercial_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="nombre_comercial_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_nombre_comercial()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #active_principle_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Principal Activo</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #active_principle_form [config]="principal_activo_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="active_principle_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_active_principle()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #concentration_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Principal Activo</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #concentration_form [config]="concentration_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="concentration_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_concentration()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>

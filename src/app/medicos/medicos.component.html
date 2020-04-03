@@ -6,17 +6,16 @@
 </h4>
 
 <div class="fade-in">
+  <div class="col mb-3">
+    <button class="float-right btn btn-success btn-sm" (click)="add_doctor()"><i class="fa fa-check"></i> Agregar
+      Médico</button>
+</div>
   <datatable #medicos_datatable_ref
     [options]="medicos_datatable"
     [loading]="medicos_datatable_loading"
     [data_array]="medicos"
     >
   </datatable>
-  <div class="col mb-3">
-    <button class="float-right btn btn-success btn-sm" (click)="add_doctor()"><i class="fa fa-check"></i> Agregar
-      Médico</button>
-</div>
-
 <div bsModal #doctores_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"
   role="dialog">
   <div class="modal-dialog modal-lg">

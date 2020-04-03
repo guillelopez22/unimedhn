@@ -38,6 +38,7 @@ export class MedicosComponent implements OnInit {
   public antecedentes_inputs = [];
   public jornadas_inputs = [];
   public academic_inputs = [];
+  public institutions = [];
   public complete_antecedente = {
     antecedente_date: '',
     antecedente_desc: ''
@@ -53,7 +54,7 @@ export class MedicosComponent implements OnInit {
   public academic_data = [];
   public doctors = [];
   public instituciones_data = {
-    id: '',
+    id: 0,
     nombre: '',
     correo: '',
     telefono: '',
@@ -68,7 +69,7 @@ export class MedicosComponent implements OnInit {
     doctores: []
   };
   public doctor_data = {
-    institution_id: '',
+    institution_id: 0,
     first_name: '',
     last_name: '',
     phone: '',
@@ -197,7 +198,7 @@ export class MedicosComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-12',
+            class: 'col-md-6',
             inputs: [
               {
                 type: 'text',
@@ -230,6 +231,51 @@ export class MedicosComponent implements OnInit {
                   return false;
                 },
                 change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'institution',
+                label: 'Institucion',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: 'Formato Inválido',
+                error_minlength: '',
+                list_data: {
+                  value: 'nombre',
+                  text: 'nombre'
+                },
+                list: () => {
+                  return this.institutions;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                  const found = this.institutions.find(el => el.nombre === event);
+                  this.instituciones_data = found;
+                  console.log('====================================');
+                  console.log(this.instituciones_data);
+                  console.log('====================================');
                 },
                 input: () => {
                 }
@@ -325,7 +371,7 @@ export class MedicosComponent implements OnInit {
             class: 'col-md-3',
             inputs: [
               {
-                type: 'text',
+                type: 'decimal',
                 extra: '',
                 name: 'extension',
                 label: 'Extensión',
@@ -334,7 +380,7 @@ export class MedicosComponent implements OnInit {
                 placeholder: '',
                 minlength: null,
                 maxlength: null,
-                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+                pattern: '',
                 error_required: 'Requerido',
                 error_pattern: 'Formato Inválido',
                 error_minlength: '',
@@ -346,7 +392,7 @@ export class MedicosComponent implements OnInit {
                   return []
                 },
                 textmask: () => {
-                  return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
+                  return false;
                 },
                 required: () => {
                   return true;
@@ -872,13 +918,27 @@ export class MedicosComponent implements OnInit {
     ];
    }
 
-  ngOnInit() {
+   get_institutions() {
+     this.endpoint.get_institutions().subscribe(data => {
+       this.institutions = data;
+       console.log('====================================');
+       console.log(this.institutions);
+       console.log('====================================');
+     });
+   }
+
+   get_doctors() {
     this.endpoint.get_doctors().subscribe(doctors => {
       this.medicos = doctors;
     }, err => {
       this.medicos_datatable_loading = true;
       this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
     });
+   }
+
+  ngOnInit() {
+    this.get_doctors();
+    this.get_institutions();
     this.medicos_datatable = {
       // title: 'Listado de Medicos',
       icon: 'user-md',
@@ -1039,8 +1099,6 @@ export class MedicosComponent implements OnInit {
         foto: null
       };
       console.log(this.doctor_data);
-      this.doctors.push(this.doctor_data);
-      this.instituciones_data.doctores = [...this.instituciones_data.doctores, ...this.doctors];
       let response;
       this.endpoint.insert_doctors(this.doctor_data).subscribe(
         data => response = data,
@@ -1057,6 +1115,7 @@ export class MedicosComponent implements OnInit {
             this.doctor_modal_view = 1;
             this.doctores_modal.hide();
             this.alertService.alert_success(response.title, response.message);
+            this.get_doctors();
           } catch (error) {
             this.alertService.alert_aplication_error('Error Interno del Aplicativo');
           }

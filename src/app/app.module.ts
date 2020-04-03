@@ -44,6 +44,7 @@ import { MedicamentosComponent } from './medicamentos/medicamentos.component';
 import { PresentacionComponent } from './presentaciones/presentacion.component';
 import { ConsultaComponent } from './consultas/consulta.component';
 import { CarterasComponent } from './carteras/carteras.component';
+import { LotesComponent } from './lotes/lotes.component';
 // *******************************************************************************
 //
 
@@ -63,6 +64,7 @@ import { CarterasComponent } from './carteras/carteras.component';
     PresentacionComponent,
     ConsultaComponent,
     CarterasComponent,
+    LotesComponent,
   ],
 
   imports: [

@@ -38,6 +38,7 @@ export class InstitucionesComponent implements OnInit {
   public inventario_medicamento_disponible = [];
   @ViewChild('alumnos_modal') alumnos_modal: ModalDirective;
   @ViewChild('medicamentos_modal') meidcamentos_modal: ModalDirective;
+  @ViewChild('inventory_modal') inventory_modal: ModalDirective;
   @ViewChild('insumos_modal') insumos_modal: ModalDirective;
   @ViewChild('instituciones_modal') instituciones_modal: ModalDirective;
   @ViewChild('doctores_modal') doctores_modal: ModalDirective;
@@ -176,7 +177,7 @@ export class InstitucionesComponent implements OnInit {
     departamento: '',
     calendario: '',
     tipo: ''
-  }
+  };
 
   @ViewChild('contacto_form') contacto_form: FormControlDirective;
   public contacto_submitted: boolean;
@@ -2496,7 +2497,7 @@ export class InstitucionesComponent implements OnInit {
     this.inner_view = 3;
   }
 
-  open_insumos() {
+  open_inv_cartera() {
     this.inner_view = 4;
   }
 
@@ -2578,8 +2579,9 @@ export class InstitucionesComponent implements OnInit {
 
   inventory_datatable_events(event) {
     console.log('====================================');
-    console.log(event);
+    console.log(event.data);
     console.log('====================================');
+    this.inventory_modal.show();
   }
 
   open_cartera_main() {

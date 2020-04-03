@@ -106,7 +106,11 @@
         </li>
         <li (click)="open_cartera()" class="nav-item" style="cursor: pointer;">
           <span class="nav-link" [class.active]="inner_view==3"><b
-              [class.text-primary]="inner_view==3">Cartera</b></span>
+              [class.text-primary]="inner_view==3">Agregar a Cartera</b></span>
+        </li>
+        <li (click)="open_inv_cartera()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="inner_view==4"><b
+              [class.text-primary]="inner_view==3">Disponible en Cartera</b></span>
         </li>
       </ul>
       <div class="custom-nav-content" *ngIf="inner_view==1">
@@ -170,8 +174,8 @@
             </tbody>
           </table>
           <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i>
-            Agregar
-            Alumno</button>
+            Agregar Alumno
+          </button>
         </div>
       </div>
       <div class="custo-nav-content" *ngIf="inner_view===3">
@@ -208,12 +212,17 @@
               <div class="container-m-nx container-p-x pt-2 text-right mb-2">
                 <button (click)="open_cartera_main()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
                     class="fa fa-arrow-left mr-2"></i>Regresar</button>
+                    <div class="text-center mb-4">
+                      <h4>Inventario de Medicamentos Disponibles</h4>
+                    </div>
               </div>
               <div class="col-md-12 text-center">
-                <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
-                  [loading]="inventory_loading" [data_array]="inventory"
-                  (option_event)="inventory_datatable_events($event)">
-                </datatable>
+                <div class="mt-3">
+                  <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
+                    [loading]="inventory_loading" [data_array]="inventory"
+                    (option_event)="inventory_datatable_events($event)">
+                  </datatable>
+                </div>
               </div>
             </div>
           </div>
@@ -224,6 +233,9 @@
               <div class="container-m-nx container-p-x pt-2 text-right mb-2">
                 <button (click)="open_cartera_main()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
                     class="fa fa-arrow-left mr-2"></i>Regresar</button>
+                    <div class="text-center mb-4">
+                      <h4>Inventario de Insumos Disponibles</h4>
+                    </div>
               </div>
               <div class="col-md-12 text-center">
                 <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
@@ -673,9 +685,9 @@
         </form-renderer>
       </div>
       <div class="modal-footer custom-modal-footer text-left">
-        <button class="btn btn-danger btn-sm" (click)="instituciones_search_modal.hide()"><i class="fa fa-times"></i>
+        <button class="btn btn-danger btn-sm" (click)="inventory_modal.hide()"><i class="fa fa-times"></i>
           Cerrar</button>
-        <button class="btn btn-warning btn-sm" (click)="clean_search_instituciones()"><i class="fa fa-ban"></i>
+        <button class="btn btn-success btn-sm" (click)="clean_search_instituciones()"><i class="fa fa-check"></i>
           Registrar</button>
       </div>
     </div>
