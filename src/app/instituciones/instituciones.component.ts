@@ -54,6 +54,8 @@ export class InstitucionesComponent implements OnInit {
   @ViewChild('alumno_contact_form') alumno_contact_form: FormRendererComponent;
   @ViewChild('instituciones_form_view') instituciones_form_view: FormRendererComponent;
   @ViewChild('instituciones_datatable_ref') instituciones_datatable_ref: ServiceDatatableComponent;
+  @ViewChild('doctores_datatable_ref') doctores_datatable_ref: ServiceDatatableComponent;
+  @ViewChild('alumnos_datatable_ref') alumnos_datatable_ref: ServiceDatatableComponent;
   @ViewChild('doctors_datatable_ref') doctors_datatable_ref: ServiceDatatableComponent;
   public instituciones_view: number;
   public instituciones_modal_view: number;
@@ -63,6 +65,10 @@ export class InstitucionesComponent implements OnInit {
   public instituciones_datatable: any;
   public patients_datatable: any;
   public instituciones_datatable_loading: boolean;
+  public doctors_datatable_loading: boolean;
+  public insumos_datatable_loading: boolean;
+  public patients_datatable_loading: boolean;
+  public medicamentos_datatable_loading: boolean;
   public instituciones_inputs = [];
   public instituciones_contactos = [];
   public instituciones_data = {
@@ -132,6 +138,9 @@ export class InstitucionesComponent implements OnInit {
   public alumno_inputs = [];
   public alumnos = [];
   public medicamentos = [];
+  public medicamentos_datatable = {};
+  public alumnos_datatable = {};
+  public insumos_datatable = {};
   public insumos = [];
   public doctors = [];
   public patient_data = {};
@@ -141,8 +150,7 @@ export class InstitucionesComponent implements OnInit {
   public hours_start = '';
   public hours_end = '';
   public doctor_schedule = [];
-  public doctors_datatable: any;
-  public doctors_datatable_loading: boolean;
+  public doctors_datatable: {};
   public doctors_inputs = [];
   public antecedentes_inputs = [];
   public jornadas_inputs = [];
@@ -186,7 +194,7 @@ export class InstitucionesComponent implements OnInit {
     nombre: '',
     cargo: '',
     celular: ''
-  }
+  };
   public phone_mask = [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
 
   constructor(private appService: AppService, public endpoint: AppEndpoints, private layoutService: LayoutService,
@@ -205,6 +213,10 @@ export class InstitucionesComponent implements OnInit {
     this.instituciones_list = [];
     this.instituciones_loading = false;
     this.instituciones_datatable_loading = false;
+    this.doctors_datatable_loading = false;
+    this.patients_datatable_loading = false;
+    this.medicamentos_datatable_loading = false;
+    this.insumos_datatable_loading = false;
     this.instituciones_inputs = [
       {
         class: 'row',
@@ -2388,6 +2400,229 @@ export class InstitucionesComponent implements OnInit {
           hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
           icon: 'search'
         },
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.medicamentos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'nombre',
+          wrap_column: false,
+          header: 'Quimico',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'concentracion',
+          wrap_column: true,
+          header: 'Concentracion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Detalle del Medicamento',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+        {
+          name: 'Eliminar Medicamento',
+          style: 'color:#FB5D5D',
+          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+          icon: 'trash-alt'
+        }
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.insumos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'tipo_insumo',
+          wrap_column: false,
+          header: 'Tipo de Insumo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: true,
+          header: 'Presentacion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Detalle del Insumo',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+        {
+          name: 'Eliminar Insumo',
+          style: 'color:#FB5D5D',
+          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+          icon: 'trash-alt'
+        }
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.doctors_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'first_name',
+          wrap_column: false,
+          header: 'Nombre',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'last_name',
+          wrap_column: true,
+          header: 'Apellido',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'id_card',
+          wrap_column: false,
+          header: '# de Cedula',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'email',
+          wrap_column: true,
+          header: 'Correo',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Detalle del Medicamento',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+        {
+          name: 'Eliminar Medicamento',
+          style: 'color:#FB5D5D',
+          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+          icon: 'trash-alt'
+        }
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.alumnos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'first_name',
+          wrap_column: false,
+          header: 'Nombre',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'last_name',
+          wrap_column: true,
+          header: 'Apellido',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'gender',
+          wrap_column: false,
+          header: 'Sexo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'grado',
+          wrap_column: true,
+          header: 'Grado',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'seccion',
+          wrap_column: true,
+          header: 'Seccion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Realizar Consulta',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'stethoscope'
+        },
+        {
+          name: 'Eliminar Insumo',
+          style: 'color:#FB5D5D',
+          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+          icon: 'trash-alt'
+        }
       ],
       navigation_starting_offset_index: 0,
       navigation_offsets: [5, 10, 15, 20, 25, 50],

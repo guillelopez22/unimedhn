@@ -1,6 +1,6 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS  } from '@angular/common/http';
 
@@ -11,7 +11,7 @@ import { ChartsModule } from 'ng2-charts';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ModalModule }          from 'ngx-bootstrap';
-
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 // *******************************************************************************
 // App
 
@@ -45,6 +45,8 @@ import { PresentacionComponent } from './presentaciones/presentacion.component';
 import { ConsultaComponent } from './consultas/consulta.component';
 import { CarterasComponent } from './carteras/carteras.component';
 import { LotesComponent } from './lotes/lotes.component';
+import { InventarioComponent } from './inventario/inventario.component';
+
 // *******************************************************************************
 //
 
@@ -65,6 +67,7 @@ import { LotesComponent } from './lotes/lotes.component';
     ConsultaComponent,
     CarterasComponent,
     LotesComponent,
+    InventarioComponent
   ],
 
   imports: [
@@ -73,6 +76,7 @@ import { LotesComponent } from './lotes/lotes.component';
     NgbModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     LayoutModule,
     ChartsModule,
@@ -80,6 +84,8 @@ import { LotesComponent } from './lotes/lotes.component';
     DatatableModule,
     ServiceDatatableModule,
     FormRendererModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
     ModalModule.forRoot()
   ],
 

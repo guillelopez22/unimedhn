@@ -1,34 +1,55 @@
 <h4 class="media align-items-center font-weight-bold py-0 mb-3">
   <div class="media-body">
     <span class="text-muted font-weight-light"></span>Administrar Lotes
-    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los lotes de medicamentos e insumos</small></div>
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra los lotes de medicamentos e
+        insumos</small></div>
   </div>
 </h4>
 
-<div class="col-12">
+<div *ngIf="lote_main_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="fade-in">
+        <div class="col">
+          <button class="float-right btn btn-success btn-sm" (click)="open_main_view()"><i
+              class="fa fa-check"></i>Agregar Lote</button>
+        </div>
+        <datatable #lote_datatable_ref [options]="lotes_datatable" [loading]="lotes_datatable_loading"
+          [data_array]="lotes" (option_event)="open_main_view($event)">
+        </datatable>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="main_view" class="fade-in">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+    <button (click)="open_lote_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+        class="fa fa-arrow-left mr-2"></i>Regresar</button>
+  </div>
   <ul class="nav nav-tabs nav-responsive-md">
     <li (click)="open_medicamentos()" class="nav-item" style="cursor: pointer;">
       <span class="nav-link" [class.active]="inner_view==1"><b
           [class.text-primary]="inner_view==1">Medicamentos</b></span>
     </li>
     <li (click)="open_insumos()" class="nav-item" style="cursor: pointer;">
-      <span class="nav-link" [class.active]="inner_view==2"><b
-          [class.text-primary]="inner_view==2">Insumos</b></span>
+      <span class="nav-link" [class.active]="inner_view==2"><b [class.text-primary]="inner_view==2">Insumos</b></span>
     </li>
   </ul>
   <div class="custom-nav-content" *ngIf="inner_view==1">
     <div class="fade-in">
-      <div class="container-m-nx container-p-x pt-2 text-right mb-2">
-      </div>
       <div class="row">
         <div class="col-12">
           <div class="fade-in">
-            <datatable #medicamentos_datatable_ref
-              [options]="medicamentos_datatable"
-              [loading]="medicamentos_datatable_loading"
-              [data_array]="medicamentos"
-              (option_event)="medicamentos_datatable_events($event)"
-            >
+            <div class="col">
+              <button *ngIf="!no_edit" class="float-right btn btn-success btn-sm" (click)="medicamentos_modal.show()"><i
+                  class="fa fa-check"></i>Agregar Medicamento</button>
+            </div>
+            <datatable #medicamentos_datatable_ref [options]="medicamentos_datatable"
+              [loading]="medicamentos_datatable_loading" [data_array]="medicamentos"
+              (option_event)="medicamentos_datatable_events($event)">
             </datatable>
           </div>
         </div>
@@ -42,25 +63,115 @@
       <div class="row">
         <div class="col-12">
           <div class="fade-in">
-            <datatable #insumos_datatable_ref
-              [options]="insumos_datatable"
-              [loading]="insumos_datatable_loading"
-              [data_array]="insumos"
-              (option_event)="insumos_datatable_events($event)"
-            >
+            <div class="col">
+              <button *ngIf="!no_edit" class="float-right btn btn-success btn-sm" (click)="insumos_modal.show()"><i
+                  class="fa fa-check"></i>Agregar Insumo</button>
+            </div>
+            <datatable #insumos_datatable_ref [options]="insumos_datatable" [loading]="insumos_datatable_loading"
+              [data_array]="insumos" (option_event)="insumos_datatable_events($event)">
             </datatable>
           </div>
         </div>
       </div>
     </div>
-</div>
 
+  </div>
+
+  <div class="row">
+    <div *ngIf="!no_edit" class="col-4">
+      <div class="card">
+        <div class="card-content mt-4 ml-4 mb-4 mr-4">
+          <h4 class="text-center media align-items-center font-weight-bold py-0 mb-3">
+            <div class="media-body">
+              <span class="text-muted font-weight-light"></span>Dato de Lote
+            </div>
+          </h4>
+          <form-renderer #batch_form [config]="lote_inputs"></form-renderer>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="selected_products.length > 0" class="col-8">
+      <div class="card">
+        <div class="card-content mt-4 ml-4 mb-4 mr-4">
+          <h4 class="text-center media align-items-center font-weight-bold py-0 mb-3">
+            <div class="media-body">
+              <span class="text-muted font-weight-light"></span>Productos Seleccionados
+            </div>
+          </h4>
+          <form role="form" novalidate="novalidate" #inventory_in_form="ngForm" autocomplete="off">
+            <div class="row" *ngFor="let product of selected_products; let i = index">
+              <div class="col-12">
+                <h6>{{product.nombre}} - {{product.nombre_comercial}} - {{product.presentacion}}</h6>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label class="form-label"><i class="fa fa-asterisk text-danger mr-2"></i>Fecha de Caducidad</label>
+                  <div class="input-group">
+                    <input [ngClass]="{'calendar-white': true}" #fecha_caducidad="ngModel" name="fecha_caducidad{{i}}"
+                      [placeholder]="'- Seleccione -'" [(ngModel)]="product.fecha_caducidad" class="form-control"
+                      [class.is-invalid]="fecha_caducidad.invalid && submitted" [required]="true" [disabled]="false"
+                      (dateTimeChange)="change($event.value)" [readonly]="true" [owlDateTime]="date_picker"
+                      [owlDateTimeTrigger]="date_picker">
+                    <div class="input-group-append">
+                      <button class="input-group-text calendar-button" [owlDateTimeTrigger]="date_picker" type="button">
+                        <i class="fa fa-calendar-alt"></i>
+                      </button>
+                    </div>
+                    <owl-date-time [pickerMode]="'popup'" [pickerType]="'calendar'" #date_picker></owl-date-time>
+                    <small *ngIf="fecha_caducidad.errors" class="invalid-feedback"><i
+                        class="fa fa-exclamation-triangle mr-1"></i>
+                      <span *ngIf="fecha_caducidad.errors.required">El campo es requerido</span>
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label class="form-label"><i class="fa fa-asterisk text-danger mr-2"></i>Precio de Presentación</label>
+                  <input #unit_price="ngModel" name="unit_price{{i}}" [placeholder]="'- Valor -'"
+                    [(ngModel)]="product.unit_price" [textMask]="{mask: decimal_mask}" type="text" class="form-control"
+                    [class.is-invalid]="unit_price.invalid && submitted" [required]="true" [disabled]="false"
+                    pattern="^[+-]?(\d{1,3}(,\d{3})*(\.\d+)?)$">
+                  <small *ngIf="unit_price.errors" class="invalid-feedback"><i
+                      class="fa fa-exclamation-triangle mr-1"></i>
+                    <span *ngIf="unit_price.errors.required">El campo es requerido</span>
+                    <span *ngIf="unit_price.errors.pattern">Formato Inválido</span>
+                  </small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label class="form-label"><i class="fa fa-asterisk text-danger mr-2"></i>Cantidad</label>
+                  <input #quantity="ngModel" name="quantity{{i}}" [placeholder]="'- Valor -'" [(ngModel)]="product.quantity"
+                    [textMask]="{mask: integer_mask}" type="text" class="form-control"
+                    [class.is-invalid]="quantity.invalid && submitted" [required]="true" [disabled]="false"
+                    pattern="^[+-]?(\d{1,3}(,\d{3})*(\.\d+)?)$">
+                  <small *ngIf="quantity.errors" class="invalid-feedback"><i
+                      class="fa fa-exclamation-triangle mr-1"></i>
+                    <span *ngIf="quantity.errors.required">El campo es requerido</span>
+                    <span *ngIf="quantity.errors.pattern">Formato Inválido</span>
+                  </small>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer text-right">
+          <button class="btn btn-success btn-sm" (click)="insert_batch()"><i
+              class="fa fa-check"></i> Registrar
+            Lote</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
 <div bsModal #confirmation_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
   tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header custom-modal-header">
-        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Registrar Medicamento en Lote</h5>
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Registrar Producto en Lote</h5>
       </div>
       <div class="modal-body custom-modal-body fade-in">
         <form-renderer #confirmation_form [config]="confirmation_inputs"></form-renderer>
@@ -68,8 +179,123 @@
       <div class="modal-footer custom-modal-footer text-left">
         <button class="btn btn-danger btn-sm" (click)="confirmation_modal.hide()"><i class="fa fa-times"></i>
           Cerrar</button>
-        <button class="float-right btn btn-success btn-sm" (click)="insert_batch();confirmation_modal.hide()"><i
+        <button class="float-right btn btn-success btn-sm" (click)="insert_batch()"><i
             class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #medicamentos_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Medicamento</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #medicamentos_form [config]="medicamento_inputs"></form-renderer>
+        <div class="col-md-12 text-center">
+          <button class="btn btn-sm btn-outline-success" (click)="open_active_principle()">Agregar Principal
+            Activo</button>
+          <button class="btn btn-sm btn-outline-success" (click)="open_nombre_comercial()">Agregar Nombre
+            Comercial</button>
+          <button class="btn btn-sm btn-outline-success" (click)="open_concentration()">Agregar Concentracion</button>
+        </div>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="medicamentos_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="btn btn-success btn-sm" (click)="insert_medicamento_product()"><i class="fa fa-check"></i>
+          Registrar Medicamento</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #nombre_comercial_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Nombre Comercial</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #nombre_comercial_form [config]="nombre_comercial_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="nombre_comercial_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_nombre_comercial()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #active_principle_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Principal Activo</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #active_principle_form [config]="principal_activo_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="active_principle_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_active_principle()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #concentration_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Principal Activo</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #concentration_form [config]="concentration_inputs"></form-renderer>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="concentration_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="float-right btn btn-success btn-sm" (click)="insert_concentration()"><i
+            class="fa fa-check"></i>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #insumos_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Agregar Insumo</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <form-renderer #insumos_form [config]="insumo_inputs"></form-renderer>
+        <div class="col-md-12 text-center">
+          <button class="btn btn-sm btn-outline-success" (click)="open_active_principle()">Agregar Principal
+            Activo</button>
+          <button class="btn btn-sm btn-outline-success" (click)="open_nombre_comercial()">Agregar Nombre
+            Comercial</button>
+          <button class="btn btn-sm btn-outline-success" (click)="open_concentration()">Agregar Concentracion</button>
+        </div>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="insumos_modal.hide()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button class="btn btn-success btn-sm" (click)="insert_insumo_product()"><i class="fa fa-check"></i>
+          Registrar Insumo</button>
       </div>
     </div>
   </div>

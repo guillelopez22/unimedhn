@@ -859,6 +859,33 @@ ngb-typeahead-window .dropdown-item {
   // background-color: #fff;
 }
 
+.box {
+  border-bottom: 1px solid rgba(24, 28, 33, 0.06);
+  border-left: 1px solid rgba(24, 28, 33, 0.06);
+  border-right: 1px solid rgba(24, 28, 33, 0.06);
+  padding:20px;
+}
+
 .custom-accept-button {
   height: 35px;
+}
+
+.calendar-button{
+	border-top-right-radius: 0.25rem !important;
+	border-bottom-right-radius: 0.25rem !important;
+	background-color: #17b3a3;
+	color:#fff;
+}
+
+.calendar-white{
+	cursor: pointer;
+	background-color: #fff !important;
+}
+
+.calendar-grey{
+
+}
+
+.owl-dt-trigger-disabled{
+	opacity: 1 !important;
 }

@@ -1,46 +1,16 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ServiceDatatableComponent } from '../components/service_datatable/service-datatable.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppService } from '../app.service';
 import { AppEndpoints } from '../app.endpoints';
 import { AlertService } from '../components/alert_service/alert.service';
-import { ModalDirective } from 'ngx-bootstrap';
 import { FormRendererComponent } from '../components/form_renderer/form_renderer.component';
-import { FormControlDirective } from '@angular/forms';
-import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+import { ModalDirective } from 'ngx-bootstrap';
+
 @Component({
-  selector: 'lotes',
-  templateUrl: 'lotes.component.html',
-  styles: [`
-.calendar-button{
-	border-top-right-radius: 0.25rem !important;
-	border-bottom-right-radius: 0.25rem !important;
-	background-color: #17b3a3;
-	color:#fff;
-}
-
-.calendar-white{
-	cursor: pointer;
-	background-color: #fff !important;
-}
-
-.calendar-grey{
-
-}
-
-.owl-dt-trigger-disabled{
-	opacity: 1 !important;
-}
-    `]
-
+  selector: 'inventario',
+  templateUrl: 'inventario.component.html'
 })
 
-export class LotesComponent implements OnInit {
-  @ViewChild('inventory_in_form') inventory_in_form: FormControlDirective;
-  @ViewChild('medicamentos_datatable_ref') medicamentos_datatable_ref: ServiceDatatableComponent;
-  @ViewChild('insumos_datatable_ref') insumos_datatable_ref: ServiceDatatableComponent;
-  @ViewChild('confirmation_modal') confirmation_modal: ModalDirective;
-  @ViewChild('confirmation_form') confirmation_form: FormRendererComponent;
-  @ViewChild('lotes_datatable_ref') lotes_datatable_ref: ServiceDatatableComponent;
+export class InventarioComponent implements OnInit {
   @ViewChild('active_principle_form') active_principle_form: FormRendererComponent;
   @ViewChild('nombre_comercial_form') nombre_comercial_form: FormRendererComponent;
   @ViewChild('concentration_form') concentration_form: FormRendererComponent;
@@ -49,193 +19,32 @@ export class LotesComponent implements OnInit {
   @ViewChild('concentration_modal') concentration_modal: ModalDirective;
   @ViewChild('medicamentos_form') medicamentos_form: FormRendererComponent;
   @ViewChild('insumos_form') insumos_form: FormRendererComponent;
-  @ViewChild('batch_product_form') batch_product_form: FormRendererComponent;
-  @ViewChild('batch_form') batch_form: FormRendererComponent;
-  public integer_mask = createNumberMask({ allowNegative: true, allowDecimal: false, integerLimit: 25, prefix: '', includeThousandsSeparator: true });
-  public decimal_mask = createNumberMask({ allowNegative: true, allowDecimal: true, integerLimit: 25, decimalLimit: 25, prefix: '', includeThousandsSeparator: true });
-  public confirmation_inputs = [];
-  public no_edit = false;
-  public submitted: any;
-  public selected_medicamento: any;
-  public selected_insumo: any;
-  public selected_id: any;
-  public lotes_datatable: any;
-  public lotes_datatable_loading: boolean;
-  public unit_price = 0;
-  public quantity = 0;
-  public main_view = false;
-  public lote_main_view = true;
-  public lotes = [];
-  public medicamentos = [];
-  public insumos = [];
-  public medicamento_inputs = [];
-  public nombre_comercial_inputs = [];
-  public principal_activo_inputs = [];
-  public concentration_inputs = [];
-  public insumo_inputs = [];
-  public lote_inputs = [];
-  public total_active_principles = [];
-  public measurement_units = [];
-  public concentration_list = [];
-  public presentations = [];
-  public selected_active_desc = '';
-  public commercial_names = [];
-  public selected_trade_name_desc = '';
-  public selected_measure_unit = '';
-  public fecha_caducidad = '';
-  public medicamentos_datatable_loading: boolean;
-  public insumos_datatable: any;
-  public filtered_units = [];
-  public insumos_datatable_loading: boolean;
-  public medicamentos_datatable = {};
-  public selected_products = [];
-  public inner_view = 1;
-  public created_batch = false;
-  public lotes_filters = {
-    current_offset: 1,
-    view_length: 10,
-    sort_order: '',
-    sort_ascendent: false
-  };
-  public lotes_search_data = {
-    nombre: '',
-    ciudad: '',
-    departamento: '',
-    calendario: '',
-    tipo: ''
-  };
-  constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService) {
-    this.submitted = false;
-    this.lotes_datatable_loading = false;
-    this.medicamentos_datatable_loading = true;
-    this.insumos_datatable_loading = true;
-    this.confirmation_inputs = [
-      {
-        class: 'row',
-        columns: [
-          {
-            class: 'col-md-4',
-            inputs: [
-              {
-                type: 'calendar',
-                extra: 'popup',
-                name: 'expiration_date',
-                label: 'Fecha de Caducidad',
-                icon: '',
-                class: 'form-control',
-                placeholder: '',
-                minlength: null,
-                maxlength: '100',
-                pattern: null,
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: 'name',
-                  text: 'name'
-                },
-                list: () => {
-                  return [];
-                },
-                textmask: () => {
-                  return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-          {
-            class: 'col-md-4',
-            inputs: [
-              {
-                type: 'decimal',
-                extra: 'popup',
-                name: 'unit_price',
-                label: 'Precio Unitario',
-                icon: '',
-                class: 'form-control',
-                placeholder: '',
-                minlength: null,
-                maxlength: '100',
-                pattern: null,
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: 'name',
-                  text: 'name'
-                },
-                list: () => {
-                  return [];
-                },
-                textmask: () => {
-                  return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-          {
-            class: 'col-md-4',
-            inputs: [
-              {
-                type: 'decimal',
-                extra: '',
-                name: 'quantity',
-                label: 'Cantidad',
-                icon: '',
-                class: 'form-control',
-                placeholder: '',
-                minlength: null,
-                maxlength: '100',
-                pattern: null,
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: 'name',
-                  text: 'name'
-                },
-                list: () => {
-                  return [];
-                },
-                textmask: () => {
-                  return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-        ]
-      },
-    ];
+  inventory_datatable: any;
+  inner_view = 1;
+  main_view = false;
+  create_med_view = false;
+  create_insumo_view = false;
+  inventory_main_view = true;
+  inventory_datatable_loading: boolean;
+  insumo_inputs = [];
+  medicamento_inputs = [];
+  nombre_comercial_inputs = [];
+  principal_activo_inputs = [];
+  concentration_inputs = [];
+  total_active_principles = [];
+  measurement_units = [];
+  concentration_list = [];
+  presentations = [];
+  selected_active_desc = '';
+  commercial_names = [];
+  selected_trade_name_desc = '';
+  selected_measure_unit = '';
+  selected_institution: any;
+  inventory_overview_data: any;
+  page_header = 'Administrar inventario';
+  constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService, ) {
+    this.appService.pageTitle = 'Inventario';
+    this.inventory_datatable_loading = true;
     this.nombre_comercial_inputs = [
       {
         class: 'row',
@@ -757,10 +566,10 @@ export class LotesComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-2',
             inputs: [
               {
-                type: 'integer',
+                type: 'text',
                 extra: '',
                 name: 'cantidad_presentacion',
                 label: 'Cantidad por Presentación',
@@ -797,7 +606,7 @@ export class LotesComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-2',
             inputs: [
               {
                 type: 'select',
@@ -831,7 +640,6 @@ export class LotesComponent implements OnInit {
                 },
                 change: (event) => {
                   this.selected_measure_unit = event;
-                  this.filtered_units = this.measurement_units.filter(el => el.name === event);
                 },
                 input: () => {
                 }
@@ -848,7 +656,7 @@ export class LotesComponent implements OnInit {
                 label: 'Tipo de Insumo',
                 icon: '',
                 class: 'form-control',
-                placeholder: '',
+                placeholder: '- Seleccione -',
                 minlength: null,
                 maxlength: null,
                 pattern: null,
@@ -856,10 +664,11 @@ export class LotesComponent implements OnInit {
                 error_pattern: 'Formato Inválido',
                 error_minlength: '',
                 list_data: {
-                  value: '',
-                  text: ''
+                  value: 'description',
+                  text: 'description'
                 },
                 list: () => {
+                  return this.concentration_list;
                 },
                 textmask: () => {
                   return false;
@@ -871,63 +680,29 @@ export class LotesComponent implements OnInit {
                   return false;
                 },
                 change: (event) => {
+                  this.selected_measure_unit = event;
                 },
                 input: () => {
                 }
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        class: 'row',
+        columns: [
           {
             class: 'col-md-4',
             inputs: [
               {
-                type: 'integer',
+                type: 'decimal',
                 extra: '',
                 name: 'aus',
                 label: 'AUS (Average Unit Served)',
                 icon: '',
                 class: 'form-control',
-                placeholder: '',
-                minlength: null,
-                maxlength: null,
-                pattern: null,
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: '',
-                  text: ''
-                },
-                list: () => {
-                  return false;
-                },
-                textmask: () => {
-                  return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-          {
-            class: 'col-md-4',
-            inputs: [
-              {
-                type: 'select',
-                extra: '',
-                name: 'aus_measure_unit',
-                label: 'AUS unidades',
-                icon: '',
-                class: 'form-control',
-                placeholder: '- Seleccione -',
+                placeholder: this.selected_measure_unit,
                 minlength: null,
                 maxlength: '100',
                 pattern: null,
@@ -939,7 +714,84 @@ export class LotesComponent implements OnInit {
                   text: 'name'
                 },
                 list: () => {
-                  return this.filtered_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'numero_inventario',
+                label: 'Numero de Inventario',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-3',
+            inputs: [
+              {
+                type: 'decimal',
+                extra: '',
+                name: 'cantidad',
+                label: 'Cantidad',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
                 },
                 textmask: () => {
                   return false;
@@ -1060,7 +912,7 @@ export class LotesComponent implements OnInit {
         class: 'row',
         columns: [
           {
-            class: 'col-md-3',
+            class: 'col-md-4',
             inputs: [
               {
                 type: 'select',
@@ -1100,10 +952,10 @@ export class LotesComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-3',
+            class: 'col-md-2',
             inputs: [
               {
-                type: 'integer',
+                type: 'text',
                 extra: '',
                 name: 'cantidad_presentacion',
                 label: 'Cantidad por Presentación',
@@ -1140,7 +992,7 @@ export class LotesComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-3',
+            class: 'col-md-2',
             inputs: [
               {
                 type: 'select',
@@ -1174,9 +1026,6 @@ export class LotesComponent implements OnInit {
                 },
                 change: (event) => {
                   this.selected_measure_unit = event;
-                  this.filtered_units = this.measurement_units.filter(el => el.name === event);
-                  console.log(this.filtered_units);
-
                 },
                 input: () => {
                 }
@@ -1184,7 +1033,7 @@ export class LotesComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-3',
+            class: 'col-md-4',
             inputs: [
               {
                 type: 'select',
@@ -1217,6 +1066,7 @@ export class LotesComponent implements OnInit {
                   return false;
                 },
                 change: (event) => {
+                  this.selected_measure_unit = event;
                 },
                 input: () => {
                 }
@@ -1229,16 +1079,16 @@ export class LotesComponent implements OnInit {
         class: 'row',
         columns: [
           {
-            class: 'col-md-6',
+            class: 'col-md-4',
             inputs: [
               {
-                type: 'integer',
+                type: 'text',
                 extra: '',
                 name: 'aus',
                 label: 'AUS (Average Unit Served)',
                 icon: '',
                 class: 'form-control',
-                placeholder: '',
+                placeholder: this.selected_measure_unit,
                 minlength: null,
                 maxlength: '100',
                 pattern: null,
@@ -1268,60 +1118,13 @@ export class LotesComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-6',
+            class: 'col-md-4',
             inputs: [
               {
-                type: 'select',
+                type: 'text',
                 extra: '',
-                name: 'aus_measure_units',
-                label: 'AUS unidades',
-                icon: '',
-                class: 'form-control',
-                placeholder: '- Seleccione -',
-                minlength: null,
-                maxlength: '100',
-                pattern: null,
-                error_required: 'Requerido',
-                error_pattern: '',
-                error_minlength: '',
-                list_data: {
-                  value: 'name',
-                  text: 'name'
-                },
-                list: () => {
-                  return this.filtered_units;
-                },
-                textmask: () => {
-                  return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-        ]
-      },
-    ];
-    this.lote_inputs = [
-      {
-        class: 'd-flex align-items-center',
-        columns: [
-          {
-            class: 'col-md-12',
-            inputs: [
-              {
-                type: 'calendar',
-                extra: 'popup',
-                name: 'purchase_date',
-                label: 'Fecha de Compra',
+                name: 'cantidad_dosis',
+                label: 'Dosis',
                 icon: '',
                 class: 'form-control',
                 placeholder: '',
@@ -1329,14 +1132,52 @@ export class LotesComponent implements OnInit {
                 maxlength: '100',
                 pattern: null,
                 error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
+                error_pattern: '',
                 error_minlength: '',
                 list_data: {
-                  value: 'name',
-                  text: 'name'
+                  value: '',
+                  text: ''
                 },
                 list: () => {
-                  return [];
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-4',
+            inputs: [
+              {
+                type: 'text',
+                extra: '',
+                name: 'numero_inventario',
+                label: 'Numero de Inventario',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: '',
+                  text: ''
+                },
+                list: () => {
                 },
                 textmask: () => {
                   return false;
@@ -1357,142 +1198,37 @@ export class LotesComponent implements OnInit {
         ]
       },
     ];
-  }
-
-  ngOnInit() {
-    this.set_values();
-    this.medicamentos_datatable = {
+    this.inventory_datatable = {
       // title: 'Listado de medicamentos',
       icon: 'user-md',
-      object_description: 'doctors',
-      empty_text: 'No se encontraron medicamentos',
+      object_description: 'inventory',
+      empty_text: 'No se encontro inventario en instituciones',
       columns: [
         {
-          column: 'nombre',
+          column: 'institution_name',
           wrap_column: false,
-          header: 'Quimico',
+          header: 'Institucion',
           wrap_header: true,
           type: 'text'
         },
         {
-          column: 'nombre_comercial',
-          wrap_column: true,
-          header: 'Nombre Comercial',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'presentacion',
-          wrap_column: false,
-          header: 'Presentación del Fármaco',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'concentracion',
-          wrap_column: true,
-          header: 'Concentracion',
-          wrap_header: true,
-          type: 'text'
-        },
-      ],
-      events: [
-        {
-          name: 'Ver lotes para medicamento',
-          style: 'color:#39B7CB',
-          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
-          icon: 'search'
-        },
-        {
-          name: 'Crear lote para medicamento',
-          style: 'color:#3CB371',
-          hover_style: 'cursor:pointer; color:#3CB371; background-color:#98FB98 !important;',
-          icon: 'check'
-        },
-      ],
-      navigation_starting_offset_index: 0,
-      navigation_offsets: [5, 10, 15, 20, 25, 50],
-      show_search_field: true,
-      table_icon: 'caret-right',
-    };
-    this.insumos_datatable = {
-      // title: 'Listado de medicamentos',
-      icon: 'user-md',
-      object_description: 'insumos',
-      empty_text: 'No se encontraron insumos',
-      columns: [
-        {
-          column: 'tipo_insumo',
-          wrap_column: false,
-          header: 'Tipo de Insumo',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'nombre_comercial',
-          wrap_column: true,
-          header: 'Nombre Comercial',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'presentacion',
-          wrap_column: true,
-          header: 'Presentacion',
-          wrap_header: true,
-          type: 'text'
-        },
-      ],
-      events: [
-        {
-          name: 'Ver lotes para insumo',
-          style: 'color:#39B7CB',
-          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
-          icon: 'search'
-        },
-        {
-          name: 'Crear lote para insumo',
-          style: 'color:#3CB371',
-          hover_style: 'cursor:pointer; color:#3CB371; background-color:#98FB98 !important;',
-          icon: 'check'
-        },
-      ],
-      navigation_starting_offset_index: 0,
-      navigation_offsets: [5, 10, 15, 20, 25, 50],
-      show_search_field: true,
-      table_icon: 'caret-right',
-    };
-    this.lotes_datatable = {
-      // title: 'Listado de medicamentos',
-      icon: 'user-md',
-      object_description: 'lotes',
-      empty_text: 'No se encontraron lotes',
-      columns: [
-        {
-          column: 'batch_id',
-          wrap_column: false,
-          header: 'Numero de Lote',
-          wrap_header: true,
-          type: 'number'
-        },
-        {
-          column: 'purchase_date',
-          wrap_column: true,
-          header: 'Fecha de Compra',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'batch_total',
+          column: 'total_worth',
           wrap_column: true,
           header: 'Capital Invertido (Lempiras)',
           wrap_header: true,
-          type: 'number'
+          type: 'text'
+        },
+        {
+          column: 'ciudad',
+          wrap_column: true,
+          header: 'Ciudad',
+          wrap_header: true,
+          type: 'text'
         },
       ],
       events: [
         {
-          name: 'Ver lote',
+          name: 'Detalle de la Institucion',
           style: 'color:#39B7CB',
           hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
           icon: 'search'
@@ -1503,147 +1239,15 @@ export class LotesComponent implements OnInit {
       show_search_field: true,
       table_icon: 'caret-right',
     };
-  }
+   }
 
-  set_values() {
-    this.get_medicamentos();
-    this.get_insumos();
-    this.get_all_batchs();
+  ngOnInit() {
     this.get_active_principle_total_list();
     this.get_concentration_list();
     this.get_measure_unit_list();
     this.get_presentation_list();
-  }
-
-  valid() {
-    if (this.inventory_in_form.valid) {
-      this.submitted = false;
-      return true;
-    } else {
-      this.submitted = true;
-      return false;
-    }
-  }
-
-  open_main_view(event) {
-    if (event === undefined) {
-      this.set_values();
-      this.lote_main_view = false;
-      this.main_view = true;
-    } else if (event.event === 'Ver lote') {
-      console.log(event.data);
-
-      this.endpoint.get_batch(event.data.batch_id).subscribe(data => {
-        this.medicamentos = data.medicamentos;
-        this.insumos = data.insumos;
-        this.lote_main_view = false;
-        this.main_view = true;
-        this.medicamentos_datatable = {
-          // title: 'Listado de medicamentos',
-          icon: 'user-md',
-          object_description: 'doctors',
-          empty_text: 'No se encontraron medicamentos',
-          columns: [
-            {
-              column: 'nombre',
-              wrap_column: false,
-              header: 'Quimico',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'nombre_comercial',
-              wrap_column: true,
-              header: 'Nombre Comercial',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'presentacion',
-              wrap_column: false,
-              header: 'Presentación del Fármaco',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'concentracion',
-              wrap_column: true,
-              header: 'Concentracion',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'quantity',
-              wrap_column: true,
-              header: 'Unidades en Lote',
-              wrap_header: true,
-              type: 'text'
-            }
-          ],
-          events: [
-          ],
-          navigation_starting_offset_index: 0,
-          navigation_offsets: [5, 10, 15, 20, 25, 50],
-          show_search_field: true,
-          table_icon: 'caret-right',
-        };
-        this.insumos_datatable = {
-          // title: 'Listado de medicamentos',
-          icon: 'user-md',
-          object_description: 'insumos',
-          empty_text: 'No se encontraron insumos',
-          columns: [
-            {
-              column: 'tipo_insumo',
-              wrap_column: false,
-              header: 'Tipo de Insumo',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'nombre_comercial',
-              wrap_column: true,
-              header: 'Nombre Comercial',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'presentacion',
-              wrap_column: true,
-              header: 'Presentacion',
-              wrap_header: true,
-              type: 'text'
-            },
-            {
-              column: 'quantity',
-              wrap_column: true,
-              header: 'Unidades en Lote',
-              wrap_header: true,
-              type: 'text'
-            }
-          ],
-          events: [
-          ],
-          navigation_starting_offset_index: 0,
-          navigation_offsets: [5, 10, 15, 20, 25, 50],
-          show_search_field: true,
-          table_icon: 'caret-right',
-        };
-        this.no_edit = true;
-      });
-    }
-  }
-
-  open_lote_main_view() {
-    this.lote_main_view = true;
-    this.main_view = false;
-  }
-
-  change(event) {
-    console.log(event);
-
-    this.fecha_caducidad = event;
-  }
+    this.get_overview_data();
+   }
 
   open_medicamentos() {
     this.inner_view = 1;
@@ -1653,106 +1257,42 @@ export class LotesComponent implements OnInit {
     this.inner_view = 2;
   }
 
-  get_medicamentos() {
-    this.endpoint.get_all_medicamentos().subscribe(data => {
-      this.medicamentos = data;
-      this.medicamentos_datatable_loading = false;
-    });
+  add_medicamento() {
+    this.create_med_view = true;
+    this.create_insumo_view = false;
+    this.main_view = false;
+    this.inventory_main_view = false;
   }
 
-  get_insumos() {
-    this.endpoint.get_all_insumos().subscribe(data => {
-      this.insumos = data;
-      this.insumos_datatable_loading = false;
-    });
+  add_insumo() {
+    this.create_insumo_view = true;
+    this.create_med_view = false;
+    this.main_view = false;
+    this.inventory_main_view = false;
   }
 
-  medicamentos_datatable_events(event) {
-    console.log(event.data);
-    if (event.event === 'Crear lote para medicamento') {
-      this.selected_medicamento = event.data;
-      this.selected_id = this.selected_medicamento.medicamento_id;
-      // this.confirmation_modal.show();
-      this.selected_products.push({
-        product_id: event.data.product_id,
-        nombre: event.data.nombre,
-        nombre_comercial: event.data.nombre_comercial,
-        presentacion: event.data.presentacion,
-        presentation_quantity: event.data.presentation_quantity,
-        aus: event.data.aus_quantity,
-        type: 'medicamento'
-      });
-      console.log(this.selected_products);
-
+  open_main_view(event) {
+    if (event !== undefined) {
+      this.selected_institution = event.data;
+      this.page_header = 'Administrar inventario/' + event.data.nombre;
+      this.main_view = true;
+      this.create_insumo_view = false;
+      this.create_med_view = false;
+      this.inventory_main_view = false;
+    } else {
+      this.main_view = true;
+      this.create_insumo_view = false;
+      this.create_med_view = false;
+      this.inventory_main_view = false;
     }
   }
 
-  get_all_batchs() {
-    this.endpoint.get_all_batchs().subscribe(data => {
-      this.lotes = data;
-      this.lotes.forEach(el => {
-        const date = new Date(el.purchase_date);
-        el.purchase_date = date.toDateString();
-      });
-    });
-  }
-
-  insumos_datatable_events(event) {
-    if (event.event === 'Crear lote para insumo') {
-      this.selected_insumo = event.data;
-      this.selected_id = this.selected_insumo.insumo_id;
-      // this.confirmation_modal.show();
-      this.selected_products.push({
-        product_id: event.data.product_id,
-        nombre: event.data.tipo_insumo,
-        nombre_comercial: event.data.nombre_comercial,
-        presentacion: event.data.presentacion,
-        presentation_quantity: event.data.presentation_quantity,
-        aus: event.data.aus_quantity,
-        type: 'insumo'
-      });
-      console.log(this.selected_products);
-
-    }
-  }
-
-  insert_batch() {
-
-    if (this.batch_form.valid() && this.inventory_in_form.valid) {
-      this.selected_products.forEach(el => {
-        const date = new Date(el.fecha_caducidad).toLocaleDateString('en-GB');
-        el.fecha_caducidad = date.split('/').reverse().join('-');
-      });
-      const form_values = this.batch_form.get_values();
-      this.endpoint.insert_batch({
-        purchase_date: form_values.purchase_date.split('/').reverse().join('-'),
-      }).subscribe(data => {
-        this.created_batch = true;
-        this.get_all_batchs();
-        this.selected_products.forEach(product => {
-          this.endpoint.insert_batch_product({
-            expiration_date: product.fecha_caducidad,
-            unit_price: product.unit_price.replace(/[^\d\.\-]/g, ''),
-            quantity: product.quantity.replace(/[^\d\.\-]/g, ''),
-            product_id: product.product_id,
-            batch_id: data.batch_id,
-            presentation_quantity: product.presentation_quantity,
-            aus: product.aus
-          }).subscribe(() => {
-            this.get_all_batchs();
-            this.selected_products = [];
-            this.open_lote_main_view();
-          });
-        });
-      },
-        err => {
-          this.alertService.alert_error('Error', err.message);
-        },
-        () => {
-          this.alertService.alert_success('Exito', 'El lote ha sido creado de manera satisfactoria.');
-          this.batch_form.clean_form();
-        });
-    }
+  open_inventory_main_view() {
+    this.page_header = 'Administrar inventario';
+    this.main_view = false;
+    this.create_insumo_view = false;
+    this.create_med_view = false;
+    this.inventory_main_view = true;
   }
 
   get_concentration_list() {
@@ -1867,11 +1407,19 @@ export class LotesComponent implements OnInit {
     this.insumos_form.clean_form();
   }
 
+  get_overview_data() {
+    this.endpoint.get_all_cartera_info().subscribe(data => {
+      this.inventory_overview_data = data;
+    });
+  }
+
   insert_medicamento_product() {
     if (this.medicamentos_form.valid()) {
       const form_values = this.medicamentos_form.get_values();
 
       const tradename = this.commercial_names.find(el => el.nombre = form_values.commercial_name);
+      console.log(tradename);
+
       const measure_unit = this.measurement_units.find(el => el.name === form_values.measure_unit);
       const presentation = this.presentations.find(el => el.name === form_values.presentation);
       const concentration = this.concentration_list.find(el => el.description === form_values.concentration);
@@ -1893,27 +1441,27 @@ export class LotesComponent implements OnInit {
         description: ''
       }).subscribe(data => {
         // this.created_product_id = data.result.insertId;
-        this.endpoint.insert_medicamento({
-          nombre: form_values.active_principle,
-          nombre_comercial: tradename.name,
-          presentacion: presentation.name,
-          concentracion: form_values.concentration,
-          product_id: data.result.insertId,
-        }).subscribe();
+          this.endpoint.insert_medicamento({
+            nombre: form_values.active_principle,
+            nombre_comercial: tradename.name,
+            presentacion: presentation.name,
+            concentracion: form_values.concentration,
+            product_id: data.result.insertId,
+          }).subscribe();
       },
-        err => {
-          this.alertService.alert_error(err.title, err.message);
-        },
-        () => {
-          this.medicamentos_form.clean_form();
-          this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
-        });
+      err => {
+        this.alertService.alert_error(err.title, err.message);
+      },
+      () => {
+        this.medicamentos_form.clean_form();
+        this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
+      });
     }
   }
 
   insert_insumo_product() {
-    if (this.insumos_form.valid()) {
-      const form_values = this.insumos_form.get_values();
+    if (this.medicamentos_form.valid()) {
+      const form_values = this.medicamentos_form.get_values();
 
       const tradename = this.commercial_names.find(el => el.nombre = form_values.commercial_name);
       console.log(tradename);
@@ -1951,168 +1499,10 @@ export class LotesComponent implements OnInit {
           this.alertService.alert_error(err.title, err.message);
         },
         () => {
-          this.insumos_form.clean_form();
+          this.medicamentos_form.clean_form();
           this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
         });
     }
   }
 
-  // lotes_datatable_events(event) {
-  //   console.log(event.data);
-
-  //   if (event.event === 'Detalle del Lote') {
-  //     // this.open_institucion(event.data);
-  //     // } else if (event.event == "Editar Institución") {
-  //     //     this.open_update_institucion(event.data);
-  //   } else if (event.event === 'Eliminar Lote') {
-  //     // this.open_delete_institucion(event.data);
-  //   }
-  // }
-
-  // lotes_datatable_get_results_offset_change(data) {
-  //   this.lotes_filters = {
-  //     current_offset: data.current_offset,
-  //     view_length: data.view_length,
-  //     sort_order: data.sort_order,
-  //     sort_ascendent: data.sort_ascendent
-  //   }
-  //   let response;
-  //   let load = {
-  //     current_offset: this.lotes_filters.current_offset,
-  //     sort_ascendent: this.lotes_filters.sort_ascendent,
-  //     sort_order: this.lotes_filters.sort_order,
-  //     view_length: this.lotes_filters.view_length,
-  //     nombre: this.lotes_search_data.nombre,
-  //     ciudad: this.lotes_search_data.ciudad,
-  //     departamento: this.lotes_search_data.departamento,
-  //     calendario: this.lotes_search_data.calendario,
-  //     tipo: this.lotes_search_data.tipo
-  //   }
-  //   this.endpoint.get_instituciones(load).subscribe(
-  //     data => response = data,
-  //     err => {
-  //       this.lotes_datatable_ref.set_loading(false);
-  //       if (err.status && err.error) {
-  //         this.alertService.alert_message(err.status, err.error);
-  //       } else {
-  //         this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
-  //       }
-  //     },
-  //     () => {
-  //       try {
-  //         console.log(response);
-  //         for (let i = 0; i < response.list.length; i++) {
-  //           response.list[i].contactos = JSON.parse(response.list[i].contactos);
-  //           response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
-  //         }
-  //         this.lotes_datatable_ref.set_results_offset_change(response.list);
-  //       } catch (error) {
-  //         console.log(error);
-
-  //         this.lotes_datatable_ref.set_loading(false);
-  //         this.alertService.alert_aplication_error('Error Interno del Aplicativo');
-  //       }
-
-  //     }
-  //   );
-  // }
-
-  // lotes_datatable_get_results_filter_change(data) {
-  //   this.lotes_filters = {
-  //     current_offset: data.current_offset,
-  //     view_length: data.view_length,
-  //     sort_order: data.sort_order,
-  //     sort_ascendent: data.sort_ascendent
-  //   }
-  //   let response;
-  //   let load = {
-  //     current_offset: this.lotes_filters.current_offset,
-  //     sort_ascendent: this.lotes_filters.sort_ascendent,
-  //     sort_order: this.lotes_filters.sort_order,
-  //     view_length: this.lotes_filters.view_length,
-  //     nombre: this.lotes_search_data.nombre,
-  //     ciudad: this.lotes_search_data.ciudad,
-  //     departamento: this.lotes_search_data.departamento,
-  //     calendario: this.lotes_search_data.calendario,
-  //     tipo: this.lotes_search_data.tipo
-  //   }
-  //   this.endpoint.get_instituciones(load).subscribe(
-  //     data => response = data,
-  //     err => {
-  //       this.lotes_datatable_ref.set_loading(false);
-  //       if (err.status && err.error) {
-  //         this.alertService.alert_message(err.status, err.error);
-  //       } else {
-  //         this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
-  //       }
-  //     },
-  //     () => {
-  //       try {
-  //         console.log(response, 'asdasdas');
-  //         for (let i = 0; i < response.list.length; i++) {
-  //           response.list[i].contactos = JSON.parse(response.list[i].contactos);
-  //           response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
-  //         }
-  //         this.lotes_datatable_ref.set_results_filter_change(response.list, response.count);
-  //       } catch (error) {
-  //         console.log(error);
-
-  //         this.lotes_datatable_ref.set_loading(false);
-  //         this.alertService.alert_aplication_error('Error Interno del Aplicativo');
-  //       }
-  //     }
-  //   );
-  // }
-
-  // lotes_datatable_get_results_update_list(data) {
-  //   this.lotes_filters = {
-  //     current_offset: data.current_offset,
-  //     view_length: data.view_length,
-  //     sort_order: data.sort_order,
-  //     sort_ascendent: data.sort_ascendent
-  //   }
-  //   let response;
-  //   let load = {
-  //     current_offset: this.lotes_filters.current_offset,
-  //     sort_ascendent: this.lotes_filters.sort_ascendent,
-  //     sort_order: this.lotes_filters.sort_order,
-  //     view_length: this.lotes_filters.view_length,
-  //     nombre: this.lotes_search_data.nombre,
-  //     ciudad: this.lotes_search_data.ciudad,
-  //     departamento: this.lotes_search_data.departamento,
-  //     calendario: this.lotes_search_data.calendario,
-  //     tipo: this.lotes_search_data.tipo
-  //   }
-  //   this.endpoint.get_instituciones(load).subscribe(
-  //     data => response = data,
-  //     err => {
-  //       this.lotes_datatable_ref.set_loading(false);
-  //       if (err.status && err.error) {
-  //         this.alertService.alert_message(err.status, err.error);
-  //       } else {
-  //         this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
-  //       }
-  //     },
-  //     () => {
-  //       try {
-  //         console.log(response);
-  //         for (let i = 0; i < response.list.length; i++) {
-  //             response.list[i].contactos = JSON.parse(response.list[i].contactos);
-  //             response.list[i].inicio_clases = response.list[i].inicio_clases.split('-').reverse().join('/');
-  //         }
-  //         this.lotes_datatable_ref.set_results_update_list(response.list, response.count);
-  //       } catch (error) {
-  //         console.log(error);
-
-  //         this.lotes_datatable_ref.set_loading(false);
-  //         this.alertService.alert_aplication_error('Error Interno del Aplicativo');
-  //       }
-  //     }
-  //   );
-  // }
-
-  // ngAfterViewInit() {
-  //   setTimeout(() => { this.lotes_datatable_ref.set_show_length(10); }, 500);
-
-  // }
 }

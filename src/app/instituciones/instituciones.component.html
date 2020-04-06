@@ -106,15 +106,14 @@
         </li>
         <li (click)="open_cartera()" class="nav-item" style="cursor: pointer;">
           <span class="nav-link" [class.active]="inner_view==3"><b
-              [class.text-primary]="inner_view==3">Agregar a Cartera</b></span>
-        </li>
-        <li (click)="open_inv_cartera()" class="nav-item" style="cursor: pointer;">
-          <span class="nav-link" [class.active]="inner_view==4"><b
-              [class.text-primary]="inner_view==3">Disponible en Cartera</b></span>
+              [class.text-primary]="inner_view==3">Cartera</b></span>
         </li>
       </ul>
       <div class="custom-nav-content" *ngIf="inner_view==1">
-        <div class="table-responsive">
+        <datatable #doctores_datatable_ref [options]="doctors_datatable"
+          [loading]="doctors_datatable_loading" [data_array]="instituciones_data.doctores">
+        </datatable>
+        <!-- <div class="table-responsive">
           <table class="table">
             <thead style="background-color: #fff;">
               <tr>
@@ -142,10 +141,13 @@
           </table>
           <button class="float-right btn btn-success btn-sm" (click)="add_doctor()"><i class="fa fa-check"></i> Agregar
             Médico</button>
-        </div>
+        </div> -->
       </div>
       <div class="custom-nav-content" *ngIf="inner_view==2">
-        <div class="table-responsive">
+        <datatable #alumnos_datatable_ref [options]="alumnos_datatable"
+          [loading]="patients_datatable_loading" [data_array]="instituciones_data.alumnos">
+        </datatable>
+        <!-- <div class="table-responsive">
           <table class="table">
             <thead style="background-color: #fff;">
               <tr>
@@ -176,7 +178,7 @@
           <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i>
             Agregar Alumno
           </button>
-        </div>
+        </div> -->
       </div>
       <div class="custo-nav-content" *ngIf="inner_view===3">
         <div *ngIf="cartera.length === 0" class="col-12 mt-4 mb-4">

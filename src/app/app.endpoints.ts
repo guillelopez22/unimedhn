@@ -160,7 +160,7 @@ export class AppEndpoints {
   }
 
   update_doctor(payload): Observable<any> {
-    return this.httpClient.get(this.endpoint + '/update_doctor', { params: payload, headers: this.get_headers(), responseType: 'json' });
+    return this.httpClient.put(this.endpoint + '/update_doctor', { params: payload, headers: this.get_headers(), responseType: 'json' });
   }
 
   delete_doctor(payload): Observable<any> {
@@ -339,8 +339,32 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + '/get_batchs_list', { params: params, responseType: 'json' });
   }
 
+  get_all_batchs(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_all_batchs', { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  get_batch(id): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_batch?batch_id=' + id, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  get_batch_products(id): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_batch_products?batch_id=' + id, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  insert_batch_product(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/insert_batch_product', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
   insert_batch(data): Observable<any> {
     return this.httpClient.post(this.endpoint + '/insert_batch', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  get_all_cartera_info() {
+    return this.httpClient.get(this.endpoint + '/get_all_cartera_info', { responseType: 'json' });
+  }
+
+  get_all_cartera_insumo_info() {
+    return this.httpClient.get(this.endpoint + '/get_all_cartera_insumo_info', { responseType: 'json' });
   }
 
   update_batch(payload): Observable<any> {

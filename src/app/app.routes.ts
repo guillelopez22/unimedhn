@@ -24,6 +24,7 @@ import { PresentacionComponent } from './presentaciones/presentacion.component';
 import { ConsultaComponent } from './consultas/consulta.component';
 import { CarterasComponent } from './carteras/carteras.component';
 import { LotesComponent } from './lotes/lotes.component';
+import { InventarioComponent } from './inventario/inventario.component';
 // *******************************************************************************
 // Routes
 
@@ -106,6 +107,11 @@ const routes: Routes = [
       {
         path: 'lotes',
         component: LotesComponent,
+        canActivate: [LoginGuard]
+      },
+      {
+        path: 'inventario',
+        component: InventarioComponent,
         canActivate: [LoginGuard]
       },
     ]
