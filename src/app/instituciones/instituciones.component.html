@@ -30,7 +30,7 @@
 
 
 </div>
-<div class="fade-in" *ngIf="view==2">
+<div class="fade-in" [hidden]="create_cartera" *ngIf="view==2">
   <div class="container-m-nx container-p-x pt-2 text-right mb-2">
     <button [disabled]="loading" (click)="close_institucion()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
         class="fa fa-arrow-left mr-2"></i>Regresar</button>
@@ -110,143 +110,91 @@
         </li>
       </ul>
       <div class="custom-nav-content" *ngIf="inner_view==1">
-        <datatable #doctores_datatable_ref [options]="doctors_datatable"
-          [loading]="doctors_datatable_loading" [data_array]="instituciones_data.doctores">
+        <button class="float-right btn btn-success btn-sm" (click)="add_doctor()"><i class="fa fa-check"></i> Agregar
+          Médico</button>
+        <datatable #doctores_datatable_ref [options]="doctors_datatable" [loading]="doctors_datatable_loading"
+          [data_array]="instituciones_data.doctores">
         </datatable>
-        <!-- <div class="table-responsive">
-          <table class="table">
-            <thead style="background-color: #fff;">
-              <tr>
-                <th class="p-2 w-25">Nombre</th>
-                <th class="p-2 w-50">Apellido</th>
-                <th class="p-2 w-25">Correo</th>
-                <th class="p-2 text-center" style="width: 1%;">Opciones</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="instituciones_data.doctores.length > 0">
-              <tr *ngFor="let x of instituciones_data.doctores; let i = index">
-                <th class="p-2">{{x.first_name}}</th>
-                <th class="p-2">{{x.last_name}}</th>
-                <td class="p-2">{{x.email}}</td>
-                <td (click)="remove_doctor(i)" class="p-2" class="text-center custom-datatable-red"><i
-                    class="fa fa-times mr-2 ml-2"></i></td>
-              </tr>
-            </tbody>
-            <tbody *ngIf="instituciones_data.doctores.length == 0">
-              <tr [class.custom-table-error]="instituciones_data.doctores.length == 0">
-                <th colspan="3" class="text-center text-danger p-2">No se han agregado doctores
-                  a la institución</th>
-              </tr>
-            </tbody>
-          </table>
-          <button class="float-right btn btn-success btn-sm" (click)="add_doctor()"><i class="fa fa-check"></i> Agregar
-            Médico</button>
-        </div> -->
       </div>
       <div class="custom-nav-content" *ngIf="inner_view==2">
-        <datatable #alumnos_datatable_ref [options]="alumnos_datatable"
-          [loading]="patients_datatable_loading" [data_array]="instituciones_data.alumnos">
+        <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i>
+          Agregar
+          Alumno</button>
+        <datatable #alumnos_datatable_ref [options]="alumnos_datatable" [loading]="patients_datatable_loading"
+          [data_array]="instituciones_data.alumnos">
         </datatable>
-        <!-- <div class="table-responsive">
-          <table class="table">
-            <thead style="background-color: #fff;">
-              <tr>
-                <th class="p-2 w-25">Nombre</th>
-                <th class="p-2 w-25">Apellido</th>
-                <th class="p-2 w-25">Grado</th>
-                <th class="p-2 w-25">Seccion</th>
-                <th class="p-2 text-center" style="width: 1%;">Opciones</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="instituciones_data.alumnos.length > 0">
-              <tr *ngFor="let x of instituciones_data.alumnos; let i = index">
-                <th class="p-2">{{x.first_name}}</th>
-                <th class="p-2">{{x.last_name}}</th>
-                <td class="p-2">{{x.grado}}</td>
-                <td class="p-2">{{x.seccion}}</td>
-                <td (click)="remove_doctor(i)" class="p-2" class="text-center custom-datatable-red"><i
-                    class="fa fa-times mr-2 ml-2"></i></td>
-              </tr>
-            </tbody>
-            <tbody *ngIf="instituciones_data.alumnos.length == 0">
-              <tr [class.custom-table-error]="instituciones_data.alumnos.length == 0">
-                <th colspan="3" class="text-center text-danger p-2">No se han agregado alumnos
-                  a la institución</th>
-              </tr>
-            </tbody>
-          </table>
-          <button class="float-right btn btn-success btn-sm" (click)="open_insert_alumno()"><i class="fa fa-check"></i>
-            Agregar Alumno
-          </button>
-        </div> -->
       </div>
-      <div class="custo-nav-content" *ngIf="inner_view===3">
-        <div *ngIf="cartera.length === 0" class="col-12 mt-4 mb-4">
-          <div class="card">
-            <div class="card-content mt-4 ml-4 mb-4 mr-4">
-              <div class="col-md-12 text-center">
-                <h5>Datos de la Cartera</h5>
-                <form-renderer #cartera_form [config]="cartera_inputs"></form-renderer>
-              </div>
+      <div class="custom-nav-content" *ngIf="inner_view===3">
+        <button class="float-right btn btn-success btn-sm" (click)="open_create_cartera()"><i class="fa fa-check"></i>
+          Agregar
+          Cartera</button>
+        <datatable #cartera_datatable_ref [options]="cartera_datatable" [loading]="cartera_datatable_loading"
+          [data_array]="cartera">
+        </datatable>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="fade-in" [hidden]="!create_cartera">
+  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+    <button [disabled]="loading" (click)="hide_cartera()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+        class="fa fa-arrow-left mr-2"></i>Regresar</button>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <ul class="nav nav-tabs nav-responsive-md">
+        <li (click)="show_medicamentos()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="show_meds"><b [class.text-primary]="show_meds">Medicamentos</b></span>
+        </li>
+        <li (click)="show_insumos()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="!show_meds"><b [class.text-primary]="!show_meds">Insumos</b></span>
+        </li>
+      </ul>
+      <div class="custom-nav-content" *ngIf="show_meds">
+        <datatable [options]="inventory_medicamento_datatable" (option_event)="medicamentos_datatable_events($event)"
+          [loading]="medicamentos_datatable_loading" [data_array]="inventory">
+        </datatable>
+      </div>
+      <div class="custom-nav-content" *ngIf="!show_meds">
+        <datatable [options]="inventory_insumo_datatable" (option_event)="insumos_datatable_events($event)"
+          [loading]="insumos_datatable_loading" [data_array]="inventory">
+        </datatable>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="selected_products.length > 0" class="col-12 d-flex justify-content-center">
+    <div class="card">
+      <div class="card-content mt-4 ml-4 mb-4 mr-4">
+        <h4 class="text-center media align-items-center font-weight-bold py-0 mb-3">
+          <div class="media-body">
+            <span class="text-muted font-weight-light"></span>Productos Seleccionados
+          </div>
+        </h4>
+        <form role="form" novalidate="novalidate" #inventory_in_form="ngForm" autocomplete="off">
+          <div class="row" *ngFor="let product of selected_products; let i = index">
+            <div class="d-flex align-items-center col-6">
+              <h6>{{product.nombre}} - {{product.nombre_comercial}} - {{product.presentacion}}</h6>
             </div>
-            <div class="card-footer text-right">
-              <button class="btn btn-danger btn-sm" (click)="cancel_cartera()"><i class="fa fa-times"></i> Cancelar
-              </button>
-              <button class="btn btn-success btn-sm" (click)="insert_cartera()"><i class="fa fa-check"></i> Registrar
-              </button>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label"><i class="fa fa-asterisk text-danger mr-2"></i>Cantidad</label>
+                <input #quantity="ngModel" name="quantity{{i}}" [placeholder]="'- Valor -'" [(ngModel)]="product.quantity"
+                  [textMask]="{mask: integer_mask}" type="text" class="form-control"
+                  [class.is-invalid]="quantity.invalid && submitted" [required]="true" [disabled]="false"
+                  pattern="^[+-]?(\d{1,3}(,\d{3})*(\.\d+)?)$">
+                <small *ngIf="quantity.errors" class="invalid-feedback"><i
+                    class="fa fa-exclamation-triangle mr-1"></i>
+                  <span *ngIf="quantity.errors.required">El campo es requerido</span>
+                  <span *ngIf="quantity.errors.pattern">Formato Inválido</span>
+                </small>
+              </div>
             </div>
           </div>
-        </div>
-        <div *ngIf="cartera.length > 0 && cartera_main_view" class="col-12 mt-4 mb-4">
-          <div class="card">
-            <div class="card-content mt-4 ml-4 mb-4 mr-4">
-              <div class="col-md-12 text-center">
-                <button class="btn btn-sm btn-outline-success" (click)="open_cartera_medicamentos()">Agregar
-                  Medicamentos</button>
-                <button class="btn btn-sm btn-outline-success" (click)="open_cartera_insumos()">Agregar Insumos</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="cartera_medicamentos_view" class="col-12 mt-4 mb-4">
-          <div class="card">
-            <div class="card-content mt-4 ml-4 mb-4 mr-4">
-              <div class="container-m-nx container-p-x pt-2 text-right mb-2">
-                <button (click)="open_cartera_main()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
-                    class="fa fa-arrow-left mr-2"></i>Regresar</button>
-                    <div class="text-center mb-4">
-                      <h4>Inventario de Medicamentos Disponibles</h4>
-                    </div>
-              </div>
-              <div class="col-md-12 text-center">
-                <div class="mt-3">
-                  <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
-                    [loading]="inventory_loading" [data_array]="inventory"
-                    (option_event)="inventory_datatable_events($event)">
-                  </datatable>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="cartera_insumos_view" class="col-12 mt-4 mb-4">
-          <div class="card">
-            <div class="card-content mt-4 ml-4 mb-4 mr-4">
-              <div class="container-m-nx container-p-x pt-2 text-right mb-2">
-                <button (click)="open_cartera_main()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
-                    class="fa fa-arrow-left mr-2"></i>Regresar</button>
-                    <div class="text-center mb-4">
-                      <h4>Inventario de Insumos Disponibles</h4>
-                    </div>
-              </div>
-              <div class="col-md-12 text-center">
-                <datatable #medicamentos_datatable_ref [options]="inventario_datatable"
-                  [loading]="inventory_loading" [data_array]="inventory">
-                </datatable>
-              </div>
-            </div>
-          </div>
-        </div>
+        </form>
+      </div>
+      <div class="card-footer text-right">
+        <button class="btn btn-success btn-sm" (click)="insert_cartera()"><i
+            class="fa fa-check"></i> Registrar Cartera</button>
       </div>
     </div>
   </div>

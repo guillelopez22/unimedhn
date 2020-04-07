@@ -12,6 +12,7 @@ import { conformToMask } from 'angular2-text-mask/dist/angular2TextMask';
 import { ServiceDatatableComponent } from '../components/service_datatable/service-datatable.component';
 import departamentos from '../components/catalogs/departamentos';
 import sexos from '../components/catalogs/sexo';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 @Component({
   selector: 'instituciones',
   templateUrl: './instituciones.component.html',
@@ -34,8 +35,14 @@ export class InstitucionesComponent implements OnInit {
   public cartera_insumos_view = false;
   public cartera_medicamentos_view = false;
   public cartera_main_view = true;
+  public show_meds = true;
   public inventario_insumo_disponible = [];
   public inventario_medicamento_disponible = [];
+  public selected_products = [];
+  public submitted: any;
+  public integer_mask = createNumberMask({ allowNegative: true, allowDecimal: false, integerLimit: 25, prefix: '', includeThousandsSeparator: true });
+  public decimal_mask = createNumberMask({ allowNegative: true, allowDecimal: true, integerLimit: 25, decimalLimit: 25, prefix: '', includeThousandsSeparator: true });
+  @ViewChild('inventory_in_form') inventory_in_form: FormControlDirective;
   @ViewChild('alumnos_modal') alumnos_modal: ModalDirective;
   @ViewChild('medicamentos_modal') meidcamentos_modal: ModalDirective;
   @ViewChild('inventory_modal') inventory_modal: ModalDirective;
@@ -57,6 +64,7 @@ export class InstitucionesComponent implements OnInit {
   @ViewChild('doctores_datatable_ref') doctores_datatable_ref: ServiceDatatableComponent;
   @ViewChild('alumnos_datatable_ref') alumnos_datatable_ref: ServiceDatatableComponent;
   @ViewChild('doctors_datatable_ref') doctors_datatable_ref: ServiceDatatableComponent;
+  @ViewChild('cartera_datatable_ref') cartera_datatable_ref: ServiceDatatableComponent;
   public instituciones_view: number;
   public instituciones_modal_view: number;
   public doctor_modal_view: number;
@@ -69,6 +77,9 @@ export class InstitucionesComponent implements OnInit {
   public insumos_datatable_loading: boolean;
   public patients_datatable_loading: boolean;
   public medicamentos_datatable_loading: boolean;
+  public cartera_datatable_loading: boolean;
+  public inventory_insumo_datatable = {};
+  public inventory_medicamento_datatable = {};
   public instituciones_inputs = [];
   public instituciones_contactos = [];
   public instituciones_data = {
@@ -141,6 +152,7 @@ export class InstitucionesComponent implements OnInit {
   public medicamentos_datatable = {};
   public alumnos_datatable = {};
   public insumos_datatable = {};
+  public cartera_datatable = {};
   public insumos = [];
   public doctors = [];
   public patient_data = {};
@@ -162,6 +174,7 @@ export class InstitucionesComponent implements OnInit {
     sort_order: '',
     sort_ascendent: false
   };
+  public create_cartera = false;
   public doctor_filters = {
     current_offset: 1,
     view_length: 10,
@@ -199,6 +212,7 @@ export class InstitucionesComponent implements OnInit {
 
   constructor(private appService: AppService, public endpoint: AppEndpoints, private layoutService: LayoutService,
     private alertService: AlertService, private excelService: ExcelService) {
+    this.submitted = false;
     this.appService.pageTitle = 'Instituciones';
     this.view = 1;
     this.inner_view = 1;
@@ -217,6 +231,7 @@ export class InstitucionesComponent implements OnInit {
     this.patients_datatable_loading = false;
     this.medicamentos_datatable_loading = false;
     this.insumos_datatable_loading = false;
+    this.cartera_datatable_loading = false;
     this.instituciones_inputs = [
       {
         class: 'row',
@@ -2537,7 +2552,7 @@ export class InstitucionesComponent implements OnInit {
         {
           column: 'id_card',
           wrap_column: false,
-          header: '# de Cedula',
+          header: 'No. de Identidad',
           wrap_header: true,
           type: 'text'
         },
@@ -2629,6 +2644,177 @@ export class InstitucionesComponent implements OnInit {
       show_search_field: true,
       table_icon: 'caret-right',
     };
+    this.cartera_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'carteras',
+      empty_text: 'No se encontraron carteras',
+      columns: [
+        {
+          column: 'cartera_id',
+          wrap_column: false,
+          header: 'No. de cartera',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'total_worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lempiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'alert_count',
+          wrap_column: true,
+          header: 'No. de Alertas',
+          wrap_header: true,
+          type: 'number'
+        },
+      ],
+      events: [
+        {
+          name: 'Realizar Cartera',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+        {
+          name: 'Eliminar Cartera',
+          style: 'color:#FB5D5D',
+          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+          icon: 'trash-alt'
+        }
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.inventory_insumo_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'tipo_insumo',
+          wrap_column: false,
+          header: 'Tipo de Insumo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'expiration_date',
+          wrap_column: true,
+          header: 'Fecha de Caducidad',
+          wrap_header: true,
+          type: 'date'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'saldo_inventario',
+          wrap_column: true,
+          header: 'Unidades Disponibles',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: true,
+          header: 'Presentacion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Seleccionar Insumo',
+          style: 'color:#3CB371',
+          hover_style: 'cursor:pointer; color:#3CB371; background-color:#98FB98 !important;',
+          icon: 'check'
+        },
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.inventory_medicamento_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'nombre',
+          wrap_column: false,
+          header: 'Quimico',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'expiration_date',
+          wrap_column: true,
+          header: 'Fecha de Caducidad',
+          wrap_header: true,
+          type: 'date'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'saldo_inventario',
+          wrap_column: true,
+          header: 'Unidades Disponibles',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'concentracion',
+          wrap_column: true,
+          header: 'Concentracion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Seleccionar Medicamento',
+          style: 'color:#3CB371',
+          hover_style: 'cursor:pointer; color:#3CB371; background-color:#98FB98 !important;',
+          icon: 'check'
+        },
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
   }
 
   ngAfterViewInit() {
@@ -2650,6 +2836,38 @@ export class InstitucionesComponent implements OnInit {
       this.open_delete_institucion(event.data);
     }
   }
+
+  open_create_cartera() {
+    this.create_cartera = true;
+    this.get_medicamento_inventory();
+  }
+
+  show_medicamentos() {
+    this.show_meds = true;
+    this.get_medicamento_inventory();
+  }
+
+  valid() {
+    if (this.inventory_in_form.valid) {
+      this.submitted = false;
+      return true;
+    } else {
+      this.submitted = true;
+      return false;
+    }
+  }
+
+  hide_cartera() {
+    this.get_carteras();
+    this.create_cartera = false;
+  }
+
+  show_insumos() {
+    this.show_meds = false;
+    this.get_insumo_inventory();
+  }
+
+
 
   open_institucion(data) {
     this.instituciones_data = {
@@ -2673,9 +2891,46 @@ export class InstitucionesComponent implements OnInit {
     this.inner_view = 1;
   }
 
+  insumos_datatable_events(event) {
+    if (event.event === 'Seleccionar Insumo') {
+      // this.confirmation_modal.show();
+      this.selected_products.push({
+        product_id: event.data.product_id,
+        nombre: event.data.tipo_insumo,
+        nombre_comercial: event.data.nombre_comercial,
+        presentacion: event.data.presentacion,
+        presentation_quantity: event.data.presentation_quantity,
+        aus: event.data.aus_quantity,
+        batch_product_id: event.data.batch_product_id,
+        type: 'insumo'
+      });
+      console.log(this.selected_products);
+
+    }
+  }
+
+  medicamentos_datatable_events(event) {
+    console.log(event.data);
+    if (event.event === 'Seleccionar Medicamento') {
+      // this.confirmation_modal.show();
+      this.selected_products.push({
+        product_id: event.data.product_id,
+        nombre: event.data.nombre,
+        nombre_comercial: event.data.nombre_comercial,
+        presentacion: event.data.presentacion,
+        presentation_quantity: event.data.presentation_quantity,
+        aus: event.data.aus_quantity,
+        batch_product_id: event.data.batch_product_id,
+        type: 'medicamento'
+      });
+      console.log(this.selected_products);
+
+    }
+  }
+
   get_carteras() {
     this.endpoint.get_institution_cartera(this.instituciones_data.id).subscribe(data => {
-      this.cartera = data;
+      this.cartera = data.cartera;
     });
   }
 
@@ -2699,6 +2954,28 @@ export class InstitucionesComponent implements OnInit {
     };
   }
 
+  get_medicamento_inventory() {
+    this.inventory = [];
+    this.endpoint.get_medicamento_inventory().subscribe(data => {
+      this.inventory = data;
+      this.inventory.forEach(el => {
+        const date = new Date(el.expiration_date).toLocaleDateString('es-HN');
+        el.expiration_date = date;
+      });
+    });
+  }
+
+  get_insumo_inventory() {
+    this.inventory = [];
+    this.endpoint.get_insumo_inventory().subscribe(data => {
+      this.inventory = data;
+      this.inventory.forEach(el => {
+        const date = new Date(el.expiration_date).toLocaleDateString('es-HN');
+        el.expiration_date = date;
+      });
+    });
+  }
+
   get_inventario_medicamentos() {
     this.endpoint.get_inventario_medicamento().subscribe(data => {
       this.inventory = data;
@@ -2713,6 +2990,8 @@ export class InstitucionesComponent implements OnInit {
     });
   }
 
+
+
   open_generales() {
     this.inner_view = 1;
   }
@@ -2726,9 +3005,6 @@ export class InstitucionesComponent implements OnInit {
 
   open_cartera() {
     this.get_carteras();
-    if (this.cartera.length === 0) {
-      this.alertService.alert_error('Institucion sin cartera', 'Actualmente La institucion no cuenta con una cartera');
-    }
     this.inner_view = 3;
   }
 
@@ -2737,20 +3013,35 @@ export class InstitucionesComponent implements OnInit {
   }
 
   insert_cartera() {
-    if (this.cartera_form.valid()) {
-      const form_values = this.cartera_form.get_values();
-      this.endpoint.insert_cartera({
-        institution_id: this.instituciones_data.id,
-        nombre: form_values.nombre,
-        descripcion: form_values.descripcion
-      }).subscribe(() => {},
-      err => {
-        this.alertService.alert_error(err.title, err.message);
-      }, () => {
-        this.get_carteras();
-        this.cartera_form.clean_form();
-        this.alertService.alert_success('Exito', 'La cartera fue registrada de manera satisfactoria');
+    console.log(this.inventory_in_form.valid);
+
+    if (this.inventory_in_form.valid) {
+      console.log(this.selected_products);
+
+      this.selected_products.forEach(product => {
+        this.endpoint.insert_cartera({
+          institution_id: this.instituciones_data.id,
+        }).subscribe(data => {
+          this.endpoint.insert_cartera_batch_products({
+            cartera_id: data.cartera_id,
+            batch_product_id: product.batch_product_id,
+            quantity: product.quantity
+          }).subscribe(() => {
+            this.selected_products = [];
+            this.get_carteras();
+            this.hide_cartera();
+          }
+          );
+        },
+        err => {
+          this.alertService.alert_error(err.title, err.message);
+        }, () => {
+          this.get_carteras();
+          this.alertService.alert_success('Exito', 'La cartera fue registrada de manera satisfactoria');
+        });
       });
+      this.selected_products = [];
+      this.hide_cartera();
     }
   }
 

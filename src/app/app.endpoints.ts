@@ -129,6 +129,14 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + '/get_institutions', { headers: this.get_headers(), responseType: 'json' });
   }
 
+  get_all_cartera_products(data): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_all_cartera_products?institution_id=' + data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  get_institution(data): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_institution?institution_id=' + data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
   insert_institucion(payload): Observable<any> {
     return this.httpClient.post(this.endpoint + '/insert_institucion', payload, { headers: this.get_headers(), responseType: 'json' });
   }
@@ -268,6 +276,10 @@ export class AppEndpoints {
     return this.httpClient.post(this.endpoint + '/insert_concentration', data, { headers: this.get_headers(), responseType: 'json' });
   }
 
+  insert_consulta(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/insert_consulta', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
   update_concentrations(payload): Observable<any> {
     const params = new HttpParams({ encoder: new FormQueryEncoder() })
       .set('concentration_id', payload.concentration_id)
@@ -309,7 +321,8 @@ export class AppEndpoints {
       .set('presentation_measure_unit_id', payload.presentation_measure_unit_id)
       .set('aus_quantity', payload.aus_quantity)
       .set('aus_measure_unit_id', payload.aus_measure_unit_id)
-      .set('description', payload.description);
+      .set('pum', payload.pum)
+      .set('pum_measure_unit_id', payload.pum_measure_unit_id);
     return this.httpClient.post(this.endpoint + '/insert_producto', params, { responseType: 'json' });
   }
 
@@ -353,6 +366,10 @@ export class AppEndpoints {
 
   insert_batch_product(data): Observable<any> {
     return this.httpClient.post(this.endpoint + '/insert_batch_product', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  use_cartera_product(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/use_cartera_product', data, { headers: this.get_headers(), responseType: 'json' });
   }
 
   insert_batch(data): Observable<any> {
@@ -554,6 +571,14 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + '/get_insumos_list', {responseType: 'json'});
   }
 
+  get_consultas(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_consultas', {responseType: 'json'});
+  }
+
+  get_available_inventory(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_available_inventory', {responseType: 'json'});
+  }
+
   get_insumos_list_cartera(): Observable<any> {
     return this.httpClient.get(this.endpoint + '/get_insumos_list_cartera', {responseType: 'json'});
   }
@@ -566,6 +591,20 @@ export class AppEndpoints {
   insert_cartera(data): Observable<any> {
     return this.httpClient.post(this.endpoint + '/insert_cartera', data, { headers: this.get_headers(), responseType: 'json' });
   }
+
+  insert_cartera_batch_products(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/insert_cartera_batch_products',
+    data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  get_medicamento_inventory(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_medicamento_inventory', {responseType: 'json'});
+  }
+
+  get_insumo_inventory(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_insumo_inventory', {responseType: 'json'});
+  }
+
 }
 
 

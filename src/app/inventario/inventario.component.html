@@ -44,10 +44,9 @@
         <div class="row">
           <div class="col-12">
             <div class="fade-in">
-              <div class="col">
-                <button class="float-right btn btn-success btn-sm" (click)="add_medicamento()"><i
-                    class="fa fa-check"></i>Agregar Medicamento</button>
-              </div>
+              <datatable #medicamentos_datatable_ref [options]="medicamentos_datatable"
+              [loading]="medicamentos_datatable_loading" [data_array]="medicamentos">
+            </datatable>
             </div>
           </div>
         </div>
@@ -60,10 +59,9 @@
         <div class="row">
           <div class="col-12">
             <div class="fade-in">
-              <div class="col">
-                <button class="float-right btn btn-success btn-sm" (click)="add_insumo()"><i
-                    class="fa fa-check"></i>Agregar Insumo</button>
-              </div>
+              <datatable #insumos_datatable_ref [options]="insumos_datatable" [loading]="insumos_datatable_loading"
+              [data_array]="insumos">
+            </datatable>
             </div>
           </div>
         </div>

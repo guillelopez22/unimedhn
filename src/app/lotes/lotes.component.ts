@@ -923,7 +923,7 @@ export class LotesComponent implements OnInit {
               {
                 type: 'select',
                 extra: '',
-                name: 'aus_measure_unit',
+                name: 'measure_unit',
                 label: 'AUS unidades',
                 icon: '',
                 class: 'form-control',
@@ -957,10 +957,89 @@ export class LotesComponent implements OnInit {
               }
             ]
           },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'integer',
+                extra: '',
+                name: 'pum',
+                label: 'PUM',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'measure_unit',
+                label: 'PUM unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
         ]
       },
     ];
-    this.medicamento_inputs = [
+    this.medicamento_inputs =  [
       {
         class: 'row',
         columns: [
@@ -1273,7 +1352,7 @@ export class LotesComponent implements OnInit {
               {
                 type: 'select',
                 extra: '',
-                name: 'aus_measure_units',
+                name: 'measure_unit',
                 label: 'AUS unidades',
                 icon: '',
                 class: 'form-control',
@@ -1289,7 +1368,86 @@ export class LotesComponent implements OnInit {
                   text: 'name'
                 },
                 list: () => {
-                  return this.filtered_units;
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'integer',
+                extra: '',
+                name: 'pum',
+                label: 'PUM',
+                icon: '',
+                class: 'form-control',
+                placeholder: '',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'select',
+                extra: '',
+                name: 'measure_unit',
+                label: 'PUM unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
                 },
                 textmask: () => {
                   return false;
@@ -1881,7 +2039,8 @@ export class LotesComponent implements OnInit {
       const presentation_measure_unit_id = measure_unit.measure_unit_id;
       const aus_measure_unit_id = measure_unit.measure_unit_id;
       const aus_quantity = form_values.aus;
-
+      const pum = form_values.pum;
+      const pum_measure_unit_id = measure_unit.measure_unit_id;
       this.endpoint.insert_producto({
         tradename_id,
         presentation_id,
@@ -1890,7 +2049,8 @@ export class LotesComponent implements OnInit {
         aus_measure_unit_id,
         aus_quantity,
         concentration_id: concentration.concentration_id,
-        description: ''
+        pum,
+        pum_measure_unit_id
       }).subscribe(data => {
         // this.created_product_id = data.result.insertId;
         this.endpoint.insert_medicamento({
@@ -1899,7 +2059,9 @@ export class LotesComponent implements OnInit {
           presentacion: presentation.name,
           concentracion: form_values.concentration,
           product_id: data.result.insertId,
-        }).subscribe();
+        }).subscribe(() => {
+          this.set_values();
+        });
       },
         err => {
           this.alertService.alert_error(err.title, err.message);
@@ -1927,7 +2089,8 @@ export class LotesComponent implements OnInit {
       const presentation_measure_unit_id = measure_unit.measure_unit_id;
       const aus_measure_unit_id = measure_unit.measure_unit_id;
       const aus_quantity = form_values.aus;
-
+      const pum = form_values.pum;
+      const pum_measure_unit_id = measure_unit.measure_unit_id;
       this.endpoint.insert_producto({
         tradename_id,
         presentation_id,
@@ -1936,7 +2099,8 @@ export class LotesComponent implements OnInit {
         aus_measure_unit_id,
         aus_quantity,
         concentration_id: concentration,
-        description: ''
+        pum,
+        pum_measure_unit_id
       }).subscribe(data => {
         console.log(data);
         // this.created_product_id = data.result.insertId;
@@ -1945,7 +2109,9 @@ export class LotesComponent implements OnInit {
           nombre_comercial: tradename.name,
           presentacion: presentation.name,
           product_id: data.result.insertId,
-        }).subscribe();
+        }).subscribe(() => {
+          this.set_values();
+        });
       },
         err => {
           this.alertService.alert_error(err.title, err.message);

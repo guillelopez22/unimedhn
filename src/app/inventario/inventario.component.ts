@@ -19,10 +19,15 @@ export class InventarioComponent implements OnInit {
   @ViewChild('concentration_modal') concentration_modal: ModalDirective;
   @ViewChild('medicamentos_form') medicamentos_form: FormRendererComponent;
   @ViewChild('insumos_form') insumos_form: FormRendererComponent;
+  medicamentos_datatable_loading: boolean;
+  insumos_datatable: any;
+  insumos_datatable_loading: boolean;
+  medicamentos_datatable = {};
   inventory_datatable: any;
   inner_view = 1;
   main_view = false;
   create_med_view = false;
+  unimed_inventory: any;
   create_insumo_view = false;
   inventory_main_view = true;
   inventory_datatable_loading: boolean;
@@ -34,6 +39,7 @@ export class InventarioComponent implements OnInit {
   total_active_principles = [];
   measurement_units = [];
   concentration_list = [];
+  filtered_units: any;
   presentations = [];
   selected_active_desc = '';
   commercial_names = [];
@@ -41,10 +47,14 @@ export class InventarioComponent implements OnInit {
   selected_measure_unit = '';
   selected_institution: any;
   inventory_overview_data: any;
+  insumos = [];
+  medicamentos = [];
   page_header = 'Administrar inventario';
   constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService, ) {
     this.appService.pageTitle = 'Inventario';
     this.inventory_datatable_loading = true;
+    this.medicamentos_datatable_loading = true;
+    this.insumos_datatable_loading = true;
     this.nombre_comercial_inputs = [
       {
         class: 'row',
@@ -912,7 +922,7 @@ export class InventarioComponent implements OnInit {
         class: 'row',
         columns: [
           {
-            class: 'col-md-4',
+            class: 'col-md-3',
             inputs: [
               {
                 type: 'select',
@@ -952,10 +962,10 @@ export class InventarioComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-2',
+            class: 'col-md-3',
             inputs: [
               {
-                type: 'text',
+                type: 'integer',
                 extra: '',
                 name: 'cantidad_presentacion',
                 label: 'Cantidad por Presentación',
@@ -992,7 +1002,7 @@ export class InventarioComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-2',
+            class: 'col-md-3',
             inputs: [
               {
                 type: 'select',
@@ -1026,6 +1036,9 @@ export class InventarioComponent implements OnInit {
                 },
                 change: (event) => {
                   this.selected_measure_unit = event;
+                  this.filtered_units = this.measurement_units.filter(el => el.name === event);
+                  console.log(this.filtered_units);
+
                 },
                 input: () => {
                 }
@@ -1033,7 +1046,7 @@ export class InventarioComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-3',
             inputs: [
               {
                 type: 'select',
@@ -1066,7 +1079,6 @@ export class InventarioComponent implements OnInit {
                   return false;
                 },
                 change: (event) => {
-                  this.selected_measure_unit = event;
                 },
                 input: () => {
                 }
@@ -1079,16 +1091,16 @@ export class InventarioComponent implements OnInit {
         class: 'row',
         columns: [
           {
-            class: 'col-md-4',
+            class: 'col-md-6',
             inputs: [
               {
-                type: 'text',
+                type: 'integer',
                 extra: '',
                 name: 'aus',
                 label: 'AUS (Average Unit Served)',
                 icon: '',
                 class: 'form-control',
-                placeholder: this.selected_measure_unit,
+                placeholder: '',
                 minlength: null,
                 maxlength: '100',
                 pattern: null,
@@ -1118,13 +1130,53 @@ export class InventarioComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-6',
             inputs: [
               {
-                type: 'text',
+                type: 'select',
                 extra: '',
-                name: 'cantidad_dosis',
-                label: 'Dosis',
+                name: 'measure_unit',
+                label: 'AUS unidades',
+                icon: '',
+                class: 'form-control',
+                placeholder: '- Seleccione -',
+                minlength: null,
+                maxlength: '100',
+                pattern: null,
+                error_required: 'Requerido',
+                error_pattern: '',
+                error_minlength: '',
+                list_data: {
+                  value: 'name',
+                  text: 'name'
+                },
+                list: () => {
+                  return this.measurement_units;
+                },
+                textmask: () => {
+                  return false;
+                },
+                required: () => {
+                  return true;
+                },
+                disabled: () => {
+                  return false;
+                },
+                change: (event) => {
+                },
+                input: () => {
+                }
+              }
+            ]
+          },
+          {
+            class: 'col-md-6',
+            inputs: [
+              {
+                type: 'integer',
+                extra: '',
+                name: 'pum',
+                label: 'PUM',
                 icon: '',
                 class: 'form-control',
                 placeholder: '',
@@ -1135,8 +1187,8 @@ export class InventarioComponent implements OnInit {
                 error_pattern: '',
                 error_minlength: '',
                 list_data: {
-                  value: '',
-                  text: ''
+                  value: 'name',
+                  text: 'name'
                 },
                 list: () => {
                 },
@@ -1157,16 +1209,16 @@ export class InventarioComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-4',
+            class: 'col-md-6',
             inputs: [
               {
-                type: 'text',
+                type: 'select',
                 extra: '',
-                name: 'numero_inventario',
-                label: 'Numero de Inventario',
+                name: 'measure_unit',
+                label: 'PUM unidades',
                 icon: '',
                 class: 'form-control',
-                placeholder: '',
+                placeholder: '- Seleccione -',
                 minlength: null,
                 maxlength: '100',
                 pattern: null,
@@ -1174,10 +1226,11 @@ export class InventarioComponent implements OnInit {
                 error_pattern: '',
                 error_minlength: '',
                 list_data: {
-                  value: '',
-                  text: ''
+                  value: 'name',
+                  text: 'name'
                 },
                 list: () => {
+                  return this.filtered_units;
                 },
                 textmask: () => {
                   return false;
@@ -1205,7 +1258,7 @@ export class InventarioComponent implements OnInit {
       empty_text: 'No se encontro inventario en instituciones',
       columns: [
         {
-          column: 'institution_name',
+          column: 'nombre',
           wrap_column: false,
           header: 'Institucion',
           wrap_header: true,
@@ -1214,7 +1267,7 @@ export class InventarioComponent implements OnInit {
         {
           column: 'total_worth',
           wrap_column: true,
-          header: 'Capital Invertido (Lempiras)',
+          header: 'Capital Disponible (Lempiras)',
           wrap_header: true,
           type: 'text'
         },
@@ -1224,6 +1277,13 @@ export class InventarioComponent implements OnInit {
           header: 'Ciudad',
           wrap_header: true,
           type: 'text'
+        },
+        {
+          column: 'total_alertas',
+          wrap_column: true,
+          header: 'Alertas',
+          wrap_header: true,
+          type: 'number'
         },
       ],
       events: [
@@ -1247,6 +1307,139 @@ export class InventarioComponent implements OnInit {
     this.get_measure_unit_list();
     this.get_presentation_list();
     this.get_overview_data();
+    this.medicamentos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'nombre',
+          wrap_column: false,
+          header: 'Quimico',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'per_presentation',
+          wrap_column: false,
+          header: 'Unidades por Presentación',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'concentracion',
+          wrap_column: true,
+          header: 'Concentracion',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'in_stock',
+          wrap_column: true,
+          header: 'Stock',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lemiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'status',
+          wrap_column: true,
+          header: 'Estado',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.insumos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'tipo_insumo',
+          wrap_column: false,
+          header: 'Tipo de Insumo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: true,
+          header: 'Presentacion',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'per_presentation',
+          wrap_column: false,
+          header: 'Unidades por Presentación',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'in_stock',
+          wrap_column: true,
+          header: 'Stock',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lemiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'status',
+          wrap_column: true,
+          header: 'Estado',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
    }
 
   open_medicamentos() {
@@ -1273,12 +1466,26 @@ export class InventarioComponent implements OnInit {
 
   open_main_view(event) {
     if (event !== undefined) {
+      console.log('====================================');
+      console.log(event.data);
+      console.log('====================================');
       this.selected_institution = event.data;
+      if (event.data.id === 0) {
+        this.medicamentos = event.data.medicamentos;
+        this.insumos = event.data.insumos;
+      } else {
+        this.endpoint.get_institution_cartera(this.selected_institution.id).subscribe(data => {
+          this.insumos = data.insumos;
+          this.medicamentos = data.medicamentos;
+        });
+      }
+
       this.page_header = 'Administrar inventario/' + event.data.nombre;
       this.main_view = true;
       this.create_insumo_view = false;
       this.create_med_view = false;
       this.inventory_main_view = false;
+
     } else {
       this.main_view = true;
       this.create_insumo_view = false;
@@ -1410,6 +1617,18 @@ export class InventarioComponent implements OnInit {
   get_overview_data() {
     this.endpoint.get_all_cartera_info().subscribe(data => {
       this.inventory_overview_data = data;
+    });
+    this.endpoint.get_available_inventory().subscribe(data => {
+      this.unimed_inventory = data;
+      this.inventory_overview_data.push({
+        id: 0,
+        nombre: 'UNIMED',
+        total_worth: this.unimed_inventory.total_worth,
+        ciudad: 'HQ',
+        medicamentos: this.unimed_inventory.medicamentos_inventory,
+        insumos: this.unimed_inventory.insumos_inventory,
+        total_alertas: 0
+      });
     });
   }
 
