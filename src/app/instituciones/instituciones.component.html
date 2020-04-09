@@ -1,9 +1,8 @@
 <!-- BREADCRUMBS -->
 <h4 class="media align-items-center font-weight-bold py-0 mb-3">
   <div class="media-body">
-    <span class="text-muted font-weight-light"></span>Administrar Instituciones
-    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra tus instituciones y sus
-        alumnos</small></div>
+    <span class="text-muted font-weight-light"></span>{{header}}
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">{{small_text}}</small></div>
   </div>
 </h4>
 <!-- END BREADCRUMBS -->
@@ -36,7 +35,7 @@
         class="fa fa-arrow-left mr-2"></i>Regresar</button>
   </div>
   <div class="row">
-    <div class="col-3">
+    <!-- <div class="col-3">
       <div class="card">
         <button style="position: absolute; align-self: flex-end;" (click)="open_update_institucion(instituciones_data)"
           class="btn">
@@ -93,8 +92,8 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-9">
+    </div> -->
+    <div class="col-12">
       <ul class="nav nav-tabs nav-responsive-md">
         <li (click)="open_doctores()" class="nav-item" style="cursor: pointer;">
           <span class="nav-link" [class.active]="inner_view==1"><b
@@ -125,12 +124,31 @@
         </datatable>
       </div>
       <div class="custom-nav-content" *ngIf="inner_view===3">
-        <button class="float-right btn btn-success btn-sm" (click)="open_create_cartera()"><i class="fa fa-check"></i>
-          Agregar
-          Cartera</button>
-        <datatable #cartera_datatable_ref [options]="cartera_datatable" [loading]="cartera_datatable_loading"
-          [data_array]="cartera">
-        </datatable>
+        <div class="col-12">
+          <button class="float-right btn btn-success btn-sm" (click)="open_create_cartera()"><i class="fa fa-check"></i>
+            Agregar
+            Productos</button>
+            <ul class="nav nav-tabs nav-responsive-md">
+              <li (click)="open_cartera_meds()" class="nav-item" style="cursor: pointer;">
+                <span class="nav-link" [class.active]="show_cartera_meds"><b
+                    [class.text-primary]="show_cartera_meds">Medicamentos</b></span>
+              </li>
+              <li (click)="open_cartera_ins()" class="nav-item" style="cursor: pointer;">
+                <span class="nav-link" [class.active]="!show_cartera_meds"><b
+                    [class.text-primary]="!show_cartera_meds">Insumos</b></span>
+              </li>
+            </ul>
+            <div class="custom-nav-content" *ngIf="show_cartera_meds">
+              <datatable #meds_datatable_ref [options]="cartera_medicamentos_datatable" [loading]="cartera_datatable_loading"
+                [data_array]="cartera_medicamentos">
+              </datatable>
+            </div>
+            <div class="custom-nav-content" *ngIf="!show_cartera_meds">
+              <datatable #ins_datatable_ref [options]="cartera_insumos_datatable" [loading]="cartera_datatable_loading"
+                [data_array]="cartera_insumos">
+              </datatable>
+            </div>
+          </div>
       </div>
     </div>
   </div>

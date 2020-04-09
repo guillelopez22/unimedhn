@@ -633,6 +633,7 @@ export class ConsultaComponent implements OnInit {
     console.log(event.data);
     // this.confirmation_modal.show();
     this.selected_products.push({
+      cartera_id: event.data.cartera_id,
       cartera_batch_products_id: event.data.cartera_batch_products_id,
       alert_id: event.data.alert_id,
       product_pum: event.data.product_pum,
@@ -651,6 +652,7 @@ export class ConsultaComponent implements OnInit {
   insumos_datatable_events(event) {
     // this.confirmation_modal.show();
     this.selected_products.push({
+      cartera_id: event.data.cartera_id,
       cartera_batch_products_id: event.data.cartera_batch_products_id,
       alert_id: event.data.alert_id,
       product_pum: event.data.product_pum,

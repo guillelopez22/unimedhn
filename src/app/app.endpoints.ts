@@ -312,6 +312,10 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + '/get_products_list', { responseType: 'json' });
   }
 
+  get_cartera_batch_product(data): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_cartera_batch_product?batch_product_id=' + data.batch_product_id + "&cartera_id="+ data.cartera_id, { responseType: 'json' });
+  }
+
   insert_producto(payload): Observable<any> {
     const params = new HttpParams({ encoder: new FormQueryEncoder() })
       .set('tradename_id', payload.tradename_id)

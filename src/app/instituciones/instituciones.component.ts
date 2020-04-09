@@ -21,6 +21,8 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
   ]
 })
 export class InstitucionesComponent implements OnInit {
+  public header = 'Administrar Instituciones';
+  public small_text = 'Administra tus instituciones y sus alumnos';
   public departamentos: any[];
   public ciudades: any[];
   public departamentos_search: any[];
@@ -36,6 +38,7 @@ export class InstitucionesComponent implements OnInit {
   public cartera_medicamentos_view = false;
   public cartera_main_view = true;
   public show_meds = true;
+  public show_cartera_meds = true;
   public inventario_insumo_disponible = [];
   public inventario_medicamento_disponible = [];
   public selected_products = [];
@@ -95,7 +98,8 @@ export class InstitucionesComponent implements OnInit {
     tipo: '',
     contactos: [],
     alumnos: [],
-    doctores: []
+    doctores: [],
+    student_count: 0
   };
   public inventory = [];
   public antecedentes_view = false;
@@ -149,6 +153,10 @@ export class InstitucionesComponent implements OnInit {
   public alumno_inputs = [];
   public alumnos = [];
   public medicamentos = [];
+  public cartera_medicamentos = [];
+  public cartera_insumos = [];
+  public cartera_medicamentos_datatable = {};
+  public cartera_insumos_datatable = {};
   public medicamentos_datatable = {};
   public alumnos_datatable = {};
   public insumos_datatable = {};
@@ -2475,6 +2483,104 @@ export class InstitucionesComponent implements OnInit {
       show_search_field: true,
       table_icon: 'caret-right',
     };
+    this.cartera_medicamentos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'nombre',
+          wrap_column: false,
+          header: 'Quimico',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'in_stock',
+          wrap_column: true,
+          header: 'Stock',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lemiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'status',
+          wrap_column: true,
+          header: 'Estado',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.cartera_insumos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'tipo_insumo',
+          wrap_column: false,
+          header: 'Tipo de Insumo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: true,
+          header: 'Presentacion',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'in_stock',
+          wrap_column: true,
+          header: 'Stock',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lemiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'status',
+          wrap_column: true,
+          header: 'Estado',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
     this.insumos_datatable = {
       // title: 'Listado de medicamentos',
       icon: 'user-md',
@@ -2830,6 +2936,7 @@ export class InstitucionesComponent implements OnInit {
 
     if (event.event == 'Detalle de la Institución') {
       this.open_institucion(event.data);
+
       // } else if (event.event == "Editar Institución") {
       //     this.open_update_institucion(event.data);
     } else if (event.event == 'Eliminar Institución') {
@@ -2883,8 +2990,11 @@ export class InstitucionesComponent implements OnInit {
       tipo: data.tipo,
       contactos: data.contactos,
       alumnos: [],
-      doctores: []
+      doctores: [],
+      student_count: data.student_count
     };
+    this.header = this.instituciones_data.nombre;
+    this.small_text = '';
     this.open_doctores();
     this.get_carteras();
     this.view = 2;
@@ -2902,7 +3012,8 @@ export class InstitucionesComponent implements OnInit {
         presentation_quantity: event.data.presentation_quantity,
         aus: event.data.aus_quantity,
         batch_product_id: event.data.batch_product_id,
-        type: 'insumo'
+        type: 'insumo',
+        product_pum: event.data.product_pum
       });
       console.log(this.selected_products);
 
@@ -2921,6 +3032,7 @@ export class InstitucionesComponent implements OnInit {
         presentation_quantity: event.data.presentation_quantity,
         aus: event.data.aus_quantity,
         batch_product_id: event.data.batch_product_id,
+        product_pum: event.data.product_pum,
         type: 'medicamento'
       });
       console.log(this.selected_products);
@@ -2931,10 +3043,14 @@ export class InstitucionesComponent implements OnInit {
   get_carteras() {
     this.endpoint.get_institution_cartera(this.instituciones_data.id).subscribe(data => {
       this.cartera = data.cartera;
+      this.cartera_medicamentos = data.medicamentos;
+      this.cartera_insumos = data.insumos;
     });
   }
 
   close_institucion() {
+    this.header = 'Administrar Instituciones';
+    this.small_text = 'Administra tus instituciones y sus alumnos';
     this.view = 1;
     this.inner_view = 1;
     this.instituciones_data = {
@@ -2950,7 +3066,8 @@ export class InstitucionesComponent implements OnInit {
       tipo: '',
       contactos: [],
       alumnos: [],
-      doctores: []
+      doctores: [],
+      student_count: 0,
     };
   }
 
@@ -2996,6 +3113,14 @@ export class InstitucionesComponent implements OnInit {
     this.inner_view = 1;
   }
 
+  open_cartera_meds() {
+    this.show_cartera_meds = true;
+  }
+
+  open_cartera_ins() {
+    this.show_cartera_meds = false;
+  }
+
   open_alumnos() {
     this.inner_view = 2;
     this.endpoint.alumno_by_institution({ institution_id: this.instituciones_data.id}).subscribe(alumnos => {
@@ -3013,35 +3138,76 @@ export class InstitucionesComponent implements OnInit {
   }
 
   insert_cartera() {
-    console.log(this.inventory_in_form.valid);
-
-    if (this.inventory_in_form.valid) {
-      console.log(this.selected_products);
-
-      this.selected_products.forEach(product => {
-        this.endpoint.insert_cartera({
-          institution_id: this.instituciones_data.id,
-        }).subscribe(data => {
-          this.endpoint.insert_cartera_batch_products({
-            cartera_id: data.cartera_id,
-            batch_product_id: product.batch_product_id,
-            quantity: product.quantity
-          }).subscribe(() => {
-            this.selected_products = [];
+    if (this.cartera.length === 0) {
+      if (this.inventory_in_form.valid) {
+        console.log(this.selected_products);
+        this.selected_products.forEach(product => {
+          this.endpoint.insert_cartera({
+            institution_id: this.instituciones_data.id,
+          }).subscribe(data => {
+            this.endpoint.insert_cartera_batch_products({
+              cartera_id: data.cartera_id,
+              batch_product_id: product.batch_product_id,
+              quantity: product.quantity
+            }).subscribe(() => {
+              this.selected_products = [];
+              this.get_carteras();
+              this.hide_cartera();
+            }
+            );
+          },
+          err => {
+            this.alertService.alert_error(err.title, err.message);
+          }, () => {
             this.get_carteras();
-            this.hide_cartera();
+            this.alertService.alert_success('Exito', 'Los productos fueron registrados de manera satisfactoria');
+          });
+        });
+        this.selected_products = [];
+        this.hide_cartera();
+      }
+    } else {
+      this.selected_products.forEach(el => {
+        this.endpoint.get_cartera_batch_product({
+          batch_product_id: el.batch_product_id,
+          cartera_id: this.cartera[0].cartera_id
+        }).subscribe(data => {
+          const cartera_batch_products_id = data.id;
+          const product_pum = el.product_pum;
+          const quantity = data.quantity;
+          const used = el.quantity * -1;
+          const student_count = this.instituciones_data.student_count;
+          const alert_id = data.alert_id;
+          if (cartera_batch_products_id !== 0) {
+            this.endpoint.use_cartera_product({
+              alert_id,
+              student_count,
+              quantity,
+              used,
+              product_pum,
+              cartera_batch_products_id,
+              cartera_id: this.cartera[0].cartera_id,
+              batch_product_id: el.batch_product_id,
+            }).subscribe();
+          } else {
+            this.endpoint.insert_cartera_batch_products({
+              cartera_id: this.cartera[0].cartera_id,
+              batch_product_id: el.batch_product_id,
+              quantity: el.quantity
+            }).subscribe(() => {
+            });
           }
-          );
         },
         err => {
           this.alertService.alert_error(err.title, err.message);
         }, () => {
           this.get_carteras();
-          this.alertService.alert_success('Exito', 'La cartera fue registrada de manera satisfactoria');
+          this.selected_products = [];
+              this.get_carteras();
+              this.hide_cartera();
+          this.alertService.alert_success('Exito', 'Los productos fueron registrados de manera satisfactoria');
         });
       });
-      this.selected_products = [];
-      this.hide_cartera();
     }
   }
 

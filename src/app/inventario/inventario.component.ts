@@ -1321,30 +1321,9 @@ export class InventarioComponent implements OnInit {
           type: 'text'
         },
         {
-          column: 'nombre_comercial',
-          wrap_column: true,
-          header: 'Nombre Comercial',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
           column: 'presentacion',
           wrap_column: false,
           header: 'Presentación del Fármaco',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'per_presentation',
-          wrap_column: false,
-          header: 'Unidades por Presentación',
-          wrap_header: true,
-          type: 'number'
-        },
-        {
-          column: 'concentracion',
-          wrap_column: true,
-          header: 'Concentracion',
           wrap_header: true,
           type: 'text'
         },
@@ -1391,25 +1370,11 @@ export class InventarioComponent implements OnInit {
           type: 'text'
         },
         {
-          column: 'nombre_comercial',
-          wrap_column: true,
-          header: 'Nombre Comercial',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
           column: 'presentacion',
           wrap_column: true,
           header: 'Presentacion',
           wrap_header: true,
           type: 'text'
-        },
-        {
-          column: 'per_presentation',
-          wrap_column: false,
-          header: 'Unidades por Presentación',
-          wrap_header: true,
-          type: 'number'
         },
         {
           column: 'in_stock',
