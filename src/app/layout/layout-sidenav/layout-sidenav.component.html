@@ -5,7 +5,7 @@
 	<div class="sidenav-divider mt-0">
 
 	</div>
-  	<div class="sidenav-inner" [ngClass]="{ 'py-1': orientation !== 'horizontal' }">
+  	<div *ngIf="isAdmin" class="sidenav-inner" [ngClass]="{ 'py-1': orientation !== 'horizontal' }">
     	<sidenav-router-link icon="ion ion-md-speedometer" route="/plataforma/inicio" [active]="isActive('/plataforma/inicio')">Inicio</sidenav-router-link>
       <sidenav-router-link icon="ion ion-ios-school" route="/plataforma/instituciones" [active]="isActive('/plataforma/instituciones')">Instituciones</sidenav-router-link>
       <sidenav-router-link icon="ion ion-md-people" route="/plataforma/medicos" [active]="isActive('/plataforma/medicos')">Medicos</sidenav-router-link>
@@ -15,5 +15,9 @@
       <sidenav-router-link icon="ion ion-ios-briefcase" route="/plataforma/inventario" [active]="isActive('/plataforma/inventario')">Inventario</sidenav-router-link>
       <!-- <sidenav-router-link icon="ion ion-ios-briefcase" route="/plataforma/medicamentos" [active]="isActive('/plataforma/medicamentos')">Medicamentos</sidenav-router-link>
       <sidenav-router-link icon="ion ion-ios-briefcase" route="/plataforma/insumos" [active]="isActive('/plataforma/insumos')">Insumos</sidenav-router-link> -->
+    </div>
+    <div *ngIf="!isAdmin" class="sidenav-inner" [ngClass]="{ 'py-1': orientation !== 'horizontal' }">
+      <sidenav-router-link icon="ion ion-md-speedometer" route="/plataforma/inicio" [active]="isActive('/plataforma/inicio')">Inicio</sidenav-router-link>
+      <sidenav-router-link icon="ion ion-md-people" route="/plataforma/consultas" [active]="isActive('/plataforma/consultas')">Consultas</sidenav-router-link>
   	</div>
 </sidenav>

@@ -39,6 +39,8 @@ export class LotesComponent implements OnInit {
   @ViewChild('medicamentos_datatable_ref') medicamentos_datatable_ref: ServiceDatatableComponent;
   @ViewChild('insumos_datatable_ref') insumos_datatable_ref: ServiceDatatableComponent;
   @ViewChild('confirmation_modal') confirmation_modal: ModalDirective;
+  @ViewChild('medicamentos_modal') medicamentos_modal: ModalDirective;
+  @ViewChild('insumos_modal') insumos_modal: ModalDirective;
   @ViewChild('confirmation_form') confirmation_form: FormRendererComponent;
   @ViewChild('lotes_datatable_ref') lotes_datatable_ref: ServiceDatatableComponent;
   @ViewChild('active_principle_form') active_principle_form: FormRendererComponent;
@@ -53,6 +55,9 @@ export class LotesComponent implements OnInit {
   @ViewChild('batch_form') batch_form: FormRendererComponent;
   public integer_mask = createNumberMask({ allowNegative: true, allowDecimal: false, integerLimit: 25, prefix: '', includeThousandsSeparator: true });
   public decimal_mask = createNumberMask({ allowNegative: true, allowDecimal: true, integerLimit: 25, decimalLimit: 25, prefix: '', includeThousandsSeparator: true });
+  public header = 'Administrar Lotes';
+  public small_text = 'Administra los lotes de medicamentos e insumos';
+  public total = 0;
   public confirmation_inputs = [];
   public no_edit = false;
   public submitted: any;
@@ -1311,7 +1316,7 @@ export class LotesComponent implements OnInit {
             class: 'col-md-6',
             inputs: [
               {
-                type: 'integer',
+                type: 'decimal',
                 extra: '',
                 name: 'aus',
                 label: 'AUS (Average Unit Served)',
@@ -1390,7 +1395,7 @@ export class LotesComponent implements OnInit {
             class: 'col-md-6',
             inputs: [
               {
-                type: 'integer',
+                type: 'decimal',
                 extra: '',
                 name: 'pum',
                 label: 'PUM',
@@ -1690,16 +1695,25 @@ export class LotesComponent implements OnInit {
       this.main_view = true;
     } else if (event.event === 'Ver lote') {
       console.log(event.data);
-
+      this.header = 'Lote No. ' + event.data.batch_id;
+      this.small_text = 'Adquirido ' + event.data.purchase_date + ' por un total de ' + event.data.batch_total + ' Lempiras';
       this.endpoint.get_batch(event.data.batch_id).subscribe(data => {
         this.medicamentos = data.medicamentos;
+        this.medicamentos.forEach(el => {
+          const date = new Date(el.expiration_date).toLocaleDateString('es-HN');
+          el.expiration_date = date;
+        });
         this.insumos = data.insumos;
+        this.insumos.forEach(el => {
+          const date = new Date(el.expiration_date).toLocaleDateString('es-HN');
+          el.expiration_date = date;
+        });
         this.lote_main_view = false;
         this.main_view = true;
         this.medicamentos_datatable = {
           // title: 'Listado de medicamentos',
           icon: 'user-md',
-          object_description: 'doctors',
+          object_description: 'medicamentos',
           empty_text: 'No se encontraron medicamentos',
           columns: [
             {
@@ -1736,7 +1750,21 @@ export class LotesComponent implements OnInit {
               header: 'Unidades en Lote',
               wrap_header: true,
               type: 'text'
-            }
+            },
+            {
+              column: 'unit_price',
+              wrap_column: true,
+              header: 'Precio (Lempiras)',
+              wrap_header: true,
+              type: 'number'
+            },
+            {
+              column: 'expiration_date',
+              wrap_column: true,
+              header: 'Fecha de Caducidad',
+              wrap_header: true,
+              type: 'date'
+            },
           ],
           events: [
           ],
@@ -1778,7 +1806,21 @@ export class LotesComponent implements OnInit {
               header: 'Unidades en Lote',
               wrap_header: true,
               type: 'text'
-            }
+            },
+            {
+              column: 'unit_price',
+              wrap_column: true,
+              header: 'Precio (Lempiras)',
+              wrap_header: true,
+              type: 'number'
+            },
+            {
+              column: 'expiration_date',
+              wrap_column: true,
+              header: 'Fecha de Caducidad',
+              wrap_header: true,
+              type: 'date'
+            },
           ],
           events: [
           ],
@@ -1795,6 +1837,118 @@ export class LotesComponent implements OnInit {
   open_lote_main_view() {
     this.lote_main_view = true;
     this.main_view = false;
+    this.no_edit = false;
+    this.medicamentos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'medicamentos',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'nombre',
+          wrap_column: false,
+          header: 'Quimico',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentation_quantity',
+          wrap_column: false,
+          header: 'Cantidad de Presentación',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'concentracion',
+          wrap_column: true,
+          header: 'Concentracion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Ver lotes para medicamento',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+        {
+          name: 'Crear lote para medicamento',
+          style: 'color:#3CB371',
+          hover_style: 'cursor:pointer; color:#3CB371; background-color:#98FB98 !important;',
+          icon: 'check'
+        },
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.insumos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'tipo_insumo',
+          wrap_column: false,
+          header: 'Tipo de Insumo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'nombre_comercial',
+          wrap_column: true,
+          header: 'Nombre Comercial',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: true,
+          header: 'Presentacion',
+          wrap_header: true,
+          type: 'text'
+        },
+      ],
+      events: [
+        {
+          name: 'Ver lotes para insumo',
+          style: 'color:#39B7CB',
+          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+          icon: 'search'
+        },
+        {
+          name: 'Crear lote para insumo',
+          style: 'color:#3CB371',
+          hover_style: 'cursor:pointer; color:#3CB371; background-color:#98FB98 !important;',
+          icon: 'check'
+        },
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [5, 10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.header = 'Administrar Lotes';
+    this.small_text = 'Administra los lotes de medicamentos e insumos';
+    this.selected_products = [];
   }
 
   change(event) {
@@ -1838,6 +1992,7 @@ export class LotesComponent implements OnInit {
         presentacion: event.data.presentacion,
         presentation_quantity: event.data.presentation_quantity,
         aus: event.data.aus_quantity,
+        desc: event.data.concentracion,
         type: 'medicamento'
       });
       console.log(this.selected_products);
@@ -1876,7 +2031,7 @@ export class LotesComponent implements OnInit {
 
   insert_batch() {
 
-    if (this.batch_form.valid() && this.inventory_in_form.valid) {
+    if (this.batch_form.valid() && this.valid()) {
       this.selected_products.forEach(el => {
         const date = new Date(el.fecha_caducidad).toLocaleDateString('en-GB');
         el.fecha_caducidad = date.split('/').reverse().join('-');
@@ -1966,6 +2121,18 @@ export class LotesComponent implements OnInit {
     });
   }
 
+  value_change(event) {
+    if (event.unit_price !== undefined && event.quantity !== undefined  && event.unit_price !== '' && event.quantity !== '') {
+      event.total = parseFloat(event.unit_price.replace(',', '')) * parseFloat(event.quantity.replace(',', ''));
+      this.total = 0;
+      this.selected_products.forEach(el => {
+        this.total += parseFloat(el.total);
+      });
+    } else {
+      event.total = 0;
+    }
+  }
+
   insert_concentration() {
     if (this.concentration_form.valid()) {
       const form_values = this.concentration_form.get_values();
@@ -2038,8 +2205,8 @@ export class LotesComponent implements OnInit {
       const presentation_quantity = form_values.cantidad_presentacion;
       const presentation_measure_unit_id = measure_unit.measure_unit_id;
       const aus_measure_unit_id = measure_unit.measure_unit_id;
-      const aus_quantity = form_values.aus;
-      const pum = form_values.pum;
+      const aus_quantity = parseFloat(form_values.aus.replace(',', ''));
+      const pum = parseFloat(form_values.pum.replace(',', ''));
       const pum_measure_unit_id = measure_unit.measure_unit_id;
       this.endpoint.insert_producto({
         tradename_id,
@@ -2069,6 +2236,7 @@ export class LotesComponent implements OnInit {
         () => {
           this.medicamentos_form.clean_form();
           this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
+          this.medicamentos_modal.hide();
         });
     }
   }
@@ -2088,8 +2256,8 @@ export class LotesComponent implements OnInit {
       const presentation_quantity = form_values.cantidad_presentacion;
       const presentation_measure_unit_id = measure_unit.measure_unit_id;
       const aus_measure_unit_id = measure_unit.measure_unit_id;
-      const aus_quantity = form_values.aus;
-      const pum = form_values.pum;
+      const aus_quantity = parseFloat(form_values.aus.replace(',', ''));
+      const pum = parseFloat(form_values.pum.replace(',', ''));
       const pum_measure_unit_id = measure_unit.measure_unit_id;
       this.endpoint.insert_producto({
         tradename_id,
@@ -2119,6 +2287,7 @@ export class LotesComponent implements OnInit {
         () => {
           this.insumos_form.clean_form();
           this.alertService.alert_success('Exito', 'Operacion realizada de manera satisfactoria');
+          this.insumos_modal.hide();
         });
     }
   }

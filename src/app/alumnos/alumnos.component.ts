@@ -177,7 +177,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -217,7 +217,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -257,7 +257,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -382,7 +382,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -422,7 +422,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -462,7 +462,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -502,7 +502,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -542,7 +542,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -582,7 +582,7 @@ export class AlumnosComponent implements OnInit {
                   return false;
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -627,46 +627,6 @@ export class AlumnosComponent implements OnInit {
                 },
                 textmask: () => {
                   return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-          {
-            class: 'col-md-3',
-            inputs: [
-              {
-                type: 'text',
-                extra: '',
-                name: 'phone',
-                label: 'Teléfono',
-                icon: '',
-                class: 'form-control',
-                placeholder: '',
-                minlength: null,
-                maxlength: null,
-                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: '',
-                  text: ''
-                },
-                list: () => {
-                  return []
-                },
-                textmask: () => {
-                  return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
                 },
                 required: () => {
                   return false;
@@ -842,6 +802,13 @@ export class AlumnosComponent implements OnInit {
           type: 'text'
         },
         {
+          column: 'institution_name',
+          wrap_column: true,
+          header: 'Institucion',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
           column: 'grado',
           wrap_column: false,
           header: 'Grado',
@@ -856,9 +823,9 @@ export class AlumnosComponent implements OnInit {
           type: 'text'
         },
         {
-          column: 'institution_name',
+          column: 'city',
           wrap_column: true,
-          header: 'Institucion',
+          header: 'Ciudad',
           wrap_header: true,
           type: 'text'
         },
@@ -895,7 +862,6 @@ export class AlumnosComponent implements OnInit {
     if (this.alumno_form.valid()) {
       const form_values = this.alumno_form.get_values();
       const alumno_data = {
-        institution_id: this.instituciones_data.id,
         first_name: form_values.first_name,
         last_name: form_values.last_name,
         grado: form_values.grado,
@@ -909,7 +875,6 @@ export class AlumnosComponent implements OnInit {
         address_house: form_values.address_house,
         address_city: form_values.address_city,
         address_state: form_values.address_state,
-        phone: form_values.phone,
         emergency_contacts: this.alumno_contacts,
         foto: null,
         tipo_paciente: 'Alumno',
@@ -935,6 +900,12 @@ export class AlumnosComponent implements OnInit {
             this.alumno_contacto_view = false;
             this.alumnos_modal.hide();
             this.alertService.alert_success(response.title, response.message);
+            this.endpoint.get_alumnos().subscribe(alumnos => {
+              this.alumnos = alumnos;
+            }, err => {
+              this.alumnos_datatable_loading = true;
+              this.alertService.alert_internal_server_error('Error interno del servidor', 'Revise su conexión de internet o inténtelo más tarde');
+            });
           } catch (error) {
             this.alertService.alert_aplication_error('Error Interno del Aplicativo');
           }

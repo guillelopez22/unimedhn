@@ -14,6 +14,7 @@
     [options]="medicos_datatable"
     [loading]="medicos_datatable_loading"
     [data_array]="medicos"
+    (option_event)="doctor_datatable_events($event)"
     >
   </datatable>
 <div bsModal #doctores_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { LayoutService } from '../layout.service';
 
 @Component({
@@ -6,11 +6,30 @@ import { LayoutService } from '../layout.service';
   templateUrl: './layout.component.html',
   styles: [':host { display: block; }', ':host /deep/ .layout-loading .sidenav-link { transition: none !important; }']
 })
-export class LayoutComponent implements AfterViewInit, OnDestroy {
+export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   // Prevent "blink" effect
   public initialized = false;
+  public isAdmin = false;
 
-  constructor(private layoutService: LayoutService) {}
+  constructor(private layoutService: LayoutService) {
+  }
+
+  ngOnInit() {
+    if (localStorage.getItem('unimed_session')) {
+      const object = JSON.parse(localStorage.getItem('unimed_session'));
+      if (object) {
+        if (object.role === 1) {
+          this.isAdmin = true;
+        } else {
+          this.isAdmin = false;
+        }
+      } else {
+        this.isAdmin = false;
+      }
+    } else {
+      this.isAdmin = false;
+    }
+  }
 
   ngAfterViewInit() {
     setTimeout(() => {

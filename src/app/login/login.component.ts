@@ -74,7 +74,9 @@ export class LoginComponent {
                         }else{
                             this.endpoint.set_session({
                                 name:response.name,
-                                token:response.token
+                                token:response.token,
+                                role:response.role,
+                                user_id:response.user_id
                             })
                             this.router.navigateByUrl('/plataforma/inicio');
                         }
@@ -82,7 +84,7 @@ export class LoginComponent {
                     }catch(error){
                         this.alertService.alert_aplication_error("Error Interno del Aplicativo");
                         this.login_loading = false;
-                    } 
+                    }
                 }
             );
 		}else{

@@ -69,7 +69,6 @@ export class MedicosComponent implements OnInit {
     doctores: []
   };
   public doctor_data = {
-    institution_id: 0,
     first_name: '',
     last_name: '',
     phone: '',
@@ -81,7 +80,7 @@ export class MedicosComponent implements OnInit {
     id_rtn: '',
     academic_information: [],
     background_information: [],
-    position: '',
+    ciudad: '',
     working_hours: [],
     foto: null
   };
@@ -198,7 +197,7 @@ export class MedicosComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-6',
+            class: 'col-md-12',
             inputs: [
               {
                 type: 'text',
@@ -231,51 +230,6 @@ export class MedicosComponent implements OnInit {
                   return false;
                 },
                 change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-          {
-            class: 'col-md-6',
-            inputs: [
-              {
-                type: 'select',
-                extra: '',
-                name: 'institution',
-                label: 'Institucion',
-                icon: '',
-                class: 'form-control',
-                placeholder: '- Seleccione -',
-                minlength: null,
-                maxlength: '100',
-                pattern: null,
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: 'nombre',
-                  text: 'nombre'
-                },
-                list: () => {
-                  return this.institutions;
-                },
-                textmask: () => {
-                  return false;
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                  const found = this.institutions.find(el => el.nombre === event);
-                  this.instituciones_data = found;
-                  console.log('====================================');
-                  console.log(this.instituciones_data);
-                  console.log('====================================');
                 },
                 input: () => {
                 }
@@ -328,7 +282,7 @@ export class MedicosComponent implements OnInit {
             ]
           },
           {
-            class: 'col-md-3',
+            class: 'col-md-6',
             inputs: [
               {
                 type: 'text',
@@ -353,46 +307,6 @@ export class MedicosComponent implements OnInit {
                 },
                 textmask: () => {
                   return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/];
-                },
-                required: () => {
-                  return true;
-                },
-                disabled: () => {
-                  return false;
-                },
-                change: (event) => {
-                },
-                input: () => {
-                }
-              }
-            ]
-          },
-          {
-            class: 'col-md-3',
-            inputs: [
-              {
-                type: 'decimal',
-                extra: '',
-                name: 'extension',
-                label: 'Extensión',
-                icon: '',
-                class: 'form-control',
-                placeholder: '',
-                minlength: null,
-                maxlength: null,
-                pattern: '',
-                error_required: 'Requerido',
-                error_pattern: 'Formato Inválido',
-                error_minlength: '',
-                list_data: {
-                  value: '',
-                  text: ''
-                },
-                list: () => {
-                  return []
-                },
-                textmask: () => {
-                  return false;
                 },
                 required: () => {
                   return true;
@@ -480,7 +394,7 @@ export class MedicosComponent implements OnInit {
                   return [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, '-', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/];
                 },
                 required: () => {
-                  return true;
+                  return false;
                 },
                 disabled: () => {
                   return false;
@@ -498,8 +412,8 @@ export class MedicosComponent implements OnInit {
               {
                 type: 'text',
                 extra: '',
-                name: 'position',
-                label: 'Posicion',
+                name: 'ciudad',
+                label: 'Ciudad',
                 icon: '',
                 class: 'form-control',
                 placeholder: '',
@@ -921,14 +835,11 @@ export class MedicosComponent implements OnInit {
    get_institutions() {
      this.endpoint.get_institutions().subscribe(data => {
        this.institutions = data;
-       console.log('====================================');
-       console.log(this.institutions);
-       console.log('====================================');
      });
    }
 
    get_doctors() {
-    this.endpoint.get_doctors().subscribe(doctors => {
+    this.endpoint.get_all_doctors().subscribe(doctors => {
       this.medicos = doctors;
     }, err => {
       this.medicos_datatable_loading = true;
@@ -960,15 +871,15 @@ export class MedicosComponent implements OnInit {
           type: 'text'
         },
         {
-          column: 'email',
+          column: 'ciudad',
           wrap_column: false,
-          header: 'Correo',
+          header: 'Ciudad',
           wrap_header: true,
           type: 'text'
         },
         {
           column: 'institution_name',
-          wrap_column: true,
+          wrap_column: false,
           header: 'Institucion',
           wrap_header: true,
           type: 'text'
@@ -976,17 +887,17 @@ export class MedicosComponent implements OnInit {
       ],
       events: [
         {
-          name: 'Detalle del Medico',
-          style: 'color:#39B7CB',
-          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
-          icon: 'search'
+          name: 'Activar Medico',
+          style: 'color:#196F3D',
+          hover_style: 'cursor:pointer; color:#196F3D; background-color:#ABEBC6 !important;',
+          icon: 'user-plus'
         },
         {
-          name: 'Eliminar Medico',
-          style: 'color:#FB5D5D',
-          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
-          icon: 'trash-alt'
-        }
+          name: 'Desactivar Medico',
+          style: 'color:#BDB76B',
+          hover_style: 'cursor:pointer; color:#BDB76B; background-color:#F0E68C !important;',
+          icon: 'user-minus'
+        },
       ],
       navigation_starting_offset_index: 0,
       navigation_offsets: [5, 10, 15, 20, 25, 50],
@@ -1061,6 +972,52 @@ export class MedicosComponent implements OnInit {
     this.academic_view = true;
   }
 
+  doctor_datatable_events(event) {
+    // if (event.event === 'Activar Medico') {
+    //   // this.open_delete_medic(event.data);
+    // } else {
+
+    // }
+    console.log(event.data);
+
+    if (event.event === 'Activar Medico') {
+      this.endpoint.activate_doctor({doctor_id: event.data.doctor_id, institution_id: event.data.institution_id !== null ? event.data.institution_id: 0 }).subscribe(res => {
+        this.alertService.alert_success(res.title, res.message);
+      },
+      err => {
+        this.alertService.alert_error(err.title, err.message);
+      });
+    } else if (event.event === 'Desactivar Medico') {
+      this.endpoint.deactivate_doctor({doctor_id: event.data.doctor_id, institution_id: event.data.institution_id !== null ? event.data.institution_id: 0 }).subscribe(res => {
+        this.alertService.alert_success(res.title, res.message);
+      },
+      err => {
+        this.alertService.alert_error(err.title, err.message);
+      });
+    }
+  }
+
+  open_delete_medic(data) {
+    this.alertService.option_alert('Eliminar Doctor',
+    '¿Está seguro que desea eliminar el doctor seleccionado?<br><br><b>Doctor:<br></b><b class=\'text-success\'> ' +
+    data.first_name + ' ' + data.last_name + '</b>', 'Sí, Eliminar').then((result) => {
+      if (result.value) {
+        this.delete_doctor(data.doctor_id);
+      }
+    }).catch(() => false);
+  }
+
+  delete_doctor(id) {
+    this.endpoint.delete_doctor({
+      doctor_id: id
+    }).subscribe(() => {
+      this.alertService.alert_success('Exito', 'El doctor ha sido eliminado de manera satisfactoria');
+      this.get_doctors();
+    }, err => {
+      this.alertService.alert_error(err.title, err.message);
+    });
+  }
+
   return_insert_view() {
     this.insert_doctor_main_view = true;
     this.jornada_view = false;
@@ -1082,7 +1039,6 @@ export class MedicosComponent implements OnInit {
     if (this.doctor_form.valid()) {
       const form_values = this.doctor_form.get_values();
       this.doctor_data = {
-        institution_id: this.instituciones_data.id,
         first_name: form_values.first_name,
         last_name: form_values.last_name,
         phone: form_values.phone,
@@ -1093,7 +1049,7 @@ export class MedicosComponent implements OnInit {
         id_college: form_values.id_college,
         id_rtn: form_values.id_rtn,
         background_information: this.antecedentes,
-        position: form_values.position,
+        ciudad: form_values.ciudad,
         working_hours: this.doctor_schedule,
         academic_information: this.academic_data,
         foto: null
@@ -1115,6 +1071,7 @@ export class MedicosComponent implements OnInit {
             this.doctor_modal_view = 1;
             this.doctores_modal.hide();
             this.alertService.alert_success(response.title, response.message);
+            this.endpoint.assign_doctor({doctor_id: response.doctor_id, institution_id: 0}).subscribe();
             this.get_doctors();
           } catch (error) {
             this.alertService.alert_aplication_error('Error Interno del Aplicativo');

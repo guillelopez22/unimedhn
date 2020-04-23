@@ -27,7 +27,11 @@ export class InventarioComponent implements OnInit {
   inner_view = 1;
   main_view = false;
   create_med_view = false;
-  unimed_inventory: any;
+  unimed_inventory = {
+    total_worth: 0,
+    medicamentos_inventory: [],
+    insumos_inventory: []
+  };
   create_insumo_view = false;
   inventory_main_view = true;
   inventory_datatable_loading: boolean;
@@ -49,6 +53,10 @@ export class InventarioComponent implements OnInit {
   inventory_overview_data: any;
   insumos = [];
   medicamentos = [];
+  unimed_medicamentos_datatable = {};
+  unimed_insumos_datatable = {};
+  unimed_view = true;
+  unimed_medicamentos_view = true;
   page_header = 'Administrar inventario';
   constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService, ) {
     this.appService.pageTitle = 'Inventario';
@@ -1405,6 +1413,118 @@ export class InventarioComponent implements OnInit {
       show_search_field: true,
       table_icon: 'caret-right',
     };
+    this.unimed_insumos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'insumos',
+      empty_text: 'No se encontraron insumos',
+      columns: [
+        {
+          column: 'tipo_insumo',
+          wrap_column: false,
+          header: 'Tipo de Insumo',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: true,
+          header: 'Presentacion',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'in_stock',
+          wrap_column: true,
+          header: 'Stock',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'costo_unidad',
+          wrap_column: true,
+          header: 'Costo Unitario',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lemiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'lote',
+          wrap_column: true,
+          header: 'No. Lote',
+          wrap_header: true,
+          type: 'number'
+        },
+      ],
+      events: [
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
+    this.unimed_medicamentos_datatable = {
+      // title: 'Listado de medicamentos',
+      icon: 'user-md',
+      object_description: 'doctors',
+      empty_text: 'No se encontraron medicamentos',
+      columns: [
+        {
+          column: 'nombre',
+          wrap_column: false,
+          header: 'Quimico',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'presentacion',
+          wrap_column: false,
+          header: 'Presentación del Fármaco',
+          wrap_header: true,
+          type: 'text'
+        },
+        {
+          column: 'in_stock',
+          wrap_column: true,
+          header: 'Stock',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'costo_unidad',
+          wrap_column: true,
+          header: 'Costo Unitario',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'worth',
+          wrap_column: true,
+          header: 'Capital Invertido (Lemiras)',
+          wrap_header: true,
+          type: 'number'
+        },
+        {
+          column: 'lote',
+          wrap_column: true,
+          header: 'No. Lote',
+          wrap_header: true,
+          type: 'number'
+        },
+      ],
+      events: [
+      ],
+      navigation_starting_offset_index: 0,
+      navigation_offsets: [10, 15, 20, 25, 50],
+      show_search_field: true,
+      table_icon: 'caret-right',
+    };
    }
 
   open_medicamentos() {
@@ -1413,6 +1533,22 @@ export class InventarioComponent implements OnInit {
 
   open_insumos() {
     this.inner_view = 2;
+  }
+
+  open_unimed() {
+    this.unimed_view = true;
+  }
+
+  open_unimed_medicamentos() {
+    this.unimed_medicamentos_view = true;
+  }
+
+  open_unimed_insumos() {
+    this.unimed_medicamentos_view = false;
+  }
+
+  open_instituciones() {
+    this.unimed_view = false;
   }
 
   add_medicamento() {
@@ -1585,15 +1721,6 @@ export class InventarioComponent implements OnInit {
     });
     this.endpoint.get_available_inventory().subscribe(data => {
       this.unimed_inventory = data;
-      this.inventory_overview_data.push({
-        id: 0,
-        nombre: 'UNIMED',
-        total_worth: this.unimed_inventory.total_worth,
-        ciudad: 'HQ',
-        medicamentos: this.unimed_inventory.medicamentos_inventory,
-        insumos: this.unimed_inventory.insumos_inventory,
-        total_alertas: 0
-      });
     });
   }
 

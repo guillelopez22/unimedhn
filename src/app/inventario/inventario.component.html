@@ -9,6 +9,71 @@
 <div *ngIf="inventory_main_view" class="fade-in">
   <div class="row">
     <div class="col-12">
+      <ul class="nav nav-tabs nav-responsive-md">
+        <li (click)="open_unimed()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="unimed_view"><b [class.text-primary]="unimed_view">UNIMED</b></span>
+        </li>
+        <li (click)="open_instituciones()" class="nav-item" style="cursor: pointer;">
+          <span class="nav-link" [class.active]="!unimed_view"><b
+              [class.text-primary]="!unimed_view">Instituciones</b></span>
+        </li>
+      </ul>
+      <div class="custom-nav-content" *ngIf="unimed_view">
+        <h4 class="media align-items-center font-weight-bold py-0 mb-3">
+          <div class="media-body">
+            <span class="text-muted font-weight-light"></span>Total Invertido: {{unimed_inventory.total_worth | currency: 'L. '}}
+          </div>
+        </h4>
+        <div class="fade-in">
+          <div class="col-12">
+            <ul class="nav nav-tabs nav-responsive-md">
+              <li (click)="open_unimed_medicamentos()" class="nav-item" style="cursor: pointer;">
+                <span class="nav-link" [class.active]="unimed_medicamentos_view"><b [class.text-primary]="unimed_medicamentos_view">Medicamentos</b></span>
+              </li>
+              <li (click)="open_unimed_insumos()" class="nav-item" style="cursor: pointer;">
+                <span class="nav-link" [class.active]="!unimed_medicamentos_view"><b
+                    [class.text-primary]="!unimed_medicamentos_view">Insumos</b></span>
+              </li>
+            </ul>
+            <div class="custom-nav-content" *ngIf="unimed_medicamentos_view">
+              <div class="fade-in">
+                <div class="row">
+                  <div class="col-12">
+                    <datatable [options]="unimed_medicamentos_datatable" [loading]="inventory_datatable_loading" [data_array]="unimed_inventory.medicamentos_inventory"></datatable>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="custom-nav-content" *ngIf="!unimed_medicamentos_view">
+              <div class="fade-in">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="fade-in">
+                      <datatable [options]="unimed_insumos_datatable" [loading]="inventory_datatable_loading" [data_array]="unimed_inventory.insumos_inventory"></datatable>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="custom-nav-content" *ngIf="!unimed_view">
+        <div class="fade-in">
+          <div class="row">
+            <div class="col-12">
+              <div class="fade-in">
+                <datatable #inventory_datatable_ref [options]="inventory_datatable"
+                  [loading]="inventory_datatable_loading" [data_array]="inventory_overview_data"
+                  (option_event)="open_main_view($event)">
+                </datatable>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-12">
       <div class="fade-in">
         <datatable #inventory_datatable_ref
           [options]="inventory_datatable"
@@ -18,12 +83,12 @@
         >
         </datatable>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>
 
 <div *ngIf="main_view" class="fade-in">
-  <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+  <div class="container-m-nx container-p-x pt-2 text-left mb-2">
     <button (click)="open_inventory_main_view()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
         class="fa fa-arrow-left mr-2"></i>Regresar</button>
   </div>
@@ -45,8 +110,8 @@
           <div class="col-12">
             <div class="fade-in">
               <datatable #medicamentos_datatable_ref [options]="medicamentos_datatable"
-              [loading]="medicamentos_datatable_loading" [data_array]="medicamentos">
-            </datatable>
+                [loading]="medicamentos_datatable_loading" [data_array]="medicamentos">
+              </datatable>
             </div>
           </div>
         </div>
@@ -60,8 +125,8 @@
           <div class="col-12">
             <div class="fade-in">
               <datatable #insumos_datatable_ref [options]="insumos_datatable" [loading]="insumos_datatable_loading"
-              [data_array]="insumos">
-            </datatable>
+                [data_array]="insumos">
+              </datatable>
             </div>
           </div>
         </div>
@@ -92,7 +157,8 @@
         <div class="card-footer text-right">
           <button class="btn btn-danger btn-sm" (click)="cancel_med()"><i class="fa fa-times"></i> Cancelar
           </button>
-          <button class="btn btn-success btn-sm" (click)="insert_medicamento_product()"><i class="fa fa-check"></i> Registrar Medicamento</button>
+          <button class="btn btn-success btn-sm" (click)="insert_medicamento_product()"><i class="fa fa-check"></i>
+            Registrar Medicamento</button>
         </div>
       </div>
     </div>

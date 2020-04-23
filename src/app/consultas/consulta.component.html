@@ -1,13 +1,12 @@
 <h4 class="media align-items-center font-weight-bold py-0 mb-3">
   <div class="media-body">
-    <span class="text-muted font-weight-light"></span>Administrar Consultas
-    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">Administra las consultas hechas en las
-        instituciones</small></div>
+    <span class="text-muted font-weight-light"></span>{{header}}
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">{{small_text}}</small></div>
   </div>
 </h4>
 
 <div *ngIf="main_view" class="fade-in">
-  <div class="col mb-3">
+  <div *ngIf="isAdmin" class="col mb-3">
     <button class="float-right btn btn-success btn-sm" (click)="consulta_modal.show()"><i class="fa fa-check"></i> Agregar
       Consulta</button>
   </div>

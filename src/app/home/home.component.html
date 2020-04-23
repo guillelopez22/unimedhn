@@ -1,5 +1,5 @@
 <!-- Head stats -->
-<div class="fade-in">
+<div *ngIf="isAdmin" class="fade-in">
   <div class="row no-gutters container-m-nx container-m-ny bg-lighter bg-white container-p-x pb-3 mb-4">
     <div class="col-6 col-sm-3 col-md pt-3 pr-4 mt-1">
       <div class="media align-items-center">
@@ -55,7 +55,8 @@
       <span class="card-header-title"><i class="ion ion-md-stats text-primary"></i>&nbsp; Traffic</span>
 
       <div class="card-header-elements ml-auto">
-        <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="displayRange" [(ngModel)]="displayRangeModel">
+        <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup name="displayRange"
+          [(ngModel)]="displayRangeModel">
           <label ngbButtonLabel class="btn btn-default md-btn-flat">
             <input ngbButton type="radio" [value]="1"> Month
           </label>
@@ -75,12 +76,9 @@
     <div class="row no-gutters row-bordered">
       <div class="d-flex col-md-8 col-lg-12 col-xl-8 align-items-center p-4">
         <div class="w-100" style="height: 230px">
-          <canvas baseChart height="230"
-            [datasets]="chart1Data"
+          <canvas baseChart height="230" [datasets]="chart1Data"
             [labels]="['2017-03', '2017-04', '2017-05', '2017-06', '2017-07', '2017-08', '2017-09', '2017-10', '2017-11', '2017-12', '2018-01', '2018-02']"
-            [options]="chart1Options"
-            [chartType]="'line'"
-            [colors]="chart1Colors">
+            [options]="chart1Options" [chartType]="'line'" [colors]="chart1Colors">
           </canvas>
         </div>
       </div>
@@ -156,12 +154,9 @@
         </div>
         <div class="px-2">
           <div class="w-100" style="height: 35px">
-            <canvas baseChart height="35"
-              [datasets]="chart2Data"
+            <canvas baseChart height="35" [datasets]="chart2Data"
               [labels]="['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']"
-              [options]="chart2Options"
-              [chartType]="'bar'"
-              [colors]="chart2Colors">
+              [options]="chart2Options" [chartType]="'bar'" [colors]="chart2Colors">
             </canvas>
           </div>
         </div>
@@ -177,12 +172,9 @@
             <div class="text-muted text-tiny">VIEWS</div>
           </div>
           <div class="w-50" style="height: 35px">
-            <canvas baseChart height="35"
-              [datasets]="chart3Data"
+            <canvas baseChart height="35" [datasets]="chart3Data"
               [labels]="['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']"
-              [options]="chart3Options"
-              [chartType]="'line'"
-              [colors]="chart3Colors">
+              [options]="chart3Options" [chartType]="'line'" [colors]="chart3Colors">
             </canvas>
           </div>
         </div>
@@ -199,12 +191,9 @@
             <sup class="text-success small">+ 12%</sup>
           </div>
           <div class="w-50" style="height: 35px">
-            <canvas baseChart height="35"
-              [datasets]="chart4Data"
+            <canvas baseChart height="35" [datasets]="chart4Data"
               [labels]="['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']"
-              [options]="chart4Options"
-              [chartType]="'line'"
-              [colors]="chart4Colors">
+              [options]="chart4Options" [chartType]="'line'" [colors]="chart4Colors">
             </canvas>
           </div>
         </div>
@@ -221,12 +210,9 @@
             <sup class="text-success small">+ 2%</sup>
           </div>
           <div class="w-50" style="height: 35px">
-            <canvas baseChart height="35"
-              [datasets]="chart5Data"
+            <canvas baseChart height="35" [datasets]="chart5Data"
               [labels]="['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']"
-              [options]="chart5Options"
-              [chartType]="'line'"
-              [colors]="chart5Colors">
+              [options]="chart5Options" [chartType]="'line'" [colors]="chart5Colors">
             </canvas>
           </div>
         </div>
@@ -252,12 +238,8 @@
         </h6>
         <div class="py-4 px-3">
           <div style="height:120px">
-            <canvas baseChart height="120"
-              [datasets]="chart6Data"
-              [labels]="['Desktops', 'Smartphones', 'Tablets']"
-              [options]="chart6Options"
-              [chartType]="'pie'"
-              [colors]="chart6Colors">
+            <canvas baseChart height="120" [datasets]="chart6Data" [labels]="['Desktops', 'Smartphones', 'Tablets']"
+              [options]="chart6Options" [chartType]="'pie'" [colors]="chart6Colors">
             </canvas>
           </div>
         </div>
@@ -283,12 +265,9 @@
         </h6>
         <div class="pt-4">
           <div style="height:144px">
-            <canvas baseChart height="144"
-              [datasets]="chart7Data"
+            <canvas baseChart height="144" [datasets]="chart7Data"
               [labels]="['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']"
-              [options]="chart7Options"
-              [chartType]="'bar'"
-              [colors]="chart7Colors">
+              [options]="chart7Options" [chartType]="'bar'" [colors]="chart7Colors">
             </canvas>
           </div>
         </div>
@@ -314,12 +293,8 @@
         </h6>
         <div class="py-4 px-3">
           <div style="height:120px">
-            <canvas baseChart height="120"
-              [datasets]="chart8Data"
-              [labels]="['18 - 24', '25 - 34', '34 - 45', '45+']"
-              [options]="chart8Options"
-              [chartType]="'pie'"
-              [colors]="chart8Colors">
+            <canvas baseChart height="120" [datasets]="chart8Data" [labels]="['18 - 24', '25 - 34', '34 - 45', '45+']"
+              [options]="chart8Options" [chartType]="'pie'" [colors]="chart8Colors">
             </canvas>
           </div>
         </div>
@@ -363,7 +338,8 @@
                 <td>14.7%</td>
               </tr>
               <tr>
-                <td>Nullam eu felis dignissim, rutrum ante at, gravida quam. Suspendisse ornare massa in leo aliquet, non aliquet tellus scelerisque.</td>
+                <td>Nullam eu felis dignissim, rutrum ante at, gravida quam. Suspendisse ornare massa in leo aliquet,
+                  non aliquet tellus scelerisque.</td>
                 <td>100</td>
                 <td>200</td>
                 <td>13.6%</td>
@@ -388,7 +364,8 @@
               </tr>
             </tbody>
           </table>
-          <a href="javascript:void(0)" class="card-footer d-block text-center text-body small font-weight-semibold">SHOW MORE</a>
+          <a href="javascript:void(0)" class="card-footer d-block text-center text-body small font-weight-semibold">SHOW
+            MORE</a>
         </div>
       </div>
       <!-- / Popular queries -->
@@ -447,3 +424,131 @@
   </div>
 </div>
 
+<h4 *ngIf="!isAdmin" class="media align-items-center font-weight-bold py-0 mb-3">
+  <div class="media-body">
+    <span class="text-muted font-weight-light"></span>{{header}}
+    <div class="text-muted text-tiny mt-1"><small class="font-weight-normal">{{small_text}}</small></div>
+  </div>
+</h4>
+
+<div *ngIf="!isAdmin" class="fade-in">
+  <datatable #patients_datatable_ref [options]="patients_datatable" [loading]="patients_datatable_loading"
+          [data_array]="patients" (option_event)="select_patient($event)">
+  </datatable>
+</div>
+
+<div bsModal #instituciones_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade"
+  tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-graduation-cap mr-2"></i>Seleccione la institución donde labora</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <datatable #institutions_datatable_ref [options]="instituciones_datatable" [loading]="instituciones_datatable_loading"
+          [data_array]="institutions" (option_event)="select_institution($event)">
+        </datatable>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #consulta_modal="bs-modal" [config]="{backdrop: 'static', keyboard:false}" class="modal fade" tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="mb-0"><i class="fa fa-filter mr-2"></i>Registrar Consulta</h5>
+      </div>
+      <div class="modal-body custom-modal-body fade-in">
+        <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+          <button *ngIf="step !== 1" (click)="return()" class="mb-2 ml-2 btn btn-sm rounded-pill btn-danger"><i
+              class="fa fa-arrow-left mr-2"></i>Regresar</button>
+        </div>
+        <div *ngIf="step === 1" class="row">
+          <div class="col-12">
+            <h5 class="text-center">Datos de la Consulta</h5>
+            <form-renderer #consultas_form [config]="consulta_inputs"></form-renderer>
+            <button class="float-right btn btn-success btn-sm" (click)="register_form_data()"><i class="fa fa-check"></i>Aceptar</button>
+          </div>
+        </div>
+        <div *ngIf="step === 2" class="row">
+          <div class="col-12">
+            <h5 class="text-center">A continuacion porfavor seleccione los productos utilizados</h5>
+            <ul class="nav nav-tabs nav-responsive-md">
+              <li (click)="show_medicamentos()" class="nav-item" style="cursor: pointer;">
+                <span class="nav-link" [class.active]="show_meds"><b
+                    [class.text-primary]="show_meds">Medicamentos</b></span>
+              </li>
+              <li (click)="show_insumos()" class="nav-item" style="cursor: pointer;">
+                <span class="nav-link" [class.active]="!show_meds"><b [class.text-primary]="!show_meds">Insumos</b></span>
+              </li>
+            </ul>
+            <div class="custom-nav-content" *ngIf="show_meds">
+              <div class="fade-in">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="fade-in">
+                      <datatable #medicamentos_datatable_ref [options]="medicamentos_datatable"
+                        [loading]="medicamentos_datatable_loading" [data_array]="medicamentos"
+                        (option_event)="medicamentos_datatable_events($event)">
+                      </datatable>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="custom-nav-content" *ngIf="!show_meds">
+              <div class="fade-in">
+                <div class="container-m-nx container-p-x pt-2 text-right mb-2">
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="fade-in">
+                      <datatable #insumos_datatable_ref [options]="insumos_datatable" [loading]="insumos_datatable_loading"
+                        [data_array]="insumos" (option_event)="insumos_datatable_events($event)">
+                      </datatable>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="selected_products.length > 0" class="d-flex justify-content-center">
+              <div class="card">
+                <div class="card-content mt-4 ml-4 mb-4 mr-4">
+                  <form role="form" novalidate="novalidate" #inventory_in_form="ngForm" autocomplete="off">
+                    <div class="row" *ngFor="let product of selected_products; let i = index">
+                      <div class="d-flex align-items-center col-8">
+                        <h6>{{product.nombre}} - {{product.nombre_comercial}} - {{product.presentacion}}</h6>
+                      </div>
+                      <div class="col-4">
+                        <div class="form-group">
+                          <label class="form-label"><i class="fa fa-asterisk text-danger mr-2"></i>Cantidad</label>
+                          <input #quantity="ngModel" name="used{{i}}" [placeholder]="'- Valor -'" [(ngModel)]="product.used"
+                            [textMask]="{mask: integer_mask}" type="text" class="form-control"
+                            [class.is-invalid]="quantity.invalid && submitted" [required]="true" [disabled]="false"
+                            pattern="^[+-]?(\d{1,3}(,\d{3})*(\.\d+)?)$">
+                          <small *ngIf="quantity.errors" class="invalid-feedback"><i
+                              class="fa fa-exclamation-triangle mr-1"></i>
+                            <span *ngIf="quantity.errors.required">El campo es requerido</span>
+                            <span *ngIf="quantity.errors.pattern">Formato Inválido</span>
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer custom-modal-footer text-left">
+        <button class="btn btn-danger btn-sm" (click)="hide_modal()"><i class="fa fa-times"></i>
+          Cerrar</button>
+        <button *ngIf="step === 2" class="btn btn-success btn-sm" (click)="insert_consulta()"><i class="fa fa-check"></i>
+          Registrar</button>
+      </div>
+    </div>
+  </div>
+</div>

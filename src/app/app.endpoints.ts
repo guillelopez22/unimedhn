@@ -22,8 +22,8 @@ export class AppEndpoints {
   private endpoint: string;
 
   constructor(private httpClient: HttpClient, private router: Router) {
-    this.endpoint = 'http://' + window.location.hostname + ':8000/api';
-    // this.endpoint = "http://3.223.73.145:8300/api";
+    // this.endpoint = 'http://' + window.location.hostname + ':8000/api';
+    this.endpoint = "http://3.223.73.145:8300/api";
   }
 
   //########################################################################
@@ -74,21 +74,27 @@ export class AppEndpoints {
         return {
           name: object.name,
           token: object.token,
-          valid: true
+          role: object.role,
+          valid: true,
+          user_id: object.id
         };
         return object;
       } else {
         return {
           name: '',
           token: '',
-          valid: false
+          role: 0,
+          valid: false,
+          user_id: 0
         };
       }
     } else {
       return {
         name: '',
         token: '',
-        valid: false
+        role: 0,
+        valid: false,
+        user_id: 0
       };
     }
   }
@@ -158,6 +164,14 @@ export class AppEndpoints {
     return this.httpClient.get(this.endpoint + '/doctors_list', { headers: this.get_headers(), responseType: 'json' });
   }
 
+  get_all_doctors(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_doctors', { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  active_doctor_list(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/active_doctor_list', { headers: this.get_headers(), responseType: 'json' });
+  }
+
   doctor_by_institution(data): Observable<any> {
     return this.httpClient.get(this.endpoint + '/doctors_institution_list?institution_id=' + data.institution_id, { headers: this.get_headers(), responseType: 'json' });
   }
@@ -167,15 +181,33 @@ export class AppEndpoints {
     return this.httpClient.post(this.endpoint + '/insert_doctor', payload, { headers: this.get_headers(), responseType: 'json' });
   }
 
+  get_doctor_by_user(user_id): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_doctor_by_user?user_id=' + user_id, { headers: this.get_headers(), responseType: 'json' });
+  }
+
   update_doctor(payload): Observable<any> {
     return this.httpClient.put(this.endpoint + '/update_doctor', { params: payload, headers: this.get_headers(), responseType: 'json' });
   }
 
-  delete_doctor(payload): Observable<any> {
-    return this.httpClient.get(this.endpoint + '/delete_doctor', { params: payload, headers: this.get_headers(), responseType: 'json' });
+  delete_doctor(data): Observable<any> {
+    return this.httpClient.delete(this.endpoint + '/delete_doctor?doctor_id=' + data.doctor_id, { headers: this.get_headers(), responseType: 'json' });
   }
 
+  assign_doctor(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/assign_doctor', data, { headers: this.get_headers(), responseType: 'json' });
+  }
 
+  deactivate_doctor(data): Observable<any> {
+    return this.httpClient.put(this.endpoint + '/deactivate_doctor', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  activate_doctor(data): Observable<any> {
+    return this.httpClient.put(this.endpoint + '/activate_doctor', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  unassign_doctor(data): Observable<any> {
+    return this.httpClient.delete(this.endpoint + '/unassign_doctor?doctor_id=' + data.doctor_id + "&institution_id=" + data.institution_id, { headers: this.get_headers(), responseType: 'json' });
+  }
 
   //DOCTORS ################################################################
   //########################################################################
@@ -202,6 +234,26 @@ export class AppEndpoints {
 
   delete_alumno(payload): Observable<any> {
     return this.httpClient.get(this.endpoint + '/delete_patient', { params: payload, headers: this.get_headers(), responseType: 'json' });
+  }
+
+  activate_patient(data): Observable<any> {
+    return this.httpClient.put(this.endpoint + '/activate_patient', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  deactivate_patient(data): Observable<any> {
+    return this.httpClient.put(this.endpoint + '/deactivate_patient', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  unassign_patient(data): Observable<any> {
+    return this.httpClient.delete(this.endpoint + '/unassign_patient?patient_id=' + data.patient_id + "&institution_id=" + data.institution_id, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  assign_patient(data): Observable<any> {
+    return this.httpClient.post(this.endpoint + '/assign_patient', data, { headers: this.get_headers(), responseType: 'json' });
+  }
+
+  get_all_patients(): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_all_patients', { headers: this.get_headers(), responseType: 'json' });
   }
 
   //DOCTORS ################################################################
@@ -577,6 +629,10 @@ export class AppEndpoints {
 
   get_consultas(): Observable<any> {
     return this.httpClient.get(this.endpoint + '/get_consultas', {responseType: 'json'});
+  }
+
+  get_consultas_by_doctor(data): Observable<any> {
+    return this.httpClient.get(this.endpoint + '/get_consultas_by_doctor?doctor_id=' + data.doctor_id, {responseType: 'json'});
   }
 
   get_available_inventory(): Observable<any> {

@@ -24,6 +24,10 @@ export class ConsultaComponent implements OnInit {
   @ViewChild('instituciones_datatable_ref') instituciones_datatable_ref: ServiceDatatableComponent;
   public integer_mask = createNumberMask({ allowNegative: true, allowDecimal: false, integerLimit: 25, prefix: '', includeThousandsSeparator: true });
   public decimal_mask = createNumberMask({ allowNegative: true, allowDecimal: true, integerLimit: 25, decimalLimit: 25, prefix: '', includeThousandsSeparator: true });
+  isAdmin = true;
+  header = 'Administrar Consultas';
+  small_text = 'Administra las consultas hechas en las instituciones';
+  public user_data: any;
   public instituciones_datatable: any;
   public consultas_datatable: any;
   public consultas_loading_datatable = true;
@@ -71,7 +75,7 @@ export class ConsultaComponent implements OnInit {
     departamento: '',
     calendario: '',
     tipo: ''
-  }
+  };
 
 
   constructor(private appService: AppService, public endpoint: AppEndpoints, private alertService: AlertService) {
@@ -209,55 +213,124 @@ export class ConsultaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.get_institutions();
-    this.get_consultas();
-    this.consultas_datatable = {
-      // title: 'Listado de Medicos',
-      icon: 'user-md',
-      object_description: 'consultas',
-      empty_text: 'No se encontraron consultas',
-      columns: [
-        {
-          column: 'institucion',
-          wrap_column: false,
-          header: 'Institucion',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'doctor_name',
-          wrap_column: true,
-          header: 'Doctor',
-          wrap_header: true,
-          type: 'text'
-        },
-        {
-          column: 'patient_name',
-          wrap_column: false,
-          header: 'Paciente',
-          wrap_header: true,
-          type: 'text'
-        },
-      ],
-      events: [
-        {
-          name: 'Detalle de la Consulta',
-          style: 'color:#39B7CB',
-          hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
-          icon: 'search'
-        },
-        {
-          name: 'Eliminar Consulta',
-          style: 'color:#FB5D5D',
-          hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
-          icon: 'trash-alt'
+    if (localStorage.getItem('unimed_session')) {
+      const object = JSON.parse(localStorage.getItem('unimed_session'));
+      if (object) {
+        this.user_data = object;
+        if (object.role === 1) {
+          this.isAdmin = true;
+        } else {
+          this.isAdmin = false;
         }
-      ],
-      navigation_starting_offset_index: 0,
-      navigation_offsets: [5, 10, 15, 20, 25, 50],
-      show_search_field: true,
-      table_icon: 'caret-right',
-    };
+      } else {
+        this.isAdmin = false;
+      }
+    } else {
+      this.isAdmin = false;
+    }
+    if (this.isAdmin) {
+      this.get_consultas();
+      this.consultas_datatable = {
+        // title: 'Listado de Medicos',
+        icon: 'user-md',
+        object_description: 'consultas',
+        empty_text: 'No se encontraron consultas',
+        columns: [
+          {
+            column: 'institucion',
+            wrap_column: false,
+            header: 'Institucion',
+            wrap_header: true,
+            type: 'text'
+          },
+          {
+            column: 'doctor_name',
+            wrap_column: true,
+            header: 'Doctor',
+            wrap_header: true,
+            type: 'text'
+          },
+          {
+            column: 'patient_name',
+            wrap_column: false,
+            header: 'Paciente',
+            wrap_header: true,
+            type: 'text'
+          },
+          {
+            column: 'curso',
+            wrap_column: false,
+            header: 'Curso',
+            wrap_header: true,
+            type: 'text'
+          },
+        ],
+        events: [
+          {
+            name: 'Detalle de la Consulta',
+            style: 'color:#39B7CB',
+            hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+            icon: 'search'
+          },
+          {
+            name: 'Eliminar Consulta',
+            style: 'color:#FB5D5D',
+            hover_style: 'cursor:pointer; color:#FB5D5D; background-color:#FEDCDC !important;',
+            icon: 'trash-alt'
+          }
+        ],
+        navigation_starting_offset_index: 0,
+        navigation_offsets: [5, 10, 15, 20, 25, 50],
+        show_search_field: true,
+        table_icon: 'caret-right',
+      };
+    } else {
+      this.get_consulta_by_doctor(this.user_data.user_id);
+      this.header = 'Consultas Realizadas';
+      this.small_text = 'Listado de las consultas que has realizado';
+      this.consultas_datatable = {
+        // title: 'Listado de Medicos',
+        icon: 'user-md',
+        object_description: 'consultas',
+        empty_text: 'No se encontraron consultas',
+        columns: [
+          {
+            column: 'institucion',
+            wrap_column: false,
+            header: 'Institucion',
+            wrap_header: true,
+            type: 'text'
+          },
+          {
+            column: 'patient_name',
+            wrap_column: false,
+            header: 'Paciente',
+            wrap_header: true,
+            type: 'text'
+          },
+          {
+            column: 'curso',
+            wrap_column: false,
+            header: 'Curso',
+            wrap_header: true,
+            type: 'text'
+          },
+        ],
+        events: [
+          {
+            name: 'Detalle de la Consulta',
+            style: 'color:#39B7CB',
+            hover_style: 'cursor:pointer; color:#39B7CB; background-color:#BDF0FF !important;',
+            icon: 'search'
+          },
+        ],
+        navigation_starting_offset_index: 0,
+        navigation_offsets: [5, 10, 15, 20, 25, 50],
+        show_search_field: true,
+        table_icon: 'caret-right',
+      };
+    }
+    this.get_institutions();
     this.instituciones_datatable = {
       // title: 'Listado de Medicos',
       icon: 'user-md',
@@ -767,6 +840,12 @@ export class ConsultaComponent implements OnInit {
 
   get_consultas() {
     this.endpoint.get_consultas().subscribe(data => {
+      this.consultas = data.consultas;
+    });
+  }
+
+  get_consulta_by_doctor(id) {
+    this.endpoint.get_consultas_by_doctor({doctor_id: id}).subscribe(data => {
       this.consultas = data.consultas;
     });
   }
