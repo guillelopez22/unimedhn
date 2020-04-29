@@ -22,8 +22,8 @@ export class AppEndpoints {
   private endpoint: string;
 
   constructor(private httpClient: HttpClient, private router: Router) {
-    // this.endpoint = 'http://' + window.location.hostname + ':8000/api';
-    this.endpoint = "http://3.223.73.145:8300/api";
+    this.endpoint = 'http://' + window.location.hostname + ':8000/api';
+    // this.endpoint = "http://3.223.73.145:8300/api";
   }
 
   //########################################################################
@@ -378,7 +378,8 @@ export class AppEndpoints {
       .set('aus_quantity', payload.aus_quantity)
       .set('aus_measure_unit_id', payload.aus_measure_unit_id)
       .set('pum', payload.pum)
-      .set('pum_measure_unit_id', payload.pum_measure_unit_id);
+      .set('pum_measure_unit_id', payload.pum_measure_unit_id)
+      .set('sku', payload.sku);
     return this.httpClient.post(this.endpoint + '/insert_producto', params, { responseType: 'json' });
   }
 

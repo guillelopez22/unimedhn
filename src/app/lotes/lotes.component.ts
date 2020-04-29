@@ -1044,7 +1044,7 @@ export class LotesComponent implements OnInit {
         ]
       },
     ];
-    this.medicamento_inputs =  [
+    this.medicamento_inputs = [
       {
         class: 'row',
         columns: [
@@ -2122,7 +2122,7 @@ export class LotesComponent implements OnInit {
   }
 
   value_change(event) {
-    if (event.unit_price !== undefined && event.quantity !== undefined  && event.unit_price !== '' && event.quantity !== '') {
+    if (event.unit_price !== undefined && event.quantity !== undefined && event.unit_price !== '' && event.quantity !== '') {
       event.total = parseFloat(event.unit_price.replace(',', '')) * parseFloat(event.quantity.replace(',', ''));
       this.total = 0;
       this.selected_products.forEach(el => {
@@ -2196,7 +2196,7 @@ export class LotesComponent implements OnInit {
     if (this.medicamentos_form.valid()) {
       const form_values = this.medicamentos_form.get_values();
 
-      const tradename = this.commercial_names.find(el => el.nombre = form_values.commercial_name);
+      const tradename = this.commercial_names.find(el => el.name = form_values.commercial_name);
       const measure_unit = this.measurement_units.find(el => el.name === form_values.measure_unit);
       const presentation = this.presentations.find(el => el.name === form_values.presentation);
       const concentration = this.concentration_list.find(el => el.description === form_values.concentration);
@@ -2208,6 +2208,21 @@ export class LotesComponent implements OnInit {
       const aus_quantity = parseFloat(form_values.aus.replace(',', ''));
       const pum = parseFloat(form_values.pum.replace(',', ''));
       const pum_measure_unit_id = measure_unit.measure_unit_id;
+
+      // constructing SKU
+      const active_principle_words = form_values.active_principle.split(' ');
+      const tradename_words = form_values.commercial_name.split(' ');
+      const presentation_char = form_values.presentation.charAt(0);
+      let sku = active_principle_words[0].charAt(0) + active_principle_words[0].charAt(1) + active_principle_words[0].charAt(2);
+      if (tradename_words.length > 1) {
+        sku = sku + '-' + tradename_words[0].charAt(0)
+          + tradename_words[tradename_words.length - 1].charAt(0) + tradename_words[tradename_words.length - 1].charAt(1)
+          + tradename_words[tradename_words.length - 1].charAt(2);
+      } else {
+        sku = sku + '-' + tradename_words[0].charAt(0) + tradename_words[0].charAt(1) + tradename_words[0].charAt(2);
+      }
+      sku = sku + '-' + presentation_char + '-' + form_values.concentration;
+      sku = sku.toUpperCase();
       this.endpoint.insert_producto({
         tradename_id,
         presentation_id,
@@ -2217,7 +2232,8 @@ export class LotesComponent implements OnInit {
         aus_quantity,
         concentration_id: concentration.concentration_id,
         pum,
-        pum_measure_unit_id
+        pum_measure_unit_id,
+        sku
       }).subscribe(data => {
         // this.created_product_id = data.result.insertId;
         this.endpoint.insert_medicamento({
